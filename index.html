@@ -7,7 +7,60 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
 
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <link rel="stylesheet" href="assets/css/main.css">
+
+  <style>
+    /* Beta Notice Window */
+    .notice-window {
+      background-color: #1a1a1a;
+      border: 2px solid #8B0000;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .notice-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .notice-window-header h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+
+    .notice-window-body {
+      margin-top: 10px;
+      color: #ccc;
+      display: block;
+    }
+
+    .notice-window .social-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .notice-window .social-buttons a {
+      color: #fff;
+      font-size: 1.2rem;
+      transition: color 0.2s;
+    }
+
+    .notice-window .social-buttons a:hover {
+      color: #8B0000;
+    }
+
+    .minimized .notice-window-body {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,13 +78,21 @@
   <div data-include="components/navbar.html"></div>
 
   <section class="content">
-    <!-- BETA NOTICE -->
-    <div class="notice-banner">
-      <h2>Phase 3/4 – Open Beta</h2>
-      <p>Site-89 is currently in Open Beta, meaning the project is still under active development. While the site is stable and open for public access, some features and systems are still being refined.</p>
-      <p>A dedicated Site Advertising Board is being established to oversee community outreach and content promotion as we move toward final release.</p>
-      <p class="italic">We value transparency — you’re exploring a work in progress that continues to evolve every week.</p>
-      <a class="roadmap-link" href="#">» View Development Roadmap «</a>
+
+    <!-- BETA NOTICE WINDOW -->
+    <div class="notice-window" id="betaWindow">
+      <div class="notice-window-header">
+        <h2>Phase 3/4 – Open Beta</h2>
+        <div class="minimize">
+          <i class="fas fa-minus" id="toggleBeta"></i>
+        </div>
+      </div>
+      <div class="notice-window-body">
+        <p>Site-89 is currently in Open Beta, meaning the project is still under active development. While the site is stable and open for public access, some features and systems are still being refined.</p>
+        <p>A dedicated Site Advertising Board is being established to oversee community outreach and content promotion as we move toward final release.</p>
+        <p class="italic">We value transparency — you’re exploring a work in progress that continues to evolve every week.</p>
+        <a class="roadmap-link" href="#">» View Development Roadmap «</a>
+      </div>
     </div>
 
     <!-- MAIN BODY DESCRIPTION -->
@@ -55,6 +116,7 @@
         </div>
       </div>
     </div>
+
   </section>
 
   <!-- Footer -->
@@ -64,9 +126,21 @@
   <script type="module" src="assets/js/auth.js"></script>
 
   <script>
+    // Sticky nav
     document.addEventListener("scroll", () => {
       const nav = document.getElementById("main-nav");
       nav.classList.toggle("is-sticky", window.scrollY > 120);
+    });
+
+    // Toggle Beta Notice
+    const betaWindow = document.getElementById("betaWindow");
+    const toggleBeta = document.getElementById("toggleBeta");
+
+    toggleBeta.addEventListener("click", (e) => {
+      e.stopPropagation();
+      betaWindow.classList.toggle("minimized");
+      toggleBeta.classList.toggle("fa-plus");
+      toggleBeta.classList.toggle("fa-minus");
     });
   </script>
 </body>

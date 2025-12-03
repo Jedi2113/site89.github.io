@@ -21,10 +21,21 @@ body {
   background: var(--bg-dark);
   color: var(--text-light);
   margin: 0;
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-head);
+}
+
+a {
+  transition: var(--transition);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ─────────── Header / Hero ─────────── */
@@ -33,11 +44,11 @@ h1, h2, h3, h4 {
   padding: 3.5rem 1rem;
   background: linear-gradient(90deg, var(--accent-teal) 0%, var(--bg-dark) 80%);
   border-bottom: 2px solid var(--accent-mint);
+  position: relative;
+  overflow: hidden;
 }
 
-.hero.small {
-  padding: 2.5rem 1rem;
-}
+.hero.small { padding: 2.5rem 1rem; }
 
 .hero .hero-content {
   display: flex;
@@ -62,103 +73,132 @@ h1, h2, h3, h4 {
   left: 2rem;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 1;
-  transition: var(--transition);
   z-index: 1;
   pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hero-logo:hover {
+  transform: translateY(-50%) scale(1.05);
+  opacity: 0.9;
 }
 
 /* ─────────── Navigation ─────────── */
-nav {
-  background: var(--bg-card);
-  padding: 1rem;
-  text-align: center;
+#main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0d1117;
+  padding: 0.75rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   border-bottom: 1px solid var(--accent-teal);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-nav a {
-  color: var(--text-light);
-  margin: 0 1.2rem;
+#main-nav.is-sticky {
+  background-color: #121212;
+  box-shadow: 0 4px 10px rgba(0, 255, 180, 0.1);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#main-nav a {
+  color: #b2f7ef;
   text-decoration: none;
-  font-weight: bold;
-  transition: var(--transition);
+  font-weight: 500;
 }
 
-nav a:hover {
+#main-nav a:hover {
   color: var(--accent-mint);
   text-shadow: 0 0 6px var(--accent-mint);
 }
 
-#login-btn {
-  color: var(--accent-mint);
+/* Dropdown hover menus */
+.nav-dropdown-parent {
+  position: relative;
 }
+
+.nav-dropdown-parent:hover .nav-dropdown-content {
+  display: block;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #141b22;
+  min-width: 220px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.nav-dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #b2f7ef;
+  font-weight: 400;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #1f2a33;
+}
+
+/* Right login button & dropdown */
+.nav-login {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #b2f7ef;
+  font-weight: 500;
+  position: relative;
+  background-color: #1f1f1f;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.nav-login:hover { background-color: #2a2a2a; }
+
+.nav-login i { margin-right: 0.5rem; }
+
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #1f1f1f;
+  border-radius: 6px;
+  display: none; /* controlled by JS */
+  flex-direction: column;
+  min-width: 160px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  margin-top: 0.25rem;
+  z-index: 100;
+}
+
+.nav-dropdown a {
+  padding: 0.5rem 1rem;
+  color: #bdfcc9;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.nav-dropdown a:hover { background-color: #2a2a2a; }
+
+.nav-dropdown.show { display: flex; flex-direction: column; }
 
 /* ─────────── Content Section ─────────── */
-.content {
-  max-width: 950px;
-  margin: auto;
-  padding: 2rem;
-}
+.content { max-width: 950px; margin: auto; padding: 2rem; }
 
-/* ─────────── Lists & Links ─────────── */
-ul.staff-links {
-  list-style: none;
-  padding: 0;
-  margin: 2rem 0;
-}
-
-ul.staff-links li {
-  margin: 1.2rem 0;
-}
-
-ul.staff-links a {
-  display: inline-block;
-  padding-bottom: 0.3rem;
-  border-bottom: 2px solid transparent;
-  transition: var(--transition);
-}
-
-ul.staff-links a:hover {
-  color: var(--accent-mint);
-  border-color: var(--accent-mint);
-}
-
-/* ─────────── Footer ─────────── */
-footer {
-  text-align: center;
-  padding: 1.4rem;
-  background: var(--bg-card);
-  border-top: 1px solid var(--accent-teal);
-  font-size: 0.9rem;
-  color: var(--accent-teal);
-}
-/* ─────────── Notice Banner ─────────── */
-.notice-banner {
-  background: var(--bg-card);
-  border-left: 4px solid var(--accent-mint);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.notice-banner h2 {
-  margin-top: 0;
-  color: var(--accent-mint);
-}
-
-.notice-banner .roadmap-link {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--accent-mint);
-  font-weight: bold;
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.notice-banner .roadmap-link:hover {
-  text-shadow: 0 0 6px var(--accent-mint);
-}
-
-/* ─────────── About Box ─────────── */
 .about-box {
   background: var(--bg-card);
   border: 1px solid var(--accent-teal);
@@ -167,19 +207,50 @@ footer {
   border-radius: 6px;
 }
 
+/* Notice Banner with minimize button */
+.notice-banner {
+  background: var(--bg-card);
+  border-left: 4px solid var(--accent-mint);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.notice-banner h2 { margin-top: 0; color: var(--accent-mint); }
+
+.notice-banner .roadmap-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: var(--accent-mint);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.notice-banner .roadmap-link:hover { text-shadow: 0 0 6px var(--accent-mint); }
+
+.notice-banner .minimize-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--accent-mint);
+  user-select: none;
+}
+
 /* ─────────── Employee of the Month Card ─────────── */
 .eotm-card {
   background: var(--bg-card);
   padding: 1.5rem;
   border-radius: 6px;
   border: 1px solid var(--accent-mint);
+  transition: transform 0.2s ease;
 }
 
-.eotm-profile {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+.eotm-card:hover { transform: translateY(-3px); }
+
+.eotm-profile { display: flex; align-items: center; gap: 1rem; }
 
 .eotm-profile img {
   width: 100px;
@@ -195,181 +266,62 @@ footer {
   opacity: 0.7;
 }
 
-/* Page Fade In Effect */
-body {
-  opacity: 0;
-  animation: fadeIn 0.8s ease forwards;
+/* ─────────── Dossier Tabs ─────────── */
+.dossier-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+
+.tab-btn {
+  background-color: #141b22;
+  color: #b2f7ef;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.tab-btn.active {
+  background-color: #0d1117;
+  border-bottom: 2px solid #7fffd4;
 }
 
-/* Sticky Navbar */
-#main-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
+.tab-content {
+  background-color: #0d1117;
+  padding: 1rem;
+  border-radius: 0 6px 6px 6px;
+  color: #b2f7ef;
 }
 
-/* Navbar when detached from hero */
-#main-nav.is-sticky {
+.personnel-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.personnel-card {
+  background-color: #141b22;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  min-width: 200px;
+  flex: 1 1 200px;
+  text-align: center;
+}
+
+/* ─────────── Footer ─────────── */
+footer {
+  text-align: center;
+  padding: 1.4rem;
   background: var(--bg-card);
-  border-bottom: 2px solid var(--accent-mint);
-  box-shadow: 0 4px 12px rgba(0, 255, 180, 0.08);
+  border-top: 1px solid var(--accent-teal);
+  font-size: 0.9rem;
+  color: var(--accent-teal);
 }
 
-/* AUTH UI */
-.auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 80px);
-    width: 100%;
+/* ─────────── Fun Extras ─────────── */
+button, .roadmap-link, .tab-btn {
+  transition: all 0.25s ease;
 }
 
-.auth-box {
-    background: var(--bg-light);
-    padding: 2rem 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 12px var(--shadow);
-    max-width: 380px;
-    width: 90%;
-    text-align: center;
-}
-
-.auth-box h2 {
-    margin-bottom: 1.2rem;
-    letter-spacing: 1px;
-}
-
-.auth-box input {
-    width: 100%;
-    padding: 0.75rem;
-    margin: 0.5rem 0;
-    background: #2b2f33;
-    border: 1px solid var(--accent);
-    border-radius: 6px;
-    color: var(--text-light);
-}
-
-.auth-box button {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.auth-switch {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-.hidden {
-    display: none;
-}
-
-#main-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #121212;
-  padding: 0.5rem 1rem;
-  position: relative;
-  z-index: 10;
-}
-
-#main-nav a {
-  color: #bdfcc9;
-  text-decoration: none;
-  margin-right: 1rem;
-  font-weight: 500;
-}
-
-.nav-login {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  background-color: #1f1f1f;
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-
-.nav-login:hover {
-  background-color: #2a2a2a;
-}
-
-.nav-login i {
-  margin-right: 0.5rem;
-  color: #bdfcc9;
-}
-
-.nav-login span {
-  color: #bdfcc9;
-  font-weight: 500;
-}
-
-.nav-login {
-  position: relative;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  background-color: #1f1f1f;
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-
-.nav-login:hover {
-  background-color: #2a2a2a;
-}
-
-.nav-login i {
-  margin-right: 0.5rem;
-  color: #bdfcc9;
-}
-
-.nav-login span {
-  color: #bdfcc9;
-  font-weight: 500;
-}
-
-/* Dropdown */
-.nav-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #1f1f1f;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-top: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  min-width: 150px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  z-index: 100;
-}
-
-.nav-dropdown a {
-  padding: 0.5rem 1rem;
-  color: #bdfcc9;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-.nav-dropdown a:hover {
-  background-color: #2a2a2a;
-}
-
-.hidden {
-  display: none;
+button:hover, .tab-btn:hover {
+  transform: scale(1.03);
+  text-shadow: 0 0 4px var(--accent-mint);
 }

@@ -1,12 +1,153 @@
 <nav id="main-nav">
-  <a href="staff.html">Personnel & Departments</a>
+  <!-- Left side: logo + links -->
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">
+      <img src="assets/img/logowhite.png" alt="Site-89 Logo" style="height:40px; vertical-align:middle;">
+    </a>
 
-  <!-- Right-aligned login button -->
-  <div class="nav-login" id="navLogin">
-    <i class="fa-solid fa-user"></i>
-    <span id="navLoginText">Login</span>
+    <a href="departments.html">Departments</a>
+
+    <!-- Dropdown for Foundation Archives -->
+    <div class="nav-dropdown-parent">
+      <a href="#">Foundation Archives <i class="fa-solid fa-caret-down"></i></a>
+      <div class="nav-dropdown-content">
+        <a href="personnel-files.html">Personnel Files</a>
+        <a href="goi-poi.html">Groups of Interest / Persons of Interest</a>
+        <a href="anomalies.html">Anomalies</a>
+        <a href="research-logs.html">Research Logs</a>
+        <a href="incident-reports.html">Incident Reports</a>
+      </div>
+    </div>
+
+    <a href="site-management.html">Site Management</a>
+    <a href="guides.html">Guides</a>
+    <a href="emails.html">Emails</a>
+  </div>
+
+  <!-- Right side: socials + login -->
+  <div class="nav-right">
+    <div class="social-buttons">
+      <a href="https://www.instagram.com/site.89_rp/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@scpfoundation.site.89" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://discord.gg/UdefBEPYhp" target="_blank"><i class="fab fa-discord"></i></a>
+    </div>
+
+    <!-- LOGIN BUTTON WITH CLICKABLE DROPDOWN -->
+    <div class="nav-login" id="navLogin">
+      <i class="fa-solid fa-user"></i>
+      <span id="navLoginText">Login</span>
+      <i class="fa-solid fa-caret-down"></i>
+
+      <!-- Dropdown -->
+      <div class="nav-dropdown-content nav-dropdown-login" id="navDropdown">
+        <a href="character-select.html">Manage Characters</a>
+        <a href="account.html">Manage Account</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </div>
+    </div>
   </div>
 </nav>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  /* Navbar layout */
+  #main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #111;
+  }
+
+  .nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .nav-left a, .nav-right a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .nav-left a:hover, .nav-right a:hover {
+    color: #8B0000;
+  }
+
+  .nav-dropdown-parent {
+    position: relative;
+  }
+
+  /* Default dropdown style */
+  .nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background: #111;
+    border: 1px solid #8B0000;
+    min-width: 200px;
+    z-index: 1000;
+    padding: 10px 0;
+  }
+
+  .nav-dropdown-content a {
+    display: block;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  /* Archives open on hover */
+  .nav-dropdown-parent:hover > .nav-dropdown-content {
+    display: block;
+  }
+
+  /* LOGIN DROPDOWN FIXES */
+  .nav-login {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .nav-dropdown-login {
+    right: 0;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .social-buttons a {
+    font-size: 1.2rem;
+    transition: color 0.2s;
+  }
+
+  .social-buttons a:hover {
+    color: #8B0000;
+  }
+</style>
+
+<script>
+  const navLogin = document.getElementById("navLogin");
+  const navDropdown = document.getElementById("navDropdown");
+  const navLoginText = document.getElementById("navLoginText");
+
+  // Placeholder until real login system added
+  const userLoggedIn = true;
+
+  if (userLoggedIn) {
+    navLoginText.textContent = "Username"; // Replace with actual username later
+  } else {
+    navDropdown.classList.add("hidden");
+  }
+
+  navLogin.addEventListener("click", (e) => {
+    e.stopPropagation(); 
+    navDropdown.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", () => {
+    navDropdown.classList.add("hidden");
+  });
+</script>

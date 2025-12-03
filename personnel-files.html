@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personnel Dossier — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div data-include="components/navbar.html"></div>
+
+  <main class="content dossier-container">
+
+    <!-- Tab Buttons -->
+    <div class="dossier-tabs">
+      <button class="tab-btn active" data-tab="foundation">Foundation Personnel</button>
+      <button class="tab-btn" data-tab="pending">Pending Personnel</button>
+      <button class="tab-btn" data-tab="former">Former Personnel</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="foundation">
+      <h2>Foundation Personnel</h2>
+      <p>All active personnel assigned to Site-89.</p>
+      <!-- Placeholder for profile cards -->
+      <div class="personnel-list">
+        <div class="personnel-card">
+          <h3>Cpt. Rehwald</h3>
+          <p>Chief Security Officer</p>
+        </div>
+        <div class="personnel-card">
+          <h3>Dr. John</h3>
+          <p>Lead Researcher, SCP-███</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="pending">
+      <h2>Pending Personnel</h2>
+      <p>New personnel entries submitted by users (pending approval).</p>
+      <button id="addPendingBtn">Submit New Entry</button>
+
+      <!-- Pending list placeholder -->
+      <div class="personnel-list">
+        <div class="personnel-card">
+          <h3>Jane Doe</h3>
+          <p>Junior Researcher (Pending)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="former">
+      <h2>Former Personnel</h2>
+      <p>Personnel no longer assigned to Site-89.</p>
+      <div class="personnel-list">
+        <div class="personnel-card">
+          <h3>Dr. Smith</h3>
+          <p>Former Researcher</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div data-include="components/footer.html"></div>
+  <script src="assets/js/include.js"></script>
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const target = tab.getAttribute('data-tab');
+        contents.forEach(c => {
+          c.classList.add('hidden');
+          if(c.id === target) c.classList.remove('hidden');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
