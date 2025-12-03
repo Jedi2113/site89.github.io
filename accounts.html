@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 Account Management</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+  <!-- Hero Header -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>SITE-89 ACCOUNT PORTAL</h1>
+        <p>Manage your account and security settings</p>
+      </div>
+      <img class="hero-logo" src="assets/img/logo.png" alt="Site-89 Logo">
+    </div>
+  </header>
+
+  <!-- Navbar -->
+  <div data-include="components/navbar.html"></div>
+
+  <!-- Main Content -->
+  <main class="content">
+    <div class="about-box">
+      <h2>Account Details</h2>
+      <p><strong>Email:</strong> <span id="accountEmail">Loading...</span></p>
+      <p><strong>User ID:</strong> <span id="accountUID">Loading...</span></p>
+    </div>
+
+    <div class="about-box">
+      <h2>Change Password</h2>
+      <form id="changePasswordForm">
+        <input type="password" id="currentPassword" placeholder="Current Password" required>
+        <input type="password" id="newPassword" placeholder="New Password" required>
+        <button type="submit">Update Password</button>
+      </form>
+      <p id="passwordFeedback" class="feedback"></p>
+    </div>
+
+    <div class="about-box">
+      <button id="logoutBtn" style="background-color:#920000; color:white; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">Logout</button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div data-include="components/footer.html"></div>
+
+  <!-- Include JS for navbar/footer -->
+  <script src="assets/js/include.js"></script>
+
+  <!-- Firebase Auth -->
+  <script type="module" src="assets/js/auth.js"></script>
+
+  <script type="module">
+    import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const auth = getAuth();
+
+    const accountEmail = document.getElementById("accountEmail");
+    const accountUID = document.getElementById("accountUID");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const passwordFeedback = document.getElementById("passwordFeedback");
+
+    // Display current user info
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        accountEmail.textContent = user.email;
+        accountUID.textContent = user.uid;
+      } else {
+        window.location.href = "login.html"; // redirect if not logged in
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    // Change password
+    changePasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+
+      const user = auth.currentUser;
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+
+      try {
+        // Reauthenticate
+        await reauthenticateWithCredential(user, credential);
+        // Update password
+        await updatePassword(user, newPassword);
+        passwordFeedback.textContent = "Password updated successfully!";
+        passwordFeedback.style.color = "var(--accent-mint)";
+        changePasswordForm.reset();
+      } catch (err) {
+        console.error(err);
+        passwordFeedback.textContent = "Error: " + err.message;
+        passwordFeedback.style.color = "var(--accent-red)";
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,6 +1,5 @@
-// auth.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -17,26 +16,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-document.addEventListener('includesLoaded', () => {
-  const navLoginText = document.getElementById("navLoginText");
+document.addEventListener("includesLoaded", () => {
   const navLogin = document.getElementById("navLogin");
+  const navLoginText = document.getElementById("navLoginText");
 
-  if (!navLogin) return;
-
-  // Check auth state
+  // Auth state
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // Logged in -> redirect to index when clicked
-      navLoginText.textContent = user.email; // or later: character name
-      navLogin.addEventListener("click", () => {
-        window.location.href = "index.html";
-      });
+      navLoginText.textContent = user.email;
     } else {
-      // Not logged in -> redirect to login when clicked
       navLoginText.textContent = "Login";
-      navLogin.addEventListener("click", () => {
-        window.location.href = "login.html";
-      });
     }
   });
+
+  // Navbar button behavior
+  if (navLogin) {
+    navLogin.addEventListener("click", () => {
+      if (auth.currentUser) {
+        window.location.href = "accounts.html";
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  }
+
+  // LOGIN FORM (if exists)
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => {
+          document.getElementById("loginFeedback").textContent = err.message;
+        });
+    });
+  }
+
+  // REGISTER FORM (if exists)
+  const registerForm = document.getElementById("registerForm");
+  if (registerForm) {
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => {
+          document.getElementById("registerFeedback").textContent = err.message;
+        });
+    });
+  }
 });
