@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Site-89 Secure Portal</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>SITE-89 PERSONNEL PORTAL</h1>
+        <p>Property of the SCP Foundation</p>
+      </div>
+      <img class="hero-logo" src="assets/img/logo.png" alt="Site-89 Logo">
+    </div>
+  </header>
+
+  <!-- Navbar -->
+  <div data-include="components/navbar.html"></div>
+
+  <section class="content">
+    <!-- BETA NOTICE -->
+    <div class="notice-banner">
+      <h2>Phase 3/4 – Open Beta</h2>
+      <p>Site-89 is currently in Open Beta, meaning the project is still under active development. While the site is stable and open for public access, some features and systems are still being refined.</p>
+      <p>A dedicated Site Advertising Board is being established to oversee community outreach and content promotion as we move toward final release.</p>
+      <p class="italic">We value transparency — you’re exploring a work in progress that continues to evolve every week.</p>
+      <a class="roadmap-link" href="#">» View Development Roadmap «</a>
+    </div>
+
+    <!-- MAIN BODY DESCRIPTION -->
+    <div class="about-box">
+      <h2>Welcome to Site-89</h2>
+      <p>Site-89 is a community-driven SCP roleplaying experience built from the ground up with a focus on immersion, creativity, and storytelling. Set within the SCP universe, we’ve created a unique platform for roleplay using Minecraft as our medium — but this is far more than just a server.</p>
+      <p>Born in May 2024 from a small group of friends passionate about SCP, Site-89 has grown into a fully developed roleplay environment. We saw a gap in serious SCP roleplay spaces outside of platforms like Roblox, and decided to build something better.</p>
+      <p>Every system you see here has been carefully crafted: from custom plugins that support deep roleplay mechanics to an in-universe site control and monitoring system powered by ComputerCraft. Whether you're diving into personnel dossiers, managing anomalous objects, or responding to unfolding incidents — Site-89 is built to immerse you.</p>
+      <p>Whether you're new to SCP or a long-time fan, welcome, and enjoy your stay at Site-89.</p>
+    </div>
+
+    <!-- EMPLOYEE OF THE MONTH -->
+    <div class="eotm-card">
+      <h3>Employee of the Month</h3>
+      <div class="eotm-profile">
+        <img src="https://i.imgur.com/pydXKDz.png" alt="EOTM portrait">
+        <div class="eotm-text">
+          <strong>Mystic Fury</strong><br>
+          Junior Researcher, Scientific Department<br>
+          <span>For dedication, professionalism, and exemplary conduct in the field.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div data-include="components/footer.html"></div>
+
+  <script src="assets/js/include.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
+
+  <script>
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      nav.classList.toggle("is-sticky", window.scrollY > 120);
+    });
+  </script>
+</body>
+</html>

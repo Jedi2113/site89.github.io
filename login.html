@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 Login</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>SITE-89 PERSONNEL PORTAL</h1>
+        <p>Property of the SCP Foundation</p>
+      </div>
+      <img class="hero-logo" src="assets/img/logo.png" alt="Site-89 Logo">
+    </div>
+  </header>
+
+  <!-- Navbar include -->
+  <div data-include="components/navbar.html"></div>
+
+  <main class="auth-container fade-in">
+    <!-- LOGIN FORM -->
+    <div class="auth-box" id="loginBox">
+      <h2>User Login</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+      <p class="auth-switch">
+        Need an account? <a href="#" id="registerToggle">Register Here</a>
+      </p>
+      <p><a href="#" id="forgotPassword">Forgot your password?</a></p>
+      <p id="loginFeedback" class="feedback"></p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-box hidden" id="registerBox">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <button type="submit">Create Account</button>
+      </form>
+      <p class="auth-switch">
+        Already have an account? <a href="#" id="loginToggle">Login Here</a>
+      </p>
+      <p id="registerFeedback" class="feedback"></p>
+    </div>
+  </main>
+
+  <!-- Footer include -->
+  <div data-include="components/footer.html"></div>
+
+  <!-- Include JS for navbar/footer -->
+  <script src="assets/js/include.js"></script>
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="assets/js/auth.js"></script>
+</body>
+</html>
