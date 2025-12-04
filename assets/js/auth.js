@@ -1,5 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { 
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -20,13 +23,33 @@ document.addEventListener("includesLoaded", () => {
   const navLogin = document.getElementById("navLogin");
   const navLoginText = document.getElementById("navLoginText");
 
+  function formatCharacterName(fullName) {
+    const parts = fullName.split(" ");
+    if (parts.length >= 2) {
+      return `${parts[0][0]}. ${parts[parts.length - 1]}`;
+    }
+    return fullName;
+  }
+
   // Auth state
   onAuthStateChanged(auth, (user) => {
+    let displayName = "Login";
+
     if (user) {
-      navLoginText.textContent = user.email;
-    } else {
-      navLoginText.textContent = "Login";
+      const selectedChar = localStorage.getItem("selectedCharacter");
+      if (selectedChar) {
+        try {
+          const charObj = JSON.parse(selectedChar);
+          displayName = formatCharacterName(charObj.name);
+        } catch {
+          displayName = user.email;
+        }
+      } else {
+        displayName = user.email;
+      }
     }
+
+    navLoginText.textContent = displayName;
   });
 
   // Navbar button behavior
@@ -51,7 +74,8 @@ document.addEventListener("includesLoaded", () => {
       signInWithEmailAndPassword(auth, email, password)
         .then(() => window.location.href = "index.html")
         .catch(err => {
-          document.getElementById("loginFeedback").textContent = err.message;
+          const feedback = document.getElementById("loginFeedback");
+          if (feedback) feedback.textContent = err.message;
         });
     });
   }
@@ -67,7 +91,8 @@ document.addEventListener("includesLoaded", () => {
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => window.location.href = "index.html")
         .catch(err => {
-          document.getElementById("registerFeedback").textContent = err.message;
+          const feedback = document.getElementById("registerFeedback");
+          if (feedback) feedback.textContent = err.message;
         });
     });
   }
