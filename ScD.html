@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Site-89 Departments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    body {
+      background-color: #111;
+      color: #ddd;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .page-header {
+      background-color: #222;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .welcome-section {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      text-align: center;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    .welcome-section h1 {
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin: 0;
+    }
+    .welcome-section p {
+      color: #aaa;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      margin: 1rem 0 0 0;
+    }
+    .department-panel {
+      display: flex;
+      background-color: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin: 2rem auto;
+      max-width: 900px;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    .department-panel:hover {
+      transform: scale(1.02);
+    }
+    .dept-image {
+      width: 300px;
+      object-fit: cover;
+      filter: invert(1);
+    }
+    .dept-content {
+      padding: 1.5rem;
+      flex: 1;
+    }
+    .dept-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #00FFAA; /* mint accent */
+      text-decoration: none;
+    }
+    .dept-description {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #ccc;
+    }
+  </style>
+</head>
+
+ <!-- Header -->
+  <div data-include="components/header.html"></div> 
+  
+ <!-- Navbar -->
+  <div data-include="components/navbar.html"></div>
+
+<body>
+  </div>
+  <div class="welcome-section">
+    <h1>Welcome to The Scientific Department!</h1>
+    <p>Lorem Ipsum Dolor Sit Amet</p>
+  </div>
+
+  <!-- Research and Development -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/014T3jC.png" alt="Research and Development" class="dept-image">
+    <div class="dept-content">
+      <a href="RnD.html" class="dept-title">» Research and Development «</a>
+      <p class="dept-description">
+        "TBD"
+      </p>
+    </div>
+  </div>
+
+  <!-- Medical -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/g0mce8B.png" alt="Medical Department" class="dept-image">
+    <div class="dept-content">
+      <a href="MD.html" class="dept-title">» The Medical Department «</a>
+      <p class="dept-description">
+        "We keep the personnel in good health. If it wasn't for us, the site would be on fire." - Dr. P. James PhD.
+      </p>
+    </div>
+  </div>
+
+  <!-- Command -->
+  <div class="department-panel">
+    <div class="dept-content">
+      <a href="ScDCMD.html" class="dept-title">» Scientific Department Heads «</a>
+      <p class="dept-description">
+        The People Who Run The Scientific Department.
+      </p>
+    </div>
+  </div>
+
+      <!-- Footer -->
+  <div data-include="components/footer.html"></div>
+
+  <script src="assets/js/include.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
+
+  <script>
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      nav.classList.toggle("is-sticky", window.scrollY > 120);
+    });
+  </script>
+</body>
+</html>
