@@ -113,7 +113,7 @@
       <div id="charFormContainer" style="display:none; margin-top:1rem;">
         <h3>Create New Character</h3>
             <form id="charForm">
-          <input type="text" id="charPID" placeholder="Personnel ID (optional)">
+          <input type="text" id="charPID" placeholder="Personnel ID (e.g., 89A0B123)" required>
           <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.5rem;">
             <input type="text" id="charName" placeholder="Character Name" required style="flex:1">
             <button type="button" id="pidLookupBtn" style="padding:.5rem .8rem">Lookup</button>
@@ -407,7 +407,7 @@
         const snap = await getDoc(pidRef);
         if (!snap.exists()) {
           charFormFeedback.style.color = 'var(--accent-red)';
-          charFormFeedback.textContent = 'PID not found. Request an admin to add this PID.';
+          charFormFeedback.textContent = 'PID not found. Contact Internal Operations to add this PID.';
           return;
         }
 
