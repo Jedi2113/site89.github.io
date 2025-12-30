@@ -1,0 +1,95 @@
+/* ACS Inline Styling */
+.acs-inline-container {
+  width: 100%;
+  max-width: 550px;
+  background-color: #1f2125;
+  border: 2px solid #8b0000;
+  padding: 15px;
+  margin: 20px auto;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.acs-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  animation: fadeInTop 0.8s ease-out backwards;
+}
+
+.acs-bars {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.acs-bar {
+  flex: 1;
+  text-align: center;
+  padding: 5px 0;
+  margin: 0 3px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  opacity: 0;
+  animation: barGrow 0.5s ease-out forwards;
+}
+
+.acs-bar.main.safe { background-color: #00b300; animation-delay: 0.2s; }
+.acs-bar.secondary.none { background-color: #555; animation-delay: 0.4s; }
+.acs-bar.disrupt.dark { background-color: #2a2a2a; animation-delay: 0.6s; }
+.acs-bar.risk.notice { background-color: #ff8c00; animation-delay: 0.8s; }
+
+/* Diamond */
+.acs-diamond {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  animation: spinDiamond 0.7s ease-out forwards;
+}
+
+.acs-diamond div {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  opacity: 0;
+  animation: fadeInDiamond 0.5s forwards;
+}
+
+.diamond-top { top: 0; left: 16px; animation-delay: 0.2s; }
+.diamond-right { top: 16px; right: 0; animation-delay: 0.3s; }
+.diamond-bottom { bottom: 0; left: 16px; animation-delay: 0.4s; }
+.diamond-left { top: 16px; left: 0; animation-delay: 0.5s; }
+
+/* Animations */
+@keyframes barGrow {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes fadeInTop {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spinDiamond {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInDiamond {
+  0% { opacity: 0; transform: scale(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive */
+@media(max-width:480px){
+  .acs-bars { flex-direction: column; }
+  .acs-bar { margin: 3px 0; }
+}

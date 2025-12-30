@@ -134,6 +134,33 @@
         <p id="charFormFeedback" class="feedback"></p>
       </div>
     </div>
+
+    <!-- Character Profile Editor (shown when character selected) -->
+    <div id="charProfileContainer" class="about-box" style="display:none;">
+      <h2>Edit Character Profile: <span id="editCharName"></span></h2>
+      
+      <div style="margin: 1.5rem 0; text-align: center;">
+        <img id="charProfileImage" src="https://via.placeholder.com/150" alt="Character photo" style="width: 150px; height: 150px; border-radius: 8px; border: 2px solid var(--accent-teal); object-fit: cover; margin-bottom: 1rem;">
+        <div>
+          <input type="file" id="charPhotoUpload" accept="image/*" style="display:none;">
+          <button type="button" id="uploadPhotoBtn" style="width: auto;">Upload Photo</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <label>Rank:</label>
+        <input type="text" id="charProfileRank" placeholder="e.g., Junior Researcher">
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <label>Bio:</label>
+        <textarea id="charProfileBio" placeholder="Enter character bio..." style="width: 100%; min-height: 120px; padding: 0.5rem; margin: 0.5rem 0; border-radius: 6px; border: 1px solid #444; background: #1f1f1f; color: var(--text-light); font-family: var(--font-body); resize: vertical;"></textarea>
+      </div>
+
+      <button id="saveCharProfileBtn" style="margin-top: 1rem; width: 100%;">Save Profile</button>
+      <button type="button" id="closeCharEditorBtn" style="margin-top: 0.5rem; width: 100%; background-color:#555;">Done</button>
+      <p id="charProfileFeedback" class="feedback"></p>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -144,10 +171,12 @@
 
   <script type="module">
     import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
     const auth = getAuth();
     const db = getFirestore();
+    const storage = getStorage();
 
     // DOM elements
     const accountEmail = document.getElementById("accountEmail");
@@ -163,6 +192,20 @@
     const cancelCharForm = document.getElementById("cancelCharForm");
     const charFormFeedback = document.getElementById("charFormFeedback");
 
+    // Character profile editor elements
+    const charProfileContainer = document.getElementById("charProfileContainer");
+    const charProfileImage = document.getElementById("charProfileImage");
+    const charPhotoUpload = document.getElementById("charPhotoUpload");
+    const uploadPhotoBtn = document.getElementById("uploadPhotoBtn");
+    const charProfileRank = document.getElementById("charProfileRank");
+    const charProfileBio = document.getElementById("charProfileBio");
+    const saveCharProfileBtn = document.getElementById("saveCharProfileBtn");
+    const closeCharEditorBtn = document.getElementById("closeCharEditorBtn");
+    const charProfileFeedback = document.getElementById("charProfileFeedback");
+    const editCharName = document.getElementById("editCharName");
+
+    let currentEditingCharId = null;
+
     // Show character creation form
     showCharFormBtn.addEventListener("click", () => {
       charFormContainer.style.display = "block";
@@ -175,6 +218,67 @@
       showCharFormBtn.style.display = "inline-block";
       charForm.reset();
       charFormFeedback.textContent = "";
+    });
+
+    // Close character editor
+    closeCharEditorBtn.addEventListener("click", () => {
+      charProfileContainer.style.display = "none";
+      charProfileFeedback.textContent = "";
+      location.reload();
+    });
+
+    // Upload photo
+    uploadPhotoBtn.addEventListener("click", () => {
+      charPhotoUpload.click();
+    });
+
+    charPhotoUpload.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      uploadPhotoBtn.textContent = "Uploading...";
+      uploadPhotoBtn.disabled = true;
+
+      try {
+        const storageRef = ref(storage, `characters/${currentEditingCharId}/profile.jpg`);
+        await uploadBytes(storageRef, file);
+        const photoUrl = await getDownloadURL(storageRef);
+        charProfileImage.src = photoUrl;
+        uploadPhotoBtn.textContent = "Upload Photo";
+        uploadPhotoBtn.disabled = false;
+      } catch (err) {
+        charProfileFeedback.textContent = "Error uploading photo: " + err.message;
+        charProfileFeedback.style.color = "var(--accent-red)";
+        uploadPhotoBtn.textContent = "Upload Photo";
+        uploadPhotoBtn.disabled = false;
+      }
+    });
+
+    // Save character profile
+    saveCharProfileBtn.addEventListener("click", async () => {
+      if (!currentEditingCharId) return;
+
+      saveCharProfileBtn.disabled = true;
+      saveCharProfileBtn.textContent = "Saving...";
+
+      try {
+        const charRef = doc(db, "characters", currentEditingCharId);
+        await updateDoc(charRef, {
+          rank: charProfileRank.value,
+          bio: charProfileBio.value,
+          profileImage: charProfileImage.src
+        });
+
+        charProfileFeedback.textContent = "Profile saved successfully!";
+        charProfileFeedback.style.color = "var(--accent-mint)";
+        saveCharProfileBtn.disabled = false;
+        saveCharProfileBtn.textContent = "Save Profile";
+      } catch (err) {
+        charProfileFeedback.textContent = "Error saving profile: " + err.message;
+        charProfileFeedback.style.color = "var(--accent-red)";
+        saveCharProfileBtn.disabled = false;
+        saveCharProfileBtn.textContent = "Save Profile";
+      }
     });
 
     // Display current user info
@@ -191,16 +295,44 @@
       if (snapshot.empty) {
         characterList.innerHTML = "<p>No characters yet.</p>";
       } else {
-        snapshot.forEach(doc => {
-          const char = doc.data();
+        snapshot.forEach(docSnap => {
+          const char = docSnap.data();
+          const charId = docSnap.id;
           const btn = document.createElement("button");
           btn.textContent = char.name + " (" + char.rank + ")";
           btn.style.display = "block";
           btn.style.marginBottom = "0.5rem";
+          btn.style.position = "relative";
+
+          // Main button to select character
           btn.addEventListener("click", () => {
             localStorage.setItem("selectedCharacter", JSON.stringify(char));
             window.location.href = "index.html";
           });
+
+          // Edit button
+          const editBtn = document.createElement("button");
+          editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+          editBtn.style.position = "absolute";
+          editBtn.style.right = "10px";
+          editBtn.style.top = "50%";
+          editBtn.style.transform = "translateY(-50%)";
+          editBtn.style.width = "auto";
+          editBtn.style.padding = "0.4rem 0.6rem";
+          editBtn.style.background = "var(--accent-mint)";
+          editBtn.style.color = "var(--bg-dark)";
+          editBtn.style.border = "none";
+          editBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            currentEditingCharId = charId;
+            editCharName.textContent = char.name;
+            charProfileRank.value = char.rank || "";
+            charProfileBio.value = char.bio || "";
+            charProfileImage.src = char.profileImage || "https://via.placeholder.com/150";
+            charProfileContainer.style.display = "block";
+          });
+
+          btn.appendChild(editBtn);
           characterList.appendChild(btn);
         });
       }
@@ -243,7 +375,7 @@
       const clearance = document.getElementById("charClearance").value;
 
       try {
-        await addDoc(collection(db, "characters"), { uid: user.uid, name, department, rank, clearance });
+        await addDoc(collection(db, "characters"), { uid: user.uid, name, department, rank, clearance, bio: "", profileImage: "" });
         charFormFeedback.style.color = "var(--accent-mint)";
         charFormFeedback.textContent = "Character created!";
         charForm.reset();

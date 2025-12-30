@@ -3,132 +3,362 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site-89 Personnel</title>
+  <title>Site-89 Personnel Files</title>
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
 
   <style>
-    .tabs {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
-    .tab {
-      padding: 8px 15px;
-      background-color: #1f2125;
-      border: 2px solid #666;
-      border-radius: 6px;
-      color: var(--accent-teal);
-    }
-    .tab.active {
-      background-color: var(--accent-teal);
-      color: #1f1f1f;
-    }
-    .personnel-list {
+    .personnel-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
+
     .personnel-card {
-      background-color: #1f2125;
-      border: 2px solid #666;
+      background: var(--bg-card);
+      border: 2px solid var(--accent-teal);
       border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-    }
-    .personnel-card img {
-      width: 150px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      margin-bottom: 8px;
-    }
-    .create-btn {
-      background-color: var(--accent-teal);
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
+      overflow: hidden;
       cursor: pointer;
-      margin-bottom: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .personnel-card:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 16px rgba(78, 250, 170, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .personnel-card-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--accent-teal), var(--bg-dark));
+      object-fit: cover;
+    }
+
+    .personnel-card-info {
+      padding: 1.2rem;
+    }
+
+    .personnel-card-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--accent-mint);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .personnel-card-rank {
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      margin: 0 0 0.3rem 0;
+    }
+
+    .personnel-card-dept {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-mint);
+      border-radius: 10px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 1rem;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--accent-mint);
+      font-size: 1.8rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--accent-mint);
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: #6fffc5;
+    }
+
+    .modal-body {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      border: 2px solid var(--accent-teal);
+      object-fit: cover;
+    }
+
+    .modal-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .modal-detail-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .modal-detail-label {
+      font-weight: bold;
+      color: var(--accent-mint);
+      min-width: 120px;
+    }
+
+    .modal-detail-value {
+      color: var(--text-light);
+      flex: 1;
+    }
+
+    .modal-bio {
+      background: rgba(78, 250, 170, 0.1);
+      border-left: 3px solid var(--accent-mint);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-light);
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
 
-<div data-include="../components/header.html"></div>
-<div data-include="../components/navbar.html"></div>
+  <!-- Header -->
+  <div data-include="components/header.html"></div>
 
-<section class="content">
+  <!-- Navbar -->
+  <div data-include="components/navbar.html"></div>
 
-  <div class="tabs">
-    <div class="tab active" data-tab="current">Current</div>
-    <div class="tab" data-tab="pending">Pending</div>
-    <div class="tab" data-tab="former">Former</div>
+  <!-- Main Content -->
+  <section class="content">
+    <div class="about-box" style="margin-bottom: 2rem;">
+      <h2>Foundation Personnel Files</h2>
+      <p>Browse active personnel and their official records. Click any personnel to view detailed information.</p>
+    </div>
+
+    <div id="personnelGrid" class="personnel-grid">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
+    </div>
+  </section>
+
+  <!-- Personnel Modal -->
+  <div id="personnelModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalName"></h2>
+        <button class="modal-close" onclick="closePersonnelModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <img id="modalPhoto" class="modal-photo" src="" alt="Personnel photo">
+        <div class="modal-details">
+          <div class="modal-detail-row">
+            <div class="modal-detail-label">Rank:</div>
+            <div class="modal-detail-value" id="modalRank">—</div>
+          </div>
+          <div class="modal-detail-row">
+            <div class="modal-detail-label">Department:</div>
+            <div class="modal-detail-value" id="modalDept">—</div>
+          </div>
+          <div class="modal-detail-row">
+            <div class="modal-detail-label">Clearance:</div>
+            <div class="modal-detail-value" id="modalClearance">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="modalBioSection" style="display:none;">
+        <div style="border-top: 1px solid var(--accent-teal); padding-top: 1rem; margin-top: 1rem;">
+          <h3 style="margin-top: 0; color: var(--accent-mint);">Biography</h3>
+          <div class="modal-bio" id="modalBio"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Current Personnel -->
-  <div id="current" class="tab-content">
-    <div class="personnel-list" id="currentList"></div>
-  </div>
+  <!-- Footer -->
+  <div data-include="components/footer.html"></div>
 
-  <!-- Pending (non-functional for now) -->
-  <div id="pending" class="tab-content" style="display:none;">
-    <button class="create-btn">+ Create New Entry</button>
-    <div class="personnel-list" id="pendingList"></div>
-  </div>
+  <script src="assets/js/include.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
 
-  <!-- Former Personnel -->
-  <div id="former" class="tab-content" style="display:none;">
-    <div class="personnel-list" id="formerList"></div>
-  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-</section>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
 
-<div data-include="../components/footer.html"></div>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-<script src="../assets/js/include.js"></script>
+    // Load personnel from Firebase
+    async function loadPersonnel() {
+      const personnelGrid = document.getElementById("personnelGrid");
+      personnelGrid.innerHTML = "";
 
-<script>
-  // Tab switching
-  const tabs = document.querySelectorAll('.tab');
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      tabContents.forEach(c => c.style.display = 'none');
-      document.getElementById(tab.dataset.tab).style.display = 'block';
-    });
-  });
+      try {
+        const querySnapshot = await getDocs(collection(db, "characters"));
+        
+        if (querySnapshot.empty) {
+          personnelGrid.innerHTML = '<div class="empty-state">No personnel records found.</div>';
+          return;
+        }
 
-  // Load current personnel dynamically
-  async function loadPersonnel() {
-    try {
-      const res = await fetch('../personnel/current/personnel.json');
-      const personnel = await res.json();
-      const container = document.getElementById('currentList');
+        querySnapshot.forEach(docSnap => {
+          const char = docSnap.data();
+          const card = document.createElement("div");
+          card.className = "personnel-card";
 
-      personnel.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'personnel-card';
-        card.innerHTML = `
-          <img src="${p.photo}" alt="${p.name}">
-          <h4>${p.name}</h4>
-          <p>${p.position}</p>
-          <a href="../personnel/current/${p.file}">View File</a>
-        `;
-        container.appendChild(card);
-      });
-    } catch (err) {
-      console.error('Failed to load personnel:', err);
+          const photoUrl = char.profileImage || "https://via.placeholder.com/240x200?text=" + encodeURIComponent(char.name || "No Name");
+
+          card.innerHTML = `
+            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://via.placeholder.com/240x200?text=No Photo'">
+            <div class="personnel-card-info">
+              <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
+              <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
+              <p class="personnel-card-dept">${char.department || "Unassigned"}</p>
+            </div>
+          `;
+
+          card.addEventListener("click", () => openPersonnelModal(char));
+          personnelGrid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error loading personnel:", err);
+        personnelGrid.innerHTML = '<div class="empty-state">Error loading personnel records.</div>';
+      }
     }
-  }
 
-  loadPersonnel();
-</script>
+    // Open modal with personnel details
+    window.openPersonnelModal = (char) => {
+      document.getElementById("modalName").textContent = char.name || "Unknown";
+      document.getElementById("modalRank").textContent = char.rank || "—";
+      document.getElementById("modalDept").textContent = char.department || "—";
+      document.getElementById("modalClearance").textContent = char.clearance || "—";
+      document.getElementById("modalPhoto").src = char.profileImage || "https://via.placeholder.com/150";
+
+      const bioSection = document.getElementById("modalBioSection");
+      if (char.bio && char.bio.trim()) {
+        document.getElementById("modalBio").textContent = char.bio;
+        bioSection.style.display = "block";
+      } else {
+        bioSection.style.display = "none";
+      }
+
+      document.getElementById("personnelModal").classList.add("show");
+    };
+
+    // Close modal
+    window.closePersonnelModal = () => {
+      document.getElementById("personnelModal").classList.remove("show");
+    };
+
+    // Close modal when clicking outside
+    document.getElementById("personnelModal").addEventListener("click", (e) => {
+      if (e.target.id === "personnelModal") {
+        window.closePersonnelModal();
+      }
+    });
+
+    // Load on page load
+    loadPersonnel();
+
+    // Sticky nav
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      if (nav) {
+        nav.classList.toggle("is-sticky", window.scrollY > 120);
+      }
+    });
+  </script>
 
 </body>
 </html>
