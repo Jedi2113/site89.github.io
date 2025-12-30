@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Site-89 Admin Panel</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <main class="content">
+    <div class="about-box">
+      <h1>Admin Panel</h1>
+      <p>Restricted to site administrators.</p>
+    </div>
+
+    <div class="about-box">
+      <h2>Personnel ID Management</h2>
+      <form id="personnelForm" style="display:flex;flex-direction:column;gap:.5rem;max-width:520px;">
+        <input id="pid" placeholder="Personnel ID (e.g., 89A0B123)" required>
+        <input id="pidName" placeholder="Name" required>
+        <input id="pidClass" placeholder="Personnel Class">
+        <input id="pidClearance" placeholder="Clearance (numeric)" required>
+        <input id="pidDepartment" placeholder="Department">
+        <input id="pidRank" placeholder="Rank">
+        <div style="display:flex;gap:.5rem;"><button id="pidSave" class="btn-primary" type="button">Save</button><button id="pidDelete" class="btn-secondary" type="button">Delete</button></div>
+        <p id="pidFeedback" class="feedback"></p>
+      </form>
+
+      <h3 style="margin-top:1rem">Existing Personnel IDs</h3>
+      <div id="personnelList">Loading…</div>
+    </div>
+
+    <div class="about-box">
+      <h2>Accounts</h2>
+      <p>Manage user accounts (list only for now).</p>
+      <div id="accountsList">Loading…</div>
+    </div>
+  </main>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/admin.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
+</body>
+</html>

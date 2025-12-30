@@ -63,6 +63,14 @@ document.addEventListener("includesLoaded", () => {
     });
   }
 
+  // Global logout handling: clear selectedCharacter and sign out
+  const logoutButtons = Array.from(document.querySelectorAll('#logoutBtn'));
+  logoutButtons.forEach(btn => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
+    signOut(auth).then(() => window.location.href = '/login.html').catch(() => window.location.href = '/login.html');
+  }));
+
   // LOGIN FORM (if exists)
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {

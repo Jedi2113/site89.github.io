@@ -112,8 +112,18 @@
       <!-- Character Creation Form -->
       <div id="charFormContainer" style="display:none; margin-top:1rem;">
         <h3>Create New Character</h3>
-        <form id="charForm">
-          <input type="text" id="charName" placeholder="Character Name" required>
+            <form id="charForm">
+          <input type="text" id="charPID" placeholder="Personnel ID (optional)">
+          <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.5rem;">
+            <input type="text" id="charName" placeholder="Character Name" required style="flex:1">
+            <button type="button" id="pidLookupBtn" style="padding:.5rem .8rem">Lookup</button>
+          </div>
+
+          <div id="pidConfirm" style="display:none;margin-bottom:.6rem;padding:.6rem;border-radius:6px;background:rgba(78,250,170,0.02);border:1px solid rgba(78,250,170,0.04);">
+            <span id="pidConfirmText"></span>
+            <div style="margin-top:.5rem"><button type="button" id="pidConfirmYes" class="btn-primary">Yes — This is correct</button> <button type="button" id="pidConfirmNo" class="btn-secondary">No — Edit</button></div>
+          </div>
+
           <input type="text" id="charDept" placeholder="Department" required>
           <input type="text" id="charRank" placeholder="Rank" required>
           <input type="text" id="charClearance" placeholder="Clearance Level" required>
@@ -160,7 +170,7 @@
 
   <script type="module">
     import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const auth = getAuth();
     const db = getFirestore();
@@ -205,6 +215,7 @@
       showCharFormBtn.style.display = "inline-block";
       charForm.reset();
       charFormFeedback.textContent = "";
+      resetCharFormState();
     });
 
     // Close character editor
@@ -321,7 +332,8 @@
 
     // Logout
     logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => window.location.href = "login.html");
+      try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
+      signOut(auth).then(() => window.location.href = "/login.html");
     });
 
     // Change password
@@ -344,22 +356,137 @@
       }
     });
 
-    // Character creation
+    // Character creation (PID required; only name editable after lookup)
+    let pidMatchedData = null; // when a PID lookup succeeds this holds the personnel record
+    let pidConfirmed = false;
+
+    const pidLookupBtn = document.getElementById('pidLookupBtn');
+    const charPID = document.getElementById('charPID');
+    const pidConfirm = document.getElementById('pidConfirm');
+    const pidConfirmText = document.getElementById('pidConfirmText');
+    const pidConfirmYes = document.getElementById('pidConfirmYes');
+    const pidConfirmNo = document.getElementById('pidConfirmNo');
+
+    const charNameInput = document.getElementById('charName');
+    const charDeptInput = document.getElementById('charDept');
+    const charRankInput = document.getElementById('charRank');
+    const charClearanceInput = document.getElementById('charClearance');
+
+    function resetCharFormState(){
+      pidMatchedData = null;
+      pidConfirmed = false;
+      pidConfirm.style.display = 'none';
+      charPID.value = '';
+      charNameInput.value = '';
+      charDeptInput.value = '';
+      charRankInput.value = '';
+      charClearanceInput.value = '';
+      charNameInput.disabled = true;
+      charDeptInput.disabled = true;
+      charRankInput.disabled = true;
+      charClearanceInput.disabled = true;
+      pidLookupBtn.disabled = false;
+      charPID.disabled = false;
+      charFormFeedback.textContent = '';
+      charFormFeedback.style.color = '';
+    }
+
+    // initial state
+    resetCharFormState();
+
+    pidLookupBtn.addEventListener('click', async () => {
+      const pid = (charPID.value || '').trim();
+      pidConfirmed = false;
+      pidMatchedData = null;
+      pidConfirm.style.display = 'none';
+      charFormFeedback.textContent = '';
+      if (!pid) return charFormFeedback.textContent = 'Enter a Personnel ID to lookup.';
+
+      try {
+        const pidRef = doc(db, 'personnel', pid);
+        const snap = await getDoc(pidRef);
+        if (!snap.exists()) {
+          charFormFeedback.style.color = 'var(--accent-red)';
+          charFormFeedback.textContent = 'PID not found. Request an admin to add this PID.';
+          return;
+        }
+
+        pidMatchedData = snap.data();
+        // Prefill fields (name editable; others locked)
+        charNameInput.value = pidMatchedData.name || '';
+        charDeptInput.value = pidMatchedData.department || '';
+        charRankInput.value = pidMatchedData.rank || '';
+        charClearanceInput.value = pidMatchedData.clearance || '';
+
+        // Only the name is editable
+        charNameInput.disabled = false;
+        charDeptInput.disabled = true;
+        charRankInput.disabled = true;
+        charClearanceInput.disabled = true;
+
+        pidConfirmText.textContent = `Found personnel: ${pidMatchedData.name} — does this look right?`;
+        pidConfirm.style.display = 'block';
+      } catch (err) {
+        console.error('PID lookup error', err);
+        charFormFeedback.style.color = 'var(--accent-red)';
+        charFormFeedback.textContent = 'Lookup failed. Check console.';
+      }
+    });
+
+    pidConfirmYes.addEventListener('click', () => {
+      pidConfirmed = true;
+      pidConfirm.style.display = 'none';
+      charFormFeedback.style.color = 'var(--accent-mint)';
+      charFormFeedback.textContent = 'Personnel confirmed — you may edit the name and create the character.';
+      // lock PID to avoid accidental changes
+      charPID.disabled = true;
+      pidLookupBtn.disabled = true;
+      // keep only name editable
+      charNameInput.disabled = false;
+    });
+
+    pidConfirmNo.addEventListener('click', () => {
+      pidConfirmed = false;
+      // keep pidMatchedData available but only allow name edit per policy
+      pidConfirm.style.display = 'none';
+      charFormFeedback.style.color = '';
+      charFormFeedback.textContent = 'Edit the name if needed, then confirm.';
+      charNameInput.disabled = false;
+      charNameInput.focus();
+    });
+
     charForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
       if (!user) return alert("You must be logged in!");
 
-      const name = document.getElementById("charName").value;
-      const department = document.getElementById("charDept").value;
-      const rank = document.getElementById("charRank").value;
-      const clearance = document.getElementById("charClearance").value;
+      const pid = (charPID.value || '').trim();
+      const name = charNameInput.value.trim();
+
+      if (!pid || !pidMatchedData || !pidConfirmed) {
+        charFormFeedback.style.color = 'var(--accent-red)';
+        charFormFeedback.textContent = 'You must lookup and confirm a valid Personnel ID before creating a character.';
+        return;
+      }
 
       try {
-        await addDoc(collection(db, "characters"), { uid: user.uid, name, department, rank, clearance, bio: "", profileImage: "" });
+        // Use authoritative values from PID record for dept/rank/clearance
+        const payload = {
+          uid: user.uid,
+          pid: pid,
+          name: name || pidMatchedData.name || '',
+          department: pidMatchedData.department || '',
+          rank: pidMatchedData.rank || '',
+          clearance: Number(pidMatchedData.clearance) || 0,
+          bio: "",
+          profileImage: ""
+        };
+
+        await addDoc(collection(db, "characters"), payload);
         charFormFeedback.style.color = "var(--accent-mint)";
         charFormFeedback.textContent = "Character created!";
         charForm.reset();
+        resetCharFormState();
         location.reload();
       } catch (err) {
         charFormFeedback.style.color = "var(--accent-red)";
