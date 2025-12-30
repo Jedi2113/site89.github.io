@@ -6,54 +6,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/main.css">
   <style>
-    body {
-      background-color: #111;
-      color: #ddd;
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .page-header {
-      background-color: #222;
-      padding: 2rem;
+    /* Page hero and departments layout (uses site variables) */
+    .page-hero {
+      padding: 3rem 1rem;
       text-align: center;
-      color: white;
-      font-size: 2rem;
-      font-weight: 800;
+      background: radial-gradient(circle at top left, rgba(78,250,170,0.03), transparent);
+      margin-bottom: 1rem;
     }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2.5rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.86; }
+
     .department-panel {
       display: flex;
-      background-color: #111;
-      border: 1px solid #333;
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.04);
       border-radius: 8px;
-      margin: 2rem auto;
-      max-width: 900px;
+      margin: 1.25rem auto;
+      max-width: 1000px;
       overflow: hidden;
-      transition: transform 0.2s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
-    .department-panel:hover {
-      transform: scale(1.02);
-    }
-    .dept-image {
-      width: 300px;
-      object-fit: cover;
-      filter: invert(1);
-    }
-    .dept-content {
-      padding: 1.5rem;
-      flex: 1;
-    }
-    .dept-title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      color: #00FFAA; /* mint accent */
-      text-decoration: none;
-    }
-    .dept-description {
-      font-size: 1rem;
-      line-height: 1.5;
-      color: #ccc;
+    .department-panel:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+
+    .dept-image { width: 320px; object-fit: cover; }
+    .dept-content { padding: 1.5rem; flex: 1; }
+    .dept-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-mint); text-decoration: none; }
+    .dept-description { font-size: 1rem; line-height: 1.6; color: var(--text-light); opacity: 0.9; }
+
+    @media (max-width: 840px) {
+      .department-panel { flex-direction: column; }
+      .dept-image { width: 100%; height: 220px; }
     }
   </style>
 </head>
@@ -65,7 +47,12 @@
   <!-- Navbar -->
   <div data-include="components/navbar.html"></div>
 
-  <div class="page-header">Departments</div>
+  <section class="page-hero">
+    <div class="hero-title">Departments</div>
+    <div class="hero-sub">Explore Site-89's organizational departments, their functions, and responsibilities.</div>
+  </section>
+
+  <section class="content">
 
   <!-- Administrative Department -->
   <div class="department-panel">
@@ -110,6 +97,8 @@
       </p>
     </div>
   </div>
+
+    </section>
 
     <!-- Footer -->
   <div data-include="components/footer.html"></div>
