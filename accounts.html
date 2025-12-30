@@ -75,17 +75,6 @@
 </head>
 <body>
 
-  <!-- Hero Header -->
-  <header class="hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1>SITE-89 ACCOUNT PORTAL</h1>
-        <p>Manage your account and security settings</p>
-      </div>
-      <img class="hero-logo" src="assets/img/logo.png" alt="Site-89 Logo">
-    </div>
-  </header>
-
   <!-- Navbar -->
   <div data-include="components/navbar.html"></div>
 
@@ -142,8 +131,8 @@
       <div style="margin: 1.5rem 0; text-align: center;">
         <img id="charProfileImage" src="https://via.placeholder.com/150" alt="Character photo" style="width: 150px; height: 150px; border-radius: 8px; border: 2px solid var(--accent-teal); object-fit: cover; margin-bottom: 1rem;">
         <div>
-          <input type="file" id="charPhotoUpload" accept="image/*" style="display:none;">
-          <button type="button" id="uploadPhotoBtn" style="width: auto;">Upload Photo</button>
+          <input type="text" id="charImgurLink" placeholder="Paste Imgur image URL here (e.g., https://i.imgur.com/...)" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border-radius: 6px; border: 1px solid #444; background: #1f1f1f; color: var(--text-light);">
+          <button type="button" id="updatePhotoBtn" style="width: 100%; margin-top: 0.5rem;">Update Photo URL</button>
         </div>
       </div>
 
@@ -172,11 +161,9 @@
   <script type="module">
     import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
     const auth = getAuth();
     const db = getFirestore();
-    const storage = getStorage();
 
     // DOM elements
     const accountEmail = document.getElementById("accountEmail");
@@ -195,8 +182,8 @@
     // Character profile editor elements
     const charProfileContainer = document.getElementById("charProfileContainer");
     const charProfileImage = document.getElementById("charProfileImage");
-    const charPhotoUpload = document.getElementById("charPhotoUpload");
-    const uploadPhotoBtn = document.getElementById("uploadPhotoBtn");
+    const charImgurLink = document.getElementById("charImgurLink");
+    const updatePhotoBtn = document.getElementById("updatePhotoBtn");
     const charProfileRank = document.getElementById("charProfileRank");
     const charProfileBio = document.getElementById("charProfileBio");
     const saveCharProfileBtn = document.getElementById("saveCharProfileBtn");
@@ -227,31 +214,24 @@
       location.reload();
     });
 
-    // Upload photo
-    uploadPhotoBtn.addEventListener("click", () => {
-      charPhotoUpload.click();
-    });
-
-    charPhotoUpload.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      uploadPhotoBtn.textContent = "Uploading...";
-      uploadPhotoBtn.disabled = true;
-
-      try {
-        const storageRef = ref(storage, `characters/${currentEditingCharId}/profile.jpg`);
-        await uploadBytes(storageRef, file);
-        const photoUrl = await getDownloadURL(storageRef);
-        charProfileImage.src = photoUrl;
-        uploadPhotoBtn.textContent = "Upload Photo";
-        uploadPhotoBtn.disabled = false;
-      } catch (err) {
-        charProfileFeedback.textContent = "Error uploading photo: " + err.message;
+    // Update photo URL from imgur link
+    updatePhotoBtn.addEventListener("click", () => {
+      const url = charImgurLink.value.trim();
+      if (!url) {
+        charProfileFeedback.textContent = "Please enter an Imgur URL";
         charProfileFeedback.style.color = "var(--accent-red)";
-        uploadPhotoBtn.textContent = "Upload Photo";
-        uploadPhotoBtn.disabled = false;
+        return;
       }
+
+      if (!url.includes("imgur")) {
+        charProfileFeedback.textContent = "Please enter a valid Imgur URL";
+        charProfileFeedback.style.color = "var(--accent-red)";
+        return;
+      }
+
+      charProfileImage.src = url;
+      charProfileFeedback.textContent = "Photo URL updated (will save when you click Save Profile)";
+      charProfileFeedback.style.color = "var(--accent-mint)";
     });
 
     // Save character profile
@@ -328,6 +308,7 @@
             editCharName.textContent = char.name;
             charProfileRank.value = char.rank || "";
             charProfileBio.value = char.bio || "";
+            charImgurLink.value = char.profileImage || "";
             charProfileImage.src = char.profileImage || "https://via.placeholder.com/150";
             charProfileContainer.style.display = "block";
           });

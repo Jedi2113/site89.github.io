@@ -2,115 +2,675 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Site-89 Secure Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SITE-89 | Secure Foundation Portal</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome for icons -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+  <!-- Main CSS -->
   <link rel="stylesheet" href="assets/css/main.css">
 
   <style>
-    /* Beta Notice Window */
-    .notice-window {
-      background-color: #1a1a1a;
-      border: 2px solid #8B0000;
-      border-radius: 8px;
-      padding: 20px;
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .notice-window-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .notice-window-header h2 {
+    * {
       margin: 0;
-      color: #fff;
-      font-size: 1.2rem;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .notice-window-body {
-      margin-top: 10px;
-      color: #ccc;
-      display: block;
-    }
-
-    .notice-window .social-buttons {
+    body {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      overflow-x: hidden;
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    .notice-window .social-buttons a {
-      color: #fff;
+    /* Full screen sections */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom right, rgba(0, 124, 107, 0.2), transparent),
+                  linear-gradient(180deg, var(--bg-dark) 0%, #0a0a0b 100%);
+      flex: 1;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(78, 250, 170, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 124, 107, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* White logo background */
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: url('assets/img/logowhite.png') no-repeat center;
+      background-size: contain;
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content {
+      text-align: center;
+      z-index: 2;
+      max-width: 1200px;
+      padding: 2rem;
+      animation: fadeInDown 1s ease-out;
+      position: relative;
+    }
+
+    .site-identifier {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      color: var(--accent-mint);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .main-title {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900;
+      font-family: var(--font-head);
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    .status-bar {
+      display: inline-flex;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      padding: 1rem 2rem;
+      background: rgba(26, 26, 28, 0.6);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 0.9rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-family: var(--font-head);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-mint), #2dd4a4);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(78, 250, 170, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--accent-teal);
+      color: var(--accent-teal);
+      box-shadow: 0 0 15px rgba(0, 124, 107, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 124, 107, 0.1);
+      border-color: var(--accent-mint);
+      color: var(--accent-mint);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.3);
+    }
+
+    /* Info Grid */
+    .info-section {
+      padding: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 0;
+    }
+
+    .info-card {
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid rgba(78, 250, 170, 0.1);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.1);
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, 
+        rgba(0, 124, 107, 0.05) 0%, 
+        transparent 100%);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      background: linear-gradient(135deg, 
+        rgba(78, 250, 170, 0.1) 0%, 
+        rgba(0, 124, 107, 0.05) 100%);
+      transform: translateY(-4px);
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-mint), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .info-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      color: var(--accent-mint);
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 1rem;
+    }
+
+    .card-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-light);
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-link {
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-link:hover {
+      color: var(--accent-mint);
+      gap: 1rem;
+    }
+
+    /* Featured Section */
+    .featured-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem 2rem;
+      background: radial-gradient(ellipse at top left, rgba(78, 250, 170, 0.1), transparent);
+      text-align: center;
+    }
+
+    .featured-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-mint);
+      margin-bottom: 2rem;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .featured-item {
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(0, 124, 107, 0.1), transparent);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .featured-item:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .featured-item-number {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent-teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .featured-item-label {
+      font-weight: 600;
+      color: var(--text-light);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-indicator i {
+      color: var(--accent-mint);
+      font-size: 1.5rem;
+    }
+
+    /* Social buttons in hero */
+    .hero-social {
+      position: absolute;
+      bottom: 4rem;
+      display: flex;
+      gap: 1.5rem;
+      z-index: 10;
+    }
+
+    .hero-social a {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(78, 250, 170, 0.1);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+      color: var(--accent-mint);
+      transition: all 0.3s ease;
       font-size: 1.2rem;
-      transition: color 0.2s;
     }
 
-    .notice-window .social-buttons a:hover {
-      color: #8B0000;
+    .hero-social a:hover {
+      background: rgba(78, 250, 170, 0.2);
+      border-color: var(--accent-mint);
+      transform: translateY(-4px);
+      box-shadow: 0 0 15px rgba(78, 250, 170, 0.3);
     }
 
-    .minimized .notice-window-body {
-      display: none;
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .status-bar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .cta-buttons {
+        gap: 1rem;
+      }
+
+      .info-card {
+        padding: 3rem 2rem;
+        border-right: none;
+      }
+
+      .featured-grid {
+        gap: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <div data-include="components/header.html"></div> 
+  <!-- Boot overlay (auto-play on first visit) -->
+  <div id="bootOverlay" aria-hidden="true">
+    <div class="boot-screen">
+      <div class="boot-lines" id="bootLines"></div>
+      <div class="boot-progress" id="bootProgressWrap">
+        <div class="boot-progress-bar" id="bootProgress"></div>
+      </div>
+      <div class="boot-access" id="bootAccess" aria-hidden="true">ACCESS GRANTED</div>
+      <div class="scanline-layer" aria-hidden="true"></div>
+      <div class="crt-noise" aria-hidden="true"></div>
+    </div>
+  </div>
 
-  <!-- Navbar -->
+  <style id="boot-style">
+    /* Boot overlay styles (CRT, scanlines, noise) */
+    #bootOverlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000000; /* full black for retro effect */
+      z-index: 9999;
+      color: var(--accent-mint);
+      font-family: var(--font-mono);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    .boot-screen {
+      width: 90%;
+      max-width: 920px;
+      text-align: left;
+      position: relative;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .boot-lines {
+      background: rgba(0,0,0,1);
+      padding: 1.1rem;
+      border-radius: 6px;
+      min-height: 180px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--accent-mint);
+      line-height: 1.4;
+      white-space: pre-wrap;
+      overflow: hidden;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.7);
+      border: 1px solid rgba(78,250,170,0.04);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* scanlines layer */
+    .scanline-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      background-image: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,0.06) 2px 4px);
+      mix-blend-mode: overlay;
+      opacity: 0.55;
+      animation: scanlineMove 7s linear infinite;
+      border-radius: 8px;
+    }
+
+    /* subtle noise */
+    .crt-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(255,255,255,0.02) 0.5px, transparent 0.6px);
+      background-size: 3px 3px;
+      opacity: 0.03;
+      animation: noise 0.4s steps(2, end) infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes scanlineMove { from { background-position: 0 0 } to { background-position: 0 60px } }
+    @keyframes noise { 0% { opacity: 0.02 } 50% { opacity: 0.045 } 100% { opacity: 0.02 } }
+
+    .boot-progress { margin-top: 1rem; background: rgba(255,255,255,0.03); border-radius: 6px; height: 10px; overflow:hidden; z-index:2; }
+    .boot-progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal)); transition: width 0.18s linear; }
+
+    .boot-access { margin-top: 1rem; font-size: 1.8rem; font-weight: 900; opacity: 0; transform: scale(0.98); transition: all 0.35s ease; text-align: center; color: var(--accent-mint); text-shadow: 0 0 18px rgba(78,250,170,0.45); z-index:2; }
+    .boot-access.show { opacity: 1; transform: scale(1); }
+
+    .boot-screen::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); pointer-events: none; z-index:3; border-radius: 8px; mix-blend-mode: soft-light; }
+
+    @keyframes crtFlicker {
+      0% { opacity: 1 }
+      6% { opacity: 0.9 }
+      8% { opacity: 0.98 }
+      12% { opacity: 0.92 }
+      20% { opacity: 0.97 }
+      100% { opacity: 1 }
+    }
+
+    .boot-screen { animation: crtFlicker 3.8s linear infinite; }
+
+    @media (max-width: 600px) { .boot-screen { width: 96%; } .boot-access { font-size: 1.25rem; } }
+  </style>
+
+  <!-- Navbar only (no header) -->
   <div data-include="components/navbar.html"></div>
 
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="site-identifier">
+        <i class="fas fa-shield"></i> CLASSIFIED FACILITY
+      </div>
 
-  <section class="content">
+      <h1 class="main-title">SITE-89</h1>
+      <p class="subtitle">Secure Foundation Portal | Access Level Required</p>
 
-    <!-- BETA NOTICE WINDOW -->
-    <div class="notice-window" id="betaWindow">
-      <div class="notice-window-header">
-        <h2>Phase 3/4 – Open Beta</h2>
-        <div class="minimize">
-          <i class="fas fa-minus" id="toggleBeta"></i>
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-indicator"></span>
+          SYSTEMS: OPERATIONAL
+        </div>
+        <div class="status-item">
+          <span class="status-indicator"></span>
+          SECURITY: ACTIVE
+        </div>
+        <div class="status-item">
+          <span class="status-indicator"></span>
+          NETWORK: SECURED
         </div>
       </div>
-      <div class="notice-window-body">
-        <p>Site-89 is currently in Open Beta, meaning the project is still under active development. While the site is stable and open for public access, some features and systems are still being refined.</p>
-        <p>A dedicated Site Advertising Board is being established to oversee community outreach and content promotion as we move toward final release.</p>
-        <p class="italic">We value transparency — you’re exploring a work in progress that continues to evolve every week.</p>
-        <a class="roadmap-link" href="roadmap.html">» View Development Roadmap «</a>
+
+      <div class="cta-buttons">
+        <button class="btn-primary" onclick="document.querySelector('.info-section').scrollIntoView({ behavior: 'smooth' })">
+          <i class="fas fa-arrow-down"></i> Enter Facility
+        </button>
+        <button id="authBtn" class="btn-secondary">
+          <i class="fas fa-user"></i> <span id="authBtnText">Authenticate</span>
+        </button>
       </div>
     </div>
 
-    <!-- MAIN BODY DESCRIPTION -->
-    <div class="about-box">
-      <h2>Welcome to Site-89</h2>
-      <p>Site-89 is a community-driven SCP roleplaying experience built from the ground up with a focus on immersion, creativity, and storytelling. Set within the SCP universe, we’ve created a unique platform for roleplay using Minecraft as our medium — but this is far more than just a server.</p>
-      <p>Born in May 2024 from a small group of friends passionate about SCP, Site-89 has grown into a fully developed roleplay environment. We saw a gap in serious SCP roleplay spaces outside of platforms like Roblox, and decided to build something better.</p>
-      <p>Every system you see here has been carefully crafted: from custom plugins that support deep roleplay mechanics to an in-universe site control and monitoring system powered by ComputerCraft. Whether you're diving into personnel dossiers, managing anomalous objects, or responding to unfolding incidents — Site-89 is built to immerse you.</p>
-      <p>Whether you're new to SCP or a long-time fan, welcome, and enjoy your stay at Site-89.</p>
+    <!-- Social buttons -->
+    <div class="hero-social">
+      <a href="https://www.instagram.com/site.89_rp/" target="_blank" title="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://www.youtube.com/@scpfoundation.site.89" target="_blank" title="YouTube">
+        <i class="fab fa-youtube"></i>
+      </a>
+      <a href="https://discord.gg/UdefBEPYhp" target="_blank" title="Discord">
+        <i class="fab fa-discord"></i>
+      </a>
     </div>
 
-    <!-- EMPLOYEE OF THE MONTH -->
-    <div class="eotm-card">
-      <h3>Employee of the Month</h3>
-      <div class="eotm-profile">
-        <img src="https://i.imgur.com/pydXKDz.png" alt="EOTM portrait">
-        <div class="eotm-text">
-          <strong>Mystic Fury</strong><br>
-          Junior Researcher, Scientific Department<br>
-          <span>For dedication, professionalism, and exemplary conduct in the field.</span>
-        </div>
+    <div class="scroll-indicator">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Information Sections -->
+  <section class="info-section">
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3 class="card-title">Personnel</h3>
+      <p class="card-description">Access comprehensive personnel dossiers, organizational structure, and departmental assignments for Site-89 staff.</p>
+      <a href="personnel-files.html" class="card-link">
+        View Personnel <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-sitemap"></i>
+      </div>
+      <h3 class="card-title">Departments</h3>
+      <p class="card-description">Explore Site-89's organizational departments, their functions, and operational responsibilities.</p>
+      <a href="departments.html" class="card-link">
+        View Departments <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-archive"></i>
+      </div>
+      <h3 class="card-title">Archives</h3>
+      <p class="card-description">Secure access to classified archives including anomalies, research logs, and incident reports.</p>
+      <a href="#" class="card-link">
+        Access Archives <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-map"></i>
+      </div>
+      <h3 class="card-title">Development</h3>
+      <p class="card-description">Track Site-89's development roadmap and phase progression from construction to full operational status.</p>
+      <a href="roadmap.html" class="card-link">
+        View Roadmap <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-cog"></i>
+      </div>
+      <h3 class="card-title">Management</h3>
+      <p class="card-description">Administrative tools and site management systems for authorized personnel only.</p>
+      <a href="site-management.html" class="card-link">
+        Management Portal <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="info-card">
+      <div class="card-icon">
+        <i class="fas fa-book"></i>
+      </div>
+      <h3 class="card-title">Resources</h3>
+      <p class="card-description">Essential guides, handbooks, and operational procedures for Site-89 personnel.</p>
+      <a href="guides.html" class="card-link">
+        Browse Resources <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Stats Section -->
+  <section class="featured-section">
+    <h2 class="featured-title">FACILITY STATISTICS</h2>
+    <div class="featured-grid">
+      <div class="featured-item">
+        <div class="featured-item-number" id="statPersonnel">0</div>
+        <div class="featured-item-label">Active Personnel</div>
+      </div>
+      <div class="featured-item">
+        <div class="featured-item-number" id="statDepartments">0</div>
+        <div class="featured-item-label">Departments</div>
+      </div>
+      <div class="featured-item">
+        <div class="featured-item-number">4</div>
+        <div class="featured-item-label">Development Phases</div>
+      </div>
+      <div class="featured-item">
+        <div class="featured-item-number" id="statAnomalies">0</div>
+        <div class="featured-item-label">Anomalies Contained</div>
       </div>
     </div>
-
   </section>
 
   <!-- Footer -->
@@ -119,23 +679,204 @@
   <script src="assets/js/include.js"></script>
   <script type="module" src="assets/js/auth.js"></script>
 
-  <script>
+  <script type="module">
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Auth button functionality
+    const authBtn = document.getElementById("authBtn");
+    const authBtnText = document.getElementById("authBtnText");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const selectedChar = localStorage.getItem("selectedCharacter");
+        if (selectedChar) {
+          try {
+            const charObj = JSON.parse(selectedChar);
+            const parts = charObj.name.split(" ");
+            const displayName = parts.length >= 2 ? `${parts[0][0]}. ${parts[parts.length - 1]}` : charObj.name;
+            authBtnText.textContent = displayName;
+          } catch {
+            authBtnText.textContent = user.email;
+          }
+        } else {
+          authBtnText.textContent = user.email;
+        }
+        authBtn.onclick = () => window.location.href = "accounts.html";
+      } else {
+        authBtnText.textContent = "Authenticate";
+        authBtn.onclick = () => window.location.href = "login.html";
+      }
+    });
+
+    // Load statistics
+    async function loadStats() {
+      try {
+        const charactersSnap = await getDocs(collection(db, "characters"));
+        document.getElementById("statPersonnel").textContent = charactersSnap.size;
+      } catch (err) {
+        console.error("Error loading stats:", err);
+      }
+    }
+
+    loadStats();
+
     // Sticky nav
     document.addEventListener("scroll", () => {
       const nav = document.getElementById("main-nav");
-      nav.classList.toggle("is-sticky", window.scrollY > 120);
-    });
-
-    // Toggle Beta Notice
-    const betaWindow = document.getElementById("betaWindow");
-    const toggleBeta = document.getElementById("toggleBeta");
-
-    toggleBeta.addEventListener("click", (e) => {
-      e.stopPropagation();
-      betaWindow.classList.toggle("minimized");
-      toggleBeta.classList.toggle("fa-plus");
-      toggleBeta.classList.toggle("fa-minus");
+      if (nav) {
+        nav.classList.toggle("is-sticky", window.scrollY > 120);
+      }
     });
   </script>
+
+  <!-- Boot overlay script -->
+  <script>
+    (function(){
+      const bootOverlay = document.getElementById('bootOverlay');
+      const bootLines = document.getElementById('bootLines');
+      const bootProgress = document.getElementById('bootProgress');
+      const bootAccess = document.getElementById('bootAccess');
+      const STORAGE_KEY = 'site89_boot_played';
+      let playing = false;
+
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+      async function typeWithVariance(el, text, opts = {}){
+        const speed = opts.speed ?? 18;
+        const variance = opts.variance ?? 8;
+        if(opts.burst){
+          const linesArr = text.split('\n');
+          for(let li=0; li<linesArr.length; li++){
+            const line = linesArr[li];
+            if(line.length === 0){ el.textContent += '\n'; await sleep(60 + Math.random()*80); continue; }
+            const slowPrefix = Math.min(3, line.length);
+            for(let j=0;j<line.length;j++){
+              el.textContent += line[j];
+              const s = (j < slowPrefix) ? Math.max(8, speed) : Math.max(2, Math.floor(speed / (2 + Math.random()*2)));
+              await sleep(s + Math.floor((Math.random()-0.5) * variance));
+            }
+            el.textContent += '\n';
+            await sleep(80 + Math.random()*140);
+          }
+        } else {
+          for(let i=0;i<text.length;i++){
+            el.textContent += text[i];
+            const jitter = Math.floor((Math.random()-0.5) * variance);
+            await sleep(Math.max(2, speed + jitter));
+          }
+        }
+      }
+
+      async function playBoot(replay=false){
+        if(playing) return;
+        playing = true;
+        try{
+          bootOverlay.style.display = 'flex';
+          bootOverlay.style.opacity = '1';
+          bootOverlay.setAttribute('aria-hidden','false');
+          bootLines.textContent = '';
+          bootProgress.style.width = '0%';
+
+          const lines = [
+            { text: 'Initializing secure shell ...', speed: 20 },
+            { text: 'Verifying integrity of core modules...', speed: 14 },
+            { text: 'Loading security policy: OK', speed: 10 },
+            { text: 'Establishing connection to Site-89 network...', speed: 12 },
+            { text: 'Authenticating environment...', speed: 16 },
+            { text: 'Running system tree scan:\n', speed: 12 },
+            { text: 'C:\\\n├─ bin\n├─ etc\n├─ lib\n├─ usr\n└─ var\n', burst: true },
+            { text: 'Starting diagnostics: [          ] 0%', speed: 10 }
+          ];
+
+          for(let i=0;i<lines.length;i++){
+            const item = lines[i];
+            await typeWithVariance(bootLines, item.text + '\n', { speed: item.speed, burst: !!item.burst });
+            await sleep(120 + Math.random()*220);
+            if(i===1) bootProgress.style.width = '18%';
+            if(i===3) bootProgress.style.width = '42%';
+            if(i===4) bootProgress.style.width = '68%';
+            if(i===6) bootProgress.style.width = '84%';
+            if(i===7) bootProgress.style.width = '96%';
+          }
+
+          // final progress sweep
+          for(let p=96;p<=100;p+=1){
+            bootProgress.style.width = p + '%';
+            await sleep(18 + Math.random()*8);
+          }
+
+          // Access granted with flicker
+          bootAccess.classList.add('show');
+          await sleep(700 + Math.random()*200);
+
+          // Fade out overlay
+          bootOverlay.style.transition = 'opacity 0.6s ease';
+          bootOverlay.style.opacity = '0';
+          await sleep(700);
+          bootOverlay.style.display = 'none';
+          bootOverlay.setAttribute('aria-hidden','true');
+
+          // Trigger layout recalculation and ensure viewport sizing
+          try{
+            document.body.style.minHeight = '100vh';
+            window.dispatchEvent(new Event('resize'));
+            setTimeout(()=> window.scrollTo(0,0), 60);
+          }catch(e){/* ignore */}
+
+          // Persist played flag unless replay requested
+          if(!replay) localStorage.setItem(STORAGE_KEY, '1');
+        }catch(e){
+          console.error('Boot overlay error:', e);
+          bootOverlay.style.display = 'none';
+        }finally{
+          playing = false;
+        }
+      }
+
+
+
+      // Play on first load if not yet played
+      document.addEventListener('DOMContentLoaded', () => {
+        if(!localStorage.getItem(STORAGE_KEY)){
+          // slight delay so fonts/layout settle
+          setTimeout(() => playBoot(false), 300);
+        } else {
+          // ensure overlay hidden if already played
+          if(bootOverlay) {
+            bootOverlay.style.display = 'none';
+            bootOverlay.setAttribute('aria-hidden','true');
+          }
+        }
+
+        // Wire replay button if present in footer
+        const replayBtn = document.getElementById('playIntroBtn');
+        if(replayBtn) {
+          replayBtn.addEventListener('click', (e)=>{
+            e.preventDefault();
+            localStorage.removeItem(STORAGE_KEY);
+            // slight delay and then play
+            setTimeout(()=>playBoot(true), 80);
+          });
+        }
+      });
+    })();
+  </script>
+
 </body>
 </html>

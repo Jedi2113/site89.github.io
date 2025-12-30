@@ -16,6 +16,10 @@
 }
 
 /* ─────────── Base Styling ─────────── */
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: var(--font-body);
   background: var(--bg-dark);
@@ -60,6 +64,79 @@ a {
   overflow: hidden;
 }
 
+/* Compact header for secondary pages */
+.site-header {
+  background: transparent;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(78,250,170,0.04);
+}
+
+.site-header .header-inner {
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.site-logo, .site-header img {
+  width: 120px;
+  height: auto;
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  pointer-events: auto;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-identifier {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-mint);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.brand-title {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.15rem;
+  background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-spacer { flex: 1 1 auto; }
+
+.header-meta { display:flex; align-items:center; gap:0.8rem; }
+
+.status-pill {
+  font-family: var(--font-mono);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(78,250,170,0.06);
+  border: 1px solid rgba(78,250,170,0.06);
+  color: var(--accent-mint);
+  font-size: 0.8rem;
+}
+
+/* legacy hero logo for index page */
 .hero-logo {
   width: 200px;
   height: auto;
