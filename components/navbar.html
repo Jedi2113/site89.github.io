@@ -5,22 +5,22 @@
       <img src="/assets/img/logowhite.png" alt="Site-89 Logo" style="height:40px; vertical-align:middle;">
     </a>
 
-    <a href="/departments.html">Departments</a>
+    <a href="/departments/">Departments</a>
 
     <!-- Dropdown for Foundation Archives -->
     <div class="nav-dropdown-parent">
       <a href="#">Foundation Archives <i class="fa-solid fa-caret-down"></i></a>
       <div class="nav-dropdown-content">
-        <a href="/archives.html">Archives Hub</a>
-        <a href="/personnel-files.html">Personnel Files</a>
-        <a href="/goi-poi.html">Groups of Interest / Persons of Interest</a>
-        <a href="/anomalies.html">Anomalies</a>
-        <a href="/research-logs.html">Research Logs</a>
-        <a href="/incident-reports.html">Incident Reports</a>
+        <a href="/archives/">Archives Hub</a>
+        <a href="/personnel-files/">Personnel Files</a>
+        <a href="/goi-poi/">Groups of Interest / Persons of Interest</a>
+        <a href="/anomalies/">Anomalies</a>
+        <a href="/research-logs/">Research Logs</a>
+        <a href="/incident-reports/">Incident Reports</a>
       </div>
     </div>
 
-    <a href="/guides.html">Guides</a>
+    <a href="/guides/">Guides</a>
   </div>
 
   <!-- Right side: socials + login -->
@@ -31,7 +31,7 @@
     </div>
 
     <div class="nav-mail-wrapper">
-      <a href="/emails.html" id="navMailBtn" class="nav-mail" title="Mail"><i class="fa-solid fa-envelope"></i></a>
+      <a href="/emails/" id="navMailBtn" class="nav-mail" title="Mail"><i class="fa-solid fa-envelope"></i></a>
     </div>
 
     <!-- LOGIN BUTTON WITH CLICKABLE DROPDOWN -->
@@ -41,8 +41,8 @@
 
       <!-- Dropdown -->
       <div class="nav-dropdown-content nav-dropdown-login" id="navDropdown">
-        <a href="/character-select.html">Manage Characters</a>
-        <a href="/account.html">Manage Account</a>
+        <a href="/character-select/">Manage Characters</a>
+        <a href="/accounts/">Manage Account</a>
         <a href="#" id="logoutBtn">Logout</a>
       </div>
     </div>
@@ -164,14 +164,14 @@ document.addEventListener('includesLoaded', () => {
   const anchors = Array.from(document.querySelectorAll('#main-nav a'));
   const manual = [
     { title: 'Home', href: '/' , desc: 'Site-89 Home' },
-    { title: 'Archives Hub', href: '/archives.html', desc: 'Browse all archives' },
-    { title: 'Personnel Files', href: '/personnel-files.html', desc: 'Personnel records and PIDs' },
-    { title: 'Anomalies', href: '/anomalies.html', desc: 'Anomalies index' },
+    { title: 'Archives Hub', href: '/archives/', desc: 'Browse all archives' },
+    { title: 'Personnel Files', href: '/personnel-files/', desc: 'Personnel records and PIDs' },
+    { title: 'Anomalies', href: '/anomalies/', desc: 'Anomalies index' },
     { title: 'Research Logs', href: '/research-logs/', desc: 'Research entries' },
-    { title: 'Incident Reports', href: '/incident-reports.html', desc: 'Incident reporting' },
-    { title: 'Emails', href: '/emails.html', desc: 'Site Mail' },
-    { title: 'Guides', href: '/guides.html', desc: 'Operational guides' },
-    { title: 'Site Management', href: '/site-management.html', desc: 'Site management tools' }
+    { title: 'Incident Reports', href: '/incident-reports/', desc: 'Incident reporting' },
+    { title: 'Emails', href: '/emails/', desc: 'Site Mail' },
+    { title: 'Guides', href: '/guides/', desc: 'Operational guides' },
+    { title: 'Site Management', href: '/site-management/', desc: 'Site management tools' }
   ];
 
   const indexMap = new Map();

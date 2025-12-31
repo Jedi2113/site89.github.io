@@ -526,7 +526,7 @@
   </style>
 
   <!-- Navbar only (no header) -->
-  <div data-include="components/navbar.html"></div>
+  <div data-include="/components/navbar.html"></div>
 
   <!-- Hero Section -->
   <section class="hero-section">
@@ -589,7 +589,7 @@
       </div>
       <h3 class="card-title">Personnel</h3>
       <p class="card-description">Access comprehensive personnel dossiers, organizational structure, and departmental assignments for Site-89 staff.</p>
-      <a href="personnel-files.html" class="card-link">
+      <a href="/personnel-files/" class="card-link">
         View Personnel <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -600,7 +600,7 @@
       </div>
       <h3 class="card-title">Departments</h3>
       <p class="card-description">Explore Site-89's organizational departments, their functions, and operational responsibilities.</p>
-      <a href="departments.html" class="card-link">
+      <a href="/departments/" class="card-link">
         View Departments <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -611,7 +611,7 @@
       </div>
       <h3 class="card-title">Mail</h3>
       <p class="card-description">Secure communication between Site-89 personnel.</p>
-      <a href="emails.html" class="card-link">
+      <a href="/emails/" class="card-link">
         Access Mail <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -622,7 +622,7 @@
       </div>
       <h3 class="card-title">Development</h3>
       <p class="card-description">Track Site-89's development roadmap and phase progression from construction to full operational status.</p>
-      <a href="roadmap.html" class="card-link">
+      <a href="/roadmap/" class="card-link">
         View Roadmap <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -633,7 +633,7 @@
       </div>
       <h3 class="card-title">Archives</h3>
       <p class="card-description">Secure access to classified archives including anomalies, research logs, and incident reports.</p>
-      <a href="archives.html" class="card-link">
+      <a href="/archives/" class="card-link">
         Access Archives <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -644,7 +644,7 @@
       </div>
       <h3 class="card-title">Resources</h3>
       <p class="card-description">Essential guides, handbooks, and operational procedures for Site-89 personnel.</p>
-      <a href="guides.html" class="card-link">
+      <a href="/guides/" class="card-link">
         Browse Resources <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -674,10 +674,10 @@
   </section>
 
   <!-- Footer -->
-  <div data-include="components/footer.html"></div>
+  <div data-include="/components/footer.html"></div>
 
-  <script src="assets/js/include.js"></script>
-  <script type="module" src="assets/js/auth.js"></script>
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
 
   <script type="module">
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
@@ -717,10 +717,10 @@
         } else {
           authBtnText.textContent = user.email;
         }
-        authBtn.onclick = () => window.location.href = "accounts.html";
+        authBtn.onclick = () => window.location.href = "/accounts/";
       } else {
         authBtnText.textContent = "Authenticate";
-        authBtn.onclick = () => window.location.href = "login.html";
+        authBtn.onclick = () => window.location.href = "/login/";
       }
     });
 

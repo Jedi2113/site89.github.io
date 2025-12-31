@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Site-89 Departments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    /* Page hero and departments layout (uses site variables) */
+    .page-hero {
+      padding: 3rem 1rem;
+      text-align: center;
+      background: radial-gradient(circle at top left, rgba(78,250,170,0.03), transparent);
+      margin-bottom: 1rem;
+    }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2.5rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.86; }
+
+    .department-panel {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.04);
+      border-radius: 8px;
+      margin: 1.25rem auto;
+      max-width: 1000px;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .department-panel:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+
+    .dept-image { width: 320px; object-fit: cover; }
+    .dept-content { padding: 1.5rem; flex: 1; }
+    .dept-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-mint); text-decoration: none; }
+    .dept-description { font-size: 1rem; line-height: 1.6; color: var(--text-light); opacity: 0.9; }
+
+    @media (max-width: 840px) {
+      .department-panel { flex-direction: column; }
+      .dept-image { width: 100%; height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div data-include="/components/header.html"></div>
+
+  <!-- Navbar -->
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Departments</div>
+    <div class="hero-sub">Explore Site-89's organizational departments, their functions, and responsibilities.</div>
+  </section>
+
+  <section class="content">
+
+  <!-- Administrative Department -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/luBORD2.png" alt="Administrative Department" class="dept-image">
+    <div class="dept-content">
+      <a href="/AD/" class="dept-title">» Administrative Department «</a>
+      <p class="dept-description">
+        The Administrative Department (AD) oversees the entire site, controlling financial operations, HR, diplomatic affairs, ethical politics, quality inspections, and more. Its goal is to ensure everything runs smoothly, efficiently, and ethically.
+      </p>
+    </div>
+  </div>
+
+  <!-- Department of External Operations -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/M5RWZyM.png" alt="External Operations" class="dept-image">
+    <div class="dept-content">
+      <a href="/DEO/" class="dept-title">» Department of External Operations «</a>
+      <p class="dept-description">
+        The DEO communicates with Groups of Interest and monitors everything outside the site. It manages Mobile Task Forces and its own internal Military Intelligence Agency.
+      </p>
+    </div>
+  </div>
+
+  <!-- Scientific Department -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/ICvO67n.png" alt="Scientific Department" class="dept-image">
+    <div class="dept-content">
+      <a href="/ScD/" class="dept-title">» Scientific Department «</a>
+      <p class="dept-description">
+        The Scientific Department (ScD) has multiple divisions specializing in research, anomaly testing, occult studies, and medical oversight. All divisions work to understand anomalies and ensure containment procedures protect the public.
+      </p>
+    </div>
+  </div>
+
+  <!-- Security Department -->
+  <div class="department-panel">
+    <img src="https://i.imgur.com/xQAI0eT.png" alt="Security Department" class="dept-image">
+    <div class="dept-content">
+      <a href="/SD/" class="dept-title">» Security Department «</a>
+      <p class="dept-description">
+        The Security Department (SD) ensures site security, anomaly containment, and personnel protection. All requests are processed through Security Command to the appropriate subdepartment.
+      </p>
+    </div>
+  </div>
+
+    </section>
+
+    <!-- Footer -->
+  <div data-include="/components/footer.html"></div>
+
+  <script src="assets/js/include.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
+
+  <script>
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      nav.classList.toggle("is-sticky", window.scrollY > 120);
+    });
+  </script>
+
+</body>
+</html>
