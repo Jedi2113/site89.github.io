@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Emails collection
+    match /emails/{emailId} {
+      // Allow reads only for authenticated users who are either the sender or one of the recipients
+      allow read: if request.auth != null && (
+        request.auth.token.email == resource.data.sender ||
+        request.auth.token.email in resource.data.recipients
+      );
+
+      // Allow create only for authenticated users and require the sender to match their auth email.
+      // NOTE: If you want to allow characters (lastname.firstname@site89.org) as senders,
+      // you should implement a server-side mapping from auth.uid => character and enforce that here.
+      allow create: if request.auth != null
+        && request.resource.data.sender == request.auth.token.email
+        && request.resource.data.recipients is list
+        && request.resource.data.subject is string
+        && request.resource.data.body is string;
+
+      // Allow updates if user is involved (sender or recipient). Limit updatable keys to a safe set.
+      allow update: if request.auth != null && (
+        resource.data.sender == request.auth.token.email || request.auth.token.email in resource.data.recipients
+      ) && (request.resource.data.keys().hasOnly(['sender','recipients','subject','body','status','folder','ts','read']) );
+
+      // Allow delete only by the sender (or restrict as needed)
+      allow delete: if request.auth != null && resource.data.sender == request.auth.token.email;
+    }
+  }
+}
