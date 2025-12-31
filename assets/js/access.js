@@ -37,7 +37,7 @@
 
       if (Number.isNaN(userClearance) || userClearance < reqNum) {
         const next = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.replace('/403.html?from=' + next);
+        window.location.replace('/403/?from=' + next);
       }
     } catch (err) {
       console.error('access check error', err);

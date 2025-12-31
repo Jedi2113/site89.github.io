@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skins Guide — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .guide-content h2 { color: var(--accent-mint); margin-top: 1rem; }
+    .guide-content p { line-height: 1.6; margin-bottom: 0.75rem; }
+    .guide-content ol { margin-left: 1.1rem; }
+    .guide-content code { background: rgba(0,0,0,0.2); padding: 0.12rem 0.4rem; border-radius: 4px; }
+    .note { background: rgba(78,250,170,0.02); border: 1px solid rgba(78,250,170,0.04); padding: 0.8rem; border-radius:6px; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Skins Guide</div>
+    <div class="hero-sub">Setting skins, using HD skins, and the /setskin command.</div>
+  </section>
+
+  <section class="content guide-content">
+    <h2>» Setting your Skin «</h2>
+    <h3>/setskin Command</h3>
+    <p>When roleplaying on the server, you will find yourself changing skins frequently. To simplify this, we provide a mod that lets you change your skin with a URL.</p>
+
+    <div class="note">
+      To use it in-game, type: <code>/setskin [sekwah url]</code>
+    </div>
+
+    <h2>» HD skins and why we use them «</h2>
+    <p>The only image hosting/sharing site that is usable is Imgur through the Sekwah proxy. When uploading a skin to Imgur, make sure to copy the image URL (not the album URL) — right-click the image and choose "Copy image address".</p>
+
+    <p>Then, go to the Sekwah Reskin Proxy, paste the Imgur image address, and press "Modify and Copy URL." Use the resulting Sekwah URL with the <code>/setskin</code> command in-game.</p>
+
+    <p><strong>Why HD?</strong> The server style uses the standard 64x64 layout, but some departments require higher-resolution skins (512x512 or 1024x1024). Higher resolution lets us include small, high-detail insignias and logos that aren't possible on a 64x64 skin, such as custom Security Department uniforms.</p>
+
+    <p>Note: HD-style features (strongly detailed eyes, etc.) that deviate from the 64x64 aesthetic may look out of place and are generally discouraged unless specifically required by a department.</p>
+
+    <h2>» Upgrading your skin to a HD One «</h2>
+    <p>To safely upscale a skin without losing detail, use an image editor that preserves clarity. We recommend Medibang Pro for this purpose (Photoshop can sometimes introduce blurring).</p>
+
+    <h3>Steps (Using Medibang Pro)</h3>
+    <ol>
+      <li>Download and install Medibang Pro: <a href="https://medibangpaint.com/en/app-download/" target="_blank" rel="noopener">https://medibangpaint.com/en/app-download/</a></li>
+      <li>Open your skin image in Medibang Pro.</li>
+      <li>Under the <strong>Edit</strong> menu, find <strong>Image Size</strong>.</li>
+      <li>Change the image size to the required resolution (128x128, 256x256, 512x512, etc.).</li>
+      <li>Export the skin via <strong>File → Export</strong> when finished.</li>
+    </ol>
+
+    <p>After exporting, upload the image to Imgur, convert using the Sekwah Reskin Proxy, and use <code>/setskin [sekwah url]</code> in-game to apply it.</p>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>

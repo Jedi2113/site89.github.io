@@ -56,9 +56,9 @@ document.addEventListener("includesLoaded", () => {
   if (navLogin) {
     navLogin.addEventListener("click", () => {
       if (auth.currentUser) {
-        window.location.href = "accounts.html";
+        window.location.href = "/accounts/";
       } else {
-        window.location.href = "login.html";
+        window.location.href = "/login/";
       }
     });
   }
@@ -68,7 +68,7 @@ document.addEventListener("includesLoaded", () => {
   logoutButtons.forEach(btn => btn.addEventListener('click', (e) => {
     e.preventDefault();
     try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
-    signOut(auth).then(() => window.location.href = '/login.html').catch(() => window.location.href = '/login.html');
+    signOut(auth).then(() => window.location.href = '/login/').catch(() => window.location.href = '/login/');
   }));
 
   // LOGIN FORM (if exists)
@@ -80,7 +80,7 @@ document.addEventListener("includesLoaded", () => {
       const password = document.getElementById("password").value;
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => window.location.href = "index.html")
+        .then(() => window.location.href = "/")
         .catch(err => {
           const feedback = document.getElementById("loginFeedback");
           if (feedback) feedback.textContent = err.message;
@@ -97,7 +97,7 @@ document.addEventListener("includesLoaded", () => {
       const password = document.getElementById("regPassword").value;
 
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => window.location.href = "index.html")
+        .then(() => window.location.href = "/")
         .catch(err => {
           const feedback = document.getElementById("registerFeedback");
           if (feedback) feedback.textContent = err.message;

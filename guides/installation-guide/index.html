@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Installation Guide — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .guide-content h2 { color: var(--accent-mint); margin-top: 1rem; }
+    .guide-content p { line-height: 1.6; margin-bottom: 0.75rem; }
+    .guide-content ul { margin-left: 1.1rem; }
+    .note { background: rgba(78,250,170,0.02); border: 1px solid rgba(78,250,170,0.04); padding: 0.8rem; border-radius:6px; margin-bottom: 1rem; }
+    code { background: rgba(0,0,0,0.2); padding: 0.12rem 0.4rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Installation Guide</div>
+    <div class="hero-sub">How to install The Technic Launcher and the Site-89 pack, and allocate RAM.</div>
+  </section>
+
+  <section class="content guide-content">
+    <h2>1. Getting The Technic Launcher</h2>
+    <p>If you already have The Technic Launcher you can skip this step. To download it head to the official page: <a href="https://www.technicpack.net/download" target="_blank" rel="noopener">Technic Launcher — Download</a>.</p>
+    <p>Download the launcher for your operating system. On Windows it will be <code>TechnicLauncher.exe</code>; on macOS/Linux it may be <code>TechnicLauncher.jar</code>. Once downloaded, run the installer (or double-click the .jar), then sign in with your Microsoft account (Mojang accounts are no longer supported after forced migration).</p>
+
+    <h2>2. Installing the Pack</h2>
+    <p>After logging in, click <strong>Modpacks</strong> at the top of the launcher. Use the search bar (top-left) and type <strong>"Site-89"</strong>. Select the Site-89 pack from the results and click <strong>Install</strong>. Wait for the installation to finish, then press <strong>Play</strong> to launch the pack.</p>
+
+    <div class="note">
+      <strong>Tip:</strong> If the pack doesn’t appear in search, try refreshing or check that you’re searching the Modpacks list and not the Spotlight/Featured sections.
+    </div>
+
+    <h2>Adding More RAM</h2>
+    <p>A common error is not allocating enough RAM to Minecraft. If you experience frequent crashes or out-of-memory errors, allocating more RAM typically fixes this. Make sure you have 64-bit Java installed (required to allocate more than ~1GB).</p>
+
+    <h3>Installing Java (64-bit)</h3>
+    <ol>
+      <li>Download a 64-bit Java (OpenJDK builds are recommended) from <a href="https://adoptium.net" target="_blank" rel="noopener">Adoptium (Temurin)</a> or the official Java page.</li>
+      <li>Install Java and then restart your computer to ensure it is recognized by the system.</li>
+    </ol>
+
+    <h3>Allocating RAM in Technic Launcher</h3>
+    <ol>
+      <li>Open the Technic Launcher.</li>
+      <li>Click the <strong>Launcher Options</strong> button at the top (it may also be labeled <strong>Launcher Settings</strong>).</li>
+      <li>Open <strong>Java Settings</strong> or the advanced settings panel.</li>
+      <li>Find the memory / RAM allocation dropdown (often showing <code>1 GB</code> by default).</li>
+      <li>Select <code>6 GB</code> or <code>8 GB</code> (8 GB is recommended). Be cautious: allocating too much can impact overall system performance—don’t allocate more RAM than your system can spare.</li>
+      <li>Save your settings and relaunch the pack.</li>
+    </ol>
+
+    <div class="note">
+      If you still see performance issues after allocating RAM, check background apps and confirm your system meets the pack’s recommended specs.
+    </div>
+
+    <h2>Done!</h2>
+    <p>Once installed and properly configured, press <strong>Play</strong> and connect. If you encounter issues, ask for help on our Discord or consult the Newcomer Guide for additional onboarding steps.</p>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>

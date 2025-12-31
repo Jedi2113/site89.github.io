@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration Staff Portal — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:left; display:flex; gap:1rem; align-items:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 1.75rem; color: var(--accent-mint); margin-bottom: 0; }
+    .page-hero .hero-sub { color: var(--text-light); opacity:0.9; }
+
+    .portal-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-top:1rem; }
+    .portal-card { background: var(--bg-card); padding: 1rem; border: 1px solid rgba(78,250,170,0.04); border-radius: 8px; }
+    .portal-card h3 { margin:0 0 0.6rem 0; color: var(--accent-mint); }
+    .portal-card p { margin:0; color: var(--text-light); opacity:0.92; }
+    .portal-card a { display:inline-block; margin-top:0.7rem; color: var(--accent-teal); font-weight:600; }
+
+    .notice { max-width:900px; margin:1rem auto; padding:0.85rem 1rem; background: linear-gradient(180deg, rgba(255,200,0,0.02), transparent); border:1px solid rgba(255,200,0,0.04); border-radius:8px; color:var(--text-light); }
+  </style>
+</head>
+<body>
+
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <img src="/assets/img/ADblack.png" alt="Administrative Dept" style="width:84px; height:auto; filter: invert(1);">
+    <div>
+      <div class="hero-title">Administration Staff Portal</div>
+      <div class="hero-sub">Important documents and forms for Administrative Department staff.</div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="notice" id="accessNotice">Checking access...</div>
+
+    <div class="portal-grid" id="portalGrid" style="display:none;">
+      <article class="portal-card">
+        <h3>Master Spreadsheet</h3>
+        <p>Internal Operations' Master Spreadsheet for managing all administrative tasks and records.</p>
+        <a href="https://docs.google.com/spreadsheets/d/1vrG2zt_MSuz3PaOyigeXPrPgBPGjOjSHtsNAcWJNo78/edit?gid=610236485#gid=610236485" target="_blank" rel="noopener">Open Master Spreadsheet →</a>
+      </article>
+
+      <article class="portal-card">
+        <h3>Code List</h3>
+        <p>A list of all codes onsite known to the Administrative Department.</p>
+        <a href="https://docs.google.com/document/d/18O084fPoXCwBr4PBjuvsDK7wEUN2ON_RXDKnqHnGsg8/edit?tab=t.0#heading=h.jx69yd1g2xz0" target="_blank" rel="noopener">Open Code List →</a>
+      </article>
+
+      <article class="portal-card">
+        <h3>Case Reports</h3>
+        <p>Folder for all case reports and incident documentation.</p>
+        <a href="https://drive.google.com/drive/u/0/folders/1kBwqi4ks-8RVWpj7KWOTZQ35fHFtl-TC" target="_blank" rel="noopener">Open Case Reports →</a>
+      </article>
+
+      <article class="portal-card">
+        <h3>Warrants</h3>
+        <p>Folder storing all issued warrants.</p>
+        <a href="https://drive.google.com/drive/u/0/folders/1Aj-1pTbBofSoA1GmhjFqGXcgOEVvtxc0" target="_blank" rel="noopener">Open Warrants →</a>
+      </article>
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script>
+    // Access control: only allow when selectedCharacter.department contains 'AD/'
+    function checkAccess(){
+      const notice = document.getElementById('accessNotice');
+      const grid = document.getElementById('portalGrid');
+      try{
+        const raw = localStorage.getItem('selectedCharacter');
+        if(!raw){
+          notice.textContent = 'Access denied: no selected character. You must select an AD character to view this portal.';
+          window.setTimeout(() => { window.location.replace('/403/'); }, 1400);
+          return;
+        }
+        const ch = JSON.parse(raw);
+        const dept = ch && ch.department ? String(ch.department) : '';
+        if(dept.indexOf('AD/') === -1){
+          notice.textContent = 'Access denied: this portal is restricted to Administrative Department members.';
+          window.setTimeout(() => { window.location.replace('/403/'); }, 1400);
+          return;
+        }
+        // allowed
+        notice.style.display = 'none';
+        grid.style.display = '';
+      }catch(err){
+        notice.textContent = 'Access check error — please contact an administrator.';
+        console.error('portal access error', err);
+      }
+    }
+
+    document.addEventListener('includesLoaded', checkAccess);
+    document.addEventListener('DOMContentLoaded', checkAccess);
+    checkAccess();
+  </script>
+</body>
+</html>

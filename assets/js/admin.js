@@ -10,7 +10,7 @@ document.addEventListener('includesLoaded', () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user || user.email !== ADMIN_EMAIL) {
       // redirect non-admins
-      window.location.replace('/403.html');
+      window.location.replace('/403/');
       return;
     }
 

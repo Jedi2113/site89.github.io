@@ -225,6 +225,18 @@
 </script>
 
 <script>
+  // Ensure clicking the login area goes to /accounts/ (absolute)
+  document.addEventListener('includesLoaded', () => {
+    const navLogin = document.getElementById('navLogin');
+    if (!navLogin) return;
+    navLogin.addEventListener('click', (e) => {
+      // Navigate to accounts folder; account page will handle auth/redirects
+      window.location.href = '/accounts/';
+    });
+  });
+</script>
+
+<script>
 // Lightweight site search (client-side index) — runs after includes load
 document.addEventListener('includesLoaded', () => {
   const input = document.getElementById('siteSearchInput');
@@ -243,6 +255,11 @@ document.addEventListener('includesLoaded', () => {
     { title: 'Emails', href: '/emails/', desc: 'Site Mail' },
     { title: 'About', href: '/about/', desc: 'About Site-89' },
     { title: 'Guides', href: '/guides/', desc: 'Operational guides' },
+    { title: 'Newcomer Guide', href: '/guides/newcomer-guide/', desc: 'Getting started at Site-89' },
+    { title: 'Installation Guide', href: '/guides/installation-guide/', desc: 'Install the Technic Launcher & Site-89 pack' },
+    { title: 'Skins Guide', href: '/guides/skins-guide/', desc: 'Skinning, HD skins, and the /setskin command' },
+    { title: 'Character Guide', href: '/guides/character-guide/', desc: 'Advice on creating and maintaining characters' },
+    { title: 'Roleplay Guide', href: '/guides/roleplay-guide/', desc: 'Rules, syntax, and RP principles' },
     { title: 'Site Management', href: '/site-management/', desc: 'Site management tools' }
   ];
 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guides — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .guides-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .guide-card { background: var(--bg-card); padding: 1rem; border: 1px solid rgba(78,250,170,0.04); border-radius: 8px; transition: transform 0.16s ease, box-shadow 0.16s ease; }
+    .guide-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+    .guide-card h3 { margin: 0 0 0.6rem 0; color: var(--accent-mint); }
+    .guide-card p { margin: 0; color: var(--text-light); opacity: 0.9; }
+    .guide-card a { display: inline-block; margin-top: 0.8rem; color: var(--accent-teal); font-weight:600; }
+  </style>
+</head>
+<body>
+
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Guides</div>
+    <div class="hero-sub">Helpful instructions and information to get started at Site-89.</div>
+  </section>
+
+  <section class="content">
+    <div class="guides-grid">
+      <article class="guide-card">
+        <h3>Newcomer Guide</h3>
+        <p>Everything new players need to know to get started at Site-89.</p>
+        <a href="/guides/newcomer-guide/">Read the guide →</a>
+      </article>
+
+      <article class="guide-card">
+        <h3>Installation Guide</h3>
+        <p>Steps to install the Technic Launcher, the Site-89 pack, and allocate RAM for best performance.</p>
+        <a href="/guides/installation-guide/">Read the guide →</a>
+      </article>
+
+      <article class="guide-card">
+        <h3>Skins Guide</h3>
+        <p>How to set skins in-game, use HD skins, and prepare skins for department requirements.</p>
+        <a href="/guides/skins-guide/">Read the guide →</a>
+      </article>
+
+      <article class="guide-card">
+        <h3>Character Guide</h3>
+        <p>Tips, structure, and best practices for creating roleplay characters.</p>
+        <a href="/guides/character-guide/">Read the guide →</a>
+      </article>
+
+      <article class="guide-card">
+        <h3>Roleplay Guide</h3>
+        <p>Syntax, emotes, show vs tell, and RP principles for text roleplay on Site-89.</p>
+        <a href="/guides/roleplay-guide/">Read the guide →</a>
+      </article>
+
+      <!-- Future guides will appear here as cards -->
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>
