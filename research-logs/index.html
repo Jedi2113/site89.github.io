@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="required-clearance" content="1">
+  <title>Research Logs — Site-89</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <main class="content">
+    <section class="about-box">
+      <h1>Research Logs</h1>
+      <p>Repository for research notes and experiment logs. Viewing requires security clearance &gt; 0. Creating entries requires membership of the Research/Scientific departments or clearance &gt; 4.</p>
+    </section>
+
+    <section class="about-box ms-logs">
+      <style>
+        /* M365-like header / toolbar */
+        .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+        .ms-title h1{margin:0;font-size:1.5rem}
+        .ms-title .ms-sub{margin:0;color:var(--text-light);font-size:.95rem}
+        .ms-toolbar{display:flex;align-items:center;gap:.6rem}
+        .ms-search{padding:.5rem .7rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:220px}
+        .ms-btn-new{padding:.45rem .8rem;border-radius:6px;background:var(--accent-mint);color:var(--bg-dark);border:none}
+        .logs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+        .log-card{background:var(--bg-dark-panel, #0f1112);padding:1rem;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.35);}
+        .log-card .meta{font-size:.85rem;color:var(--text-light);opacity:.85;margin-bottom:.6rem}
+        .log-card .content{margin-top:.4rem;color:var(--text);line-height:1.45}
+        /* Simple modal */
+        .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:1200}
+        .modal-content{background:var(--bg-card);padding:1.2rem;border-radius:10px;min-width:360px;max-width:820px;box-shadow:0 6px 30px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.03)}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+        .modal-header h2{margin:0}
+        .btn-link{background:none;border:none;color:var(--text-light);font-size:1.1rem}
+        label{display:block;margin-bottom:.6rem}
+        input[id="logTitle"], input[id="logTags"], textarea[id="logContent"]{width:100%;padding:.5rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:inherit}
+      </style>
+
+      <div class="ms-header">
+        <div class="ms-title">
+          <h1>Research Logs</h1>
+          <p class="ms-sub">Repository for research notes and experiment logs. Viewing requires security clearance &gt; 0. Creating entries requires membership of the Research/Scientific departments or clearance &gt; 4.</p>
+        </div>
+
+        <div class="ms-toolbar">
+          <input id="logSearch" class="ms-search" placeholder="Search logs by title, tags, or content…">
+          <button id="newLogBtn" class="ms-btn-new" style="display:none">+ New</button>
+        </div>
+      </div>
+
+      <!-- Modal create form -->
+      <div id="createModal" class="modal" aria-hidden="true" style="display:none">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <div class="modal-header">
+            <h2>Create New Research Log</h2>
+            <button id="closeModalBtn" class="btn-link" title="Close">✕</button>
+          </div>
+
+          <form id="createLogForm">
+            <label>Title <input id="logTitle" placeholder="Title" required></label>
+            <label>Tags <input id="logTags" placeholder="Tags (comma separated)"></label>
+            <label>Content <textarea id="logContent" placeholder="Entry content" style="min-height:200px" required></textarea></label>
+            <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createLogBtn" class="btn-primary" type="submit">Create</button><button id="cancelLogBtn" class="btn-secondary" type="button">Cancel</button></div>
+            <p id="logFeedback" class="feedback"></p>
+          </form>
+        </div>
+      </div>
+
+      <h2 style="margin-top:1rem">Entries</h2>
+      <div id="logsList" class="logs-grid">Loading…</div>
+    </section>
+  </main>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module" src="/assets/js/researchLogs.js"></script>
+</body>
+</html>

@@ -1,5 +1,15 @@
 <footer>
-  <p>© 2026 Site-89. All rights reserved.<br>Unauthorized access or distribution is strictly prohibited.</p>
+  <p>© <span id="copyright-year">2025</span> Site-89. All original content reserved.</p>
 </footer>
+
+<script>
+  (function(){
+    const startYear = 2024;
+    const now = new Date().getFullYear();
+    const el = document.getElementById('copyright-year');
+    if(!el) return;
+    el.textContent = (startYear === now) ? now : startYear + '-' + now;
+  })();
+</script>
 
 <script src="/assets/js/access.js"></script>
