@@ -1,2 +1,3 @@
 theme: jekyll-theme-slate
-error_page: 404/index.html
+# Point to the root 404 file so GitHub Pages will serve the custom page
+error_page: 404.html

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .about-hero {
+      padding: 3.5rem 1rem;
+      text-align: center;
+      background: linear-gradient(90deg, rgba(78,250,170,0.06) 0%, rgba(0,124,107,0.02) 100%);
+      border-bottom: 1px solid rgba(78,250,170,0.03);
+    }
+
+    .about-hero .title { font-family: var(--font-head); font-size: 2.25rem; color: var(--accent-mint); margin-bottom: 0.45rem; }
+    .about-hero .subtitle { color: var(--text-light); opacity: 0.9; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 880px) { .about-grid { grid-template-columns: 1fr; } }
+
+    .about-box h2 { color: var(--accent-mint); margin-bottom: 0.5rem; }
+    .about-cta { margin-top: 1rem; }
+    .about-cta .btn-primary { padding: 0.65rem 1.4rem; font-size: 0.95rem; }
+
+    .side-panel { background: linear-gradient(0deg, rgba(78,250,170,0.02), transparent); border: 1px solid rgba(78,250,170,0.04); padding: 1.25rem; border-radius: 8px; }
+    .side-panel h3 { color: var(--accent-teal); margin: 0 0 0.5rem 0; }
+    .side-panel p { opacity: 0.92; }
+  </style>
+</head>
+<body>
+
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="about-hero">
+    <div class="content">
+      <div class="title">About Site-89</div>
+      <div class="subtitle">A community-driven SCP roleplaying experience built with immersion, creativity, and storytelling in mind.</div>
+    </div>
+  </section>
+
+  <section class="content" style="padding-top:2rem">
+    <div class="about-grid">
+      <div>
+        <div class="about-box">
+          <p><strong>Site-89 is a community-driven SCP roleplaying experience built from the ground up with a focus on immersion, creativity, and storytelling.</strong> Set within the SCP universe, we’ve created a unique platform for roleplay using Minecraft as our medium, but this is far more than just a server.</p>
+
+          <h2>History</h2>
+          <p>Born in February 2024 from a small group of friends passionate about SCP, Site-89 has grown into a fully developed roleplay environment. We saw a gap in serious SCP roleplay spaces outside of platforms like Roblox, and decided to build something better.</p>
+
+          <h2>Systems & Features</h2>
+          <p>Every system you see here has been carefully crafted: from custom plugins that support deep roleplay mechanics to an in-universe site control and monitoring system powered by ComputerCraft. Whether you're diving into personnel dossiers, managing anomalous objects, or responding to unfolding incidents, Site-89 is built to immerse you.</p>
+
+          <h2>Who is this for?</h2>
+          <p>Whether you're new to SCP or a long-time fan, welcome, and enjoy your stay at Site-89.</p>
+
+          <div class="about-cta">
+            <a href="/guides/" class="btn-primary">Getting Started</a>
+            <a href="/accounts/" class="btn-secondary" style="margin-left:.6rem">Create Account</a>
+          </div>
+        </div>
+
+        <div class="about-box">
+          <h2>Our Mission</h2>
+          <p>Site-89 is dedicated to fostering high-quality, immersive, and long-term roleplay. We strive to create an environment where members can explore the SCP universe through meaningful stories, and collaborative character development. We ensure every participant, whether new or experienced, can contribute to and enjoy the experience.</p>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <h3>Quick Facts</h3>
+        <p><strong>Founded:</strong> February 2024</p>
+        <p><strong>Platform:</strong> Minecraft roleplay</p>
+        <p><strong>Focus:</strong> Immersion, long-term storytelling, community-run systems</p>
+
+        <hr style="border-color: rgba(78,250,170,0.04); margin: 0.75rem 0;">
+
+        <h3>Get Involved</h3>
+        <p>Visit our <a href="/guides/">Guides</a> to learn how to join and contribute, or create an account to begin.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script>
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      nav.classList.toggle("is-sticky", window.scrollY > 120);
+    });
+  </script>
+</body>
+</html>
