@@ -22,6 +22,18 @@
 
     <a href="/guides/">Guides</a>
   </div>
+  <button id="navToggle" class="nav-toggle" aria-expanded="false" aria-label="Open menu">☰</button>
+
+  <div id="mobileMenu" class="mobile-menu hidden" aria-hidden="true">
+    <a href="/departments/">Departments</a>
+    <a href="/archives/">Archives Hub</a>
+    <a href="/personnel-files/">Personnel Files</a>
+    <a href="/goi-poi/">Groups / Persons of Interest</a>
+    <a href="/anomalies/">Anomalies</a>
+    <a href="/research-logs/">Research Logs</a>
+    <a href="/incident-reports/">Incident Reports</a>
+    <a href="/guides/">Guides</a>
+  </div>
 
   <!-- Right side: socials + login -->
   <div class="nav-right">
@@ -119,6 +131,41 @@
     display: none !important;
   }
 
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #0e1113;
+    padding: 0.9rem 1rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .mobile-menu a {
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+
+  .mobile-menu a:hover { background: rgba(78,250,170,0.03); color: var(--accent-mint); }
+
   .social-buttons a {
     font-size: 1.2rem;
     transition: color 0.2s;
@@ -151,6 +198,28 @@
   document.addEventListener("click", () => {
     navDropdown.classList.add("hidden");
   });
+
+  // Mobile menu toggle
+  const navToggle = document.getElementById('navToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if(navToggle && mobileMenu){
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileMenu.classList.toggle('hidden');
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', (!expanded).toString());
+      mobileMenu.setAttribute('aria-hidden', (!expanded).toString());
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', () => {
+      if(!mobileMenu.classList.contains('hidden')){
+        mobileMenu.classList.add('hidden');
+        navToggle.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
 </script>
 
 <script>

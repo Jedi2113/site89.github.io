@@ -399,6 +399,26 @@ footer {
   z-index: 0;
 }
 
+/* ─────────── Mobile / Responsive tweaks ─────────── */
+@media (max-width: 840px) {
+  #main-nav { padding: 0.5rem 0.8rem; }
+  .nav-left a:not(.nav-logo), .nav-left .nav-dropdown-parent { display: none; }
+  .nav-toggle { display: inline-block; }
+  .mobile-menu { display: flex; }
+  .nav-search { display: none; }
+  .content { padding: 1rem; }
+  .hero { padding: 2rem 1rem; }
+  .hero-logo { display: none; }
+  .site-logo, .site-header img { width: 96px; }
+  footer { font-size: 0.85rem; padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .error-code { font-size: 4.5rem; }
+  h1 { font-size: 1.6rem; }
+  .brand-title { font-size: 1rem; }
+}
+
 /* ─────────── Button utilities (shared) ─────────── */
 .btn-primary, .btn-secondary {
   padding: 0.6rem 1rem;
