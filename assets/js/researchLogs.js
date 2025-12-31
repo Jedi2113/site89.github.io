@@ -76,27 +76,49 @@ document.addEventListener('includesLoaded', ()=>{
   if(closeModalBtn) closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
   if(cancelLogBtn) cancelLogBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
 
-  // Helper: render logs with optional search filter
+  // Helper: render logs into table with optional search filter
   let logsCache = [];
+  const tableBody = document.getElementById('logsTableBody');
+  const viewModal = document.getElementById('viewModal');
+  const viewModalTitle = document.getElementById('viewModalTitle');
+  const viewModalBody = document.getElementById('viewModalBody');
+  const viewModalMeta = document.getElementById('viewModalMeta');
+  const viewModalClose = document.getElementById('viewModalClose');
+
   function renderLogs(arr){
     const q = (searchInput && searchInput.value || '').trim().toLowerCase();
-    if(isNaN(userClearance()) || userClearance() <= 0){ logsList.innerHTML = '<p>You need clearance &gt; 0 to view research logs.</p>'; return; }
-    const filtered = (!q) ? arr : arr.filter(d => (d.title||'').toLowerCase().includes(q) || (d.content||'').toLowerCase().includes(q) || (d.tags||[]).join(' ').toLowerCase().includes(q));
-    if(filtered.length === 0){ logsList.innerHTML = '<p>No entries match.</p>'; return; }
-    logsList.innerHTML = '';
+    if(isNaN(userClearance()) || userClearance() <= 0){ tableBody.innerHTML = '<tr><td colspan="2" class="empty">You need clearance &gt; 0 to view research logs.</td></tr>'; return; }
+    const filtered = (!q) ? arr : arr.filter(d => (d.title||'').toLowerCase().includes(q) || (d.tags||[]).join(' ').toLowerCase().includes(q));
+    if(filtered.length === 0){ tableBody.innerHTML = '<tr><td colspan="2" class="empty">No entries match.</td></tr>'; return; }
+    tableBody.innerHTML = '';
     filtered.forEach(d => {
-      const item = document.createElement('div');
-      item.className = 'log-card';
-      const titleEl = document.createElement('div'); titleEl.style.fontWeight = '700'; titleEl.textContent = d.title || '(untitled)';
-      const metaEl = document.createElement('div'); metaEl.className = 'meta'; metaEl.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
-      const contentEl = document.createElement('div'); contentEl.className = 'content'; contentEl.innerHTML = (d.content || '').replace(/\n/g,'<br>');
-      item.appendChild(titleEl); item.appendChild(metaEl); item.appendChild(contentEl);
-      if(d.tags && d.tags.length){ const tagsEl = document.createElement('div'); tagsEl.style.marginTop = '.6rem'; tagsEl.innerHTML = d.tags.map(t => `<span class="tag" style="display:inline-block;padding:.15rem .4rem;border-radius:4px;background:rgba(255,255,255,0.03);margin-right:.4rem;font-size:.85rem">${t}</span>`).join(''); item.appendChild(tagsEl); }
-      logsList.appendChild(item);
+      const row = document.createElement('tr');
+      const titleCell = document.createElement('td');
+      const link = document.createElement('a'); link.className = 'click-row'; link.href = '#'; link.textContent = d.title || '(untitled)';
+      link.addEventListener('click', (e)=>{ e.preventDefault(); openViewModal(d); });
+      titleCell.appendChild(link);
+
+      const tagsCell = document.createElement('td');
+      if(d.tags && d.tags.length){ tagsCell.innerHTML = d.tags.map(t => `<span class="pill" style="margin-right:.4rem">${t}</span>`).join(''); }
+      else { tagsCell.innerHTML = '<span style="color:var(--text-light);opacity:.7">—</span>'; }
+
+      row.appendChild(titleCell); row.appendChild(tagsCell);
+      tableBody.appendChild(row);
     });
   }
 
   if(searchInput){ searchInput.addEventListener('input', ()=> renderLogs(logsCache)); }
+
+  // View modal handlers
+  function openViewModal(d){
+    viewModalTitle.textContent = d.title || '(untitled)';
+    viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
+    viewModalBody.innerHTML = (d.content || '').replace(/\n/g,'<br>');
+    viewModal.setAttribute('aria-hidden','false');
+  }
+  function closeViewModal(){ viewModal.setAttribute('aria-hidden','true'); }
+  if(viewModalClose) viewModalClose.addEventListener('click', closeViewModal);
+  if(viewModal) viewModal.addEventListener('click', (ev)=>{ if(ev.target === viewModal) closeViewModal(); });
 
   // Wire create form
   if(createForm){

@@ -63,217 +63,139 @@
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
-  <section class="content anomalies-hero">
+  <section class="content ms-anomalies">
+    <style>
+      /* M365-style layout */
+      .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+      .ms-title h1{margin:0;font-size:1.6rem}
+      .ms-title p{margin:0;color:var(--text-light);opacity:.9}
+      .ms-toolbar{display:flex;align-items:center;gap:.6rem}
+      .ms-search{padding:.56rem .8rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:280px}
+      .ms-filters{display:flex;gap:.5rem}
+      .table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
+      .table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
+      .table th,.table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
+      .click-row{display:block;color:inherit;text-decoration:none}
+      .pill{display:inline-block;padding:.25rem .5rem;border-radius:6px;font-weight:700;font-size:.85rem}
+      .pill.Safe{background:rgba(78,250,170,0.08);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.06)}
+      .pill.Euclid{background:rgba(0,124,107,0.07);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.06)}
+      .pill.Keter{background:rgba(146,0,0,0.06);color:var(--accent-red);border:1px solid rgba(146,0,0,0.06)}
+      .empty{padding:1.2rem;color:var(--text-light)}
+      @media (max-width:720px){ .ms-header{flex-direction:column;align-items:stretch}.ms-toolbar{justify-content:space-between} .table th:nth-child(3), .table td:nth-child(3){display:none} }
+    </style>
 
-    <div class="anomalies-hero-inner">
-      <div>
-        <div class="page-identifier">ON-SITE ANOMALIES</div>
-        <h1 class="anomalies-title">Containment Database</h1>
-        <p class="anomalies-sub">Search, filter, and inspect Site-89's logged anomalies. Use filters to narrow by class or risk level.</p>
+    <div class="ms-header">
+      <div class="ms-title">
+        <h1>Containment Database</h1>
+        <p>Quick list of site anomalies — click any row to open the full entry.</p>
+      </div>
 
-        <div class="anomalies-controls" style="margin-top:1.25rem; display:flex; gap:.6rem; align-items:center; justify-content:center; flex-wrap:wrap;">
-          <input id="anomalySearch" placeholder="Search by SCP ID or nickname…" style="padding:.6rem .9rem; border-radius:6px; border:1px solid rgba(78,250,170,0.06); background: rgba(255,255,255,0.02); color:var(--text-light); width:320px;">
-          <div class="class-filters">
-            <button class="filter-btn active" data-class="all">All</button>
-            <button class="filter-btn" data-class="Safe">Safe</button>
-            <button class="filter-btn" data-class="Euclid">Euclid</button>
-            <button class="filter-btn" data-class="Keter">Keter</button>
-          </div>
+      <div class="ms-toolbar">
+        <input id="anomalySearch" class="ms-search" placeholder="Search by SCP ID or nickname…">
+        <div class="ms-filters">
+          <select id="classFilter">
+            <option value="all">All classes</option>
+            <option value="Safe">Safe</option>
+            <option value="Euclid">Euclid</option>
+            <option value="Keter">Keter</option>
+          </select>
         </div>
-
-        <div class="anomaly-stats" style="margin-top:1rem; display:flex; gap:1rem; justify-content:center;">
-          <div class="stat-pill">Total: <span id="statTotal">0</span></div>
-          <div class="stat-pill">Contained: <span id="statContained">0</span></div>
-          <div class="stat-pill">High Risk: <span id="statHigh">0</span></div>
-        </div>
-
       </div>
     </div>
 
+    <table class="table" aria-describedby="tableDesc">
+      <thead>
+        <tr><th style="width:160px">Item</th><th style="width:160px">Class</th><th>Nickname</th></tr>
+      </thead>
+      <tbody id="anomalyTableBody">
+        <tr><td colspan="3" class="empty">Loading anomalies…</td></tr>
+      </tbody>
+    </table>
+    <div id="tableDesc" style="display:none">Click any row to open full anomaly file.</div>
   </section>
-
-  <section class="content anomalies-list">
-    <div class="anomaly-grid" id="anomalyGrid">
-      <!-- cards injected here -->
-    </div>
-
-    <div id="anomalyModal" class="modal" aria-hidden="true">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="modalTitle">SCP-000</h2>
-          <button class="modal-close" id="modalClose">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div id="modalBody"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <style>
-    .anomalies-hero { background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent); text-align:center; padding:3rem 1rem; border-bottom:1px solid rgba(78,250,170,0.03); }
-    .anomalies-hero .page-identifier { font-family: var(--font-mono); color:var(--accent-mint); letter-spacing:1.6px; text-transform:uppercase; margin-bottom:.5rem; }
-    .anomalies-title { font-family: var(--font-head); font-size: clamp(2rem, 6vw, 3.2rem); background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0; }
-    .anomalies-sub { color:var(--text-light); opacity:.86; margin-top:.45rem; }
-    .stat-pill { background: rgba(78,250,170,0.04); padding:.5rem .8rem; border-radius: 999px; color: var(--accent-mint); font-family: var(--font-mono); }
-
-    .anomaly-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:1rem; margin:1.5rem 0; }
-    .anomaly-card { background: linear-gradient(135deg, rgba(78,250,170,0.02), transparent); border:1px solid rgba(78,250,170,0.04); border-radius:8px; padding:1rem; transition: transform .18s ease, box-shadow .18s ease; cursor:pointer; }
-    .anomaly-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,0.45); }
-    .anomaly-card .id { font-family: var(--font-mono); color:var(--accent-mint); }
-    .anomaly-card .class { font-weight:700; padding:.2rem .5rem; border-radius:6px; font-size:.85rem; }
-    .class.Safe { background: rgba(78,250,170,0.08); color:var(--accent-mint); border:1px solid rgba(78,250,170,0.06); }
-    .class.Euclid { background: rgba(0,124,107,0.07); color:var(--accent-teal); border:1px solid rgba(0,124,107,0.06); }
-    .class.Keter { background: rgba(146,0,0,0.06); color:var(--accent-red); border:1px solid rgba(146,0,0,0.06); }
-
-    .modal { display:none; position:fixed; inset:0; align-items:center; justify-content:center; background: rgba(0,0,0,0.7); z-index:2000; }
-    .modal[aria-hidden="false"] { display:flex; }
-    .modal-content { background:var(--bg-card); border:1px solid rgba(78,250,170,0.04); padding:1.15rem; border-radius:8px; max-width:900px; width:94%; }
-    .modal-header { display:flex; justify-content:space-between; align-items:center; }
-    .modal-body { margin-top:.6rem; }
-
-    .filter-btn { padding:.45rem .6rem; border-radius:6px; background:transparent; border:1px solid rgba(255,255,255,0.03); color:var(--text-light); cursor:pointer; }
-    .filter-btn.active { background: linear-gradient(90deg,var(--accent-mint),var(--accent-teal)); color:#081413; }
-
-    @media (max-width:700px){ .anomaly-grid{ grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); } }
-  </style>
 
   <div data-include="/components/footer.html"></div>
 
-  <script src="assets/js/include.js"></script>
-  <script type="module" src="assets/js/auth.js"></script>
-  <script>
+  <script src="/assets/js/include.js"></script>
+  <script type="module">
     (function(){
-      // Anomaly data (expanded)
+      // Anomaly data (local fallback)
       const anomalies = [
-        { id: 'SCP-131', clazz: 'Safe', nick: 'The Eye Pods', risk: 'Notice', notes: 'Vlam — The Eye Pods', img: 'https://i.imgur.com/3c4h0bQ.png', clearance: 1},
-        { id: 'SCP-160', clazz: 'Euclid', nick: 'Predator Drone', risk: 'Warning', notes: 'Vlam — Autonomous predator drone', img: 'https://i.imgur.com/1w2kY6x.png', clearance: 3},
-        { id: 'SCP-178', clazz: 'Safe', nick: '3-D Glasses', risk: 'Warning', notes: 'Vlam — Visual distortion when worn', img: 'https://i.imgur.com/4QfK3a9.png', clearance: 3},
-        { id: 'SCP-330', clazz: 'Safe', nick: 'Take Only Two', risk: 'Caution', notes: 'Vlam — Consumable anomaly', img: 'https://i.imgur.com/6K1QZPx.png', clearance: 2},
-        { id: 'SCP-346', clazz: 'Safe', nick: 'Pterry', risk: 'Notice', notes: 'Vlam — avian anomaly', img: 'https://i.imgur.com/placeholder.png', clearance: 1},
-        { id: 'SCP-553', clazz: 'Euclid', nick: 'Crystalline Butterflies', risk: 'Warning', notes: 'Vlam — crystalline lepidoptera', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-811', clazz: 'Euclid', nick: 'Swamp Woman', risk: 'Caution', notes: 'Vlam — humanoid manifold', img: 'https://i.imgur.com/placeholder.png', clearance: 2},
-        { id: 'SCP-999', clazz: 'Safe', nick: 'The Tickle Monster', risk: 'Notice', notes: 'Vlam — benevolent gelatinous entity', img: 'https://i.imgur.com/placeholder.png', clearance: 1},
-        { id: 'SCP-1162', clazz: 'Euclid', nick: 'A hole in the wall', risk: 'Caution', notes: 'Vlam — interstitial anomaly', img: 'https://i.imgur.com/placeholder.png', clearance: 2},
-        { id: 'SCP-2295', clazz: 'Safe', nick: 'Patchwork Bear', risk: 'Notice', notes: 'Vlam — anomalous construct', img: 'https://i.imgur.com/placeholder.png', clearance: 1},
+        { id: 'SCP-131', clazz: 'Safe', nick: 'The Eye Pods' },
+        { id: 'SCP-160', clazz: 'Euclid', nick: 'Predator Drone' },
+        { id: 'SCP-178', clazz: 'Safe', nick: '3-D Glasses' },
+        { id: 'SCP-330', clazz: 'Safe', nick: 'Take Only Two' },
+        { id: 'SCP-346', clazz: 'Safe', nick: 'Pterry' },
+        { id: 'SCP-553', clazz: 'Euclid', nick: 'Crystalline Butterflies' },
+        { id: 'SCP-811', clazz: 'Euclid', nick: 'Swamp Woman' },
+        { id: 'SCP-999', clazz: 'Safe', nick: 'The Tickle Monster' },
+        { id: 'SCP-1162', clazz: 'Euclid', nick: 'A hole in the wall' },
+        { id: 'SCP-2295', clazz: 'Safe', nick: 'Patchwork Bear' },
 
-        { id: 'SCP-009', clazz: 'Euclid', nick: 'Red Ice', risk: 'Warning', notes: 'Vlam — cryogenic substance', img: 'https://i.imgur.com/2Gz0G9k.png', clearance: 3},
-        { id: 'SCP-049', clazz: 'Euclid', nick: 'The Plague Doctor', risk: 'Warning', notes: 'Vlam — humanoid entity', img: 'https://i.imgur.com/o5A9r7N.png', clearance: 3},
-        { id: 'SCP-063', clazz: 'Safe', nick: "The World's Best Toothbrush", risk: 'Notice', notes: 'Vlam — anomalous toothbrush artifact', img: 'https://i.imgur.com/placeholder.png', clearance: 1},
-        { id: 'SCP-109', clazz: 'Euclid', nick: 'Infinite Canteen', risk: 'Notice', notes: 'Dark — self-refilling canteen', img: 'https://i.imgur.com/placeholder.png', clearance: 1},
-        { id: 'SCP-151', clazz: 'Euclid', nick: 'The Painting', risk: 'Warning', notes: 'Vlam — hostile painting', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-524', clazz: 'Safe', nick: 'Walter the Omnivorous Rabbit', risk: 'Caution', notes: 'Dark — anomalous lagomorph', img: 'https://i.imgur.com/placeholder.png', clearance: 2},
-        { id: 'SCP-548', clazz: 'Euclid', nick: 'Ice Spider', risk: 'Warning', notes: 'Vlam — arachnid hostile', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-1025', clazz: 'Safe', nick: 'An Encyclopedia of Common Diseases', risk: 'Warning', notes: 'Vlam — informational tome', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
+        { id: 'SCP-009', clazz: 'Euclid', nick: 'Red Ice' },
+        { id: 'SCP-049', clazz: 'Euclid', nick: 'The Plague Doctor' },
+        { id: 'SCP-063', clazz: 'Safe', nick: "The World's Best Toothbrush" },
+        { id: 'SCP-109', clazz: 'Euclid', nick: 'Infinite Canteen' },
+        { id: 'SCP-151', clazz: 'Euclid', nick: 'The Painting' },
+        { id: 'SCP-524', clazz: 'Safe', nick: 'Walter the Omnivorous Rabbit' },
+        { id: 'SCP-548', clazz: 'Euclid', nick: 'Ice Spider' },
+        { id: 'SCP-1025', clazz: 'Safe', nick: 'An Encyclopedia of Common Diseases' },
 
-        { id: 'SCP-098', clazz: 'Euclid', nick: 'Surgeon Crabs', risk: 'Caution', notes: 'Vlam — surgical arthropods', img: 'https://i.imgur.com/7mZ2x1k.png', clearance: 2},
-        { id: 'SCP-914', clazz: 'Safe', nick: 'The Clockworks', risk: 'Caution', notes: 'Vlam — temporal machine', img: 'https://i.imgur.com/n2Qh3bM.png', clearance: 2},
-        { id: 'SCP-939', clazz: 'Keter', nick: 'With Many Voices', risk: 'Danger', notes: 'Keneq — predatory pack creatures', img: 'https://i.imgur.com/placeholder.png', clearance: 4},
+        { id: 'SCP-098', clazz: 'Euclid', nick: 'Surgeon Crabs' },
+        { id: 'SCP-914', clazz: 'Safe', nick: 'The Clockworks' },
+        { id: 'SCP-939', clazz: 'Keter', nick: 'With Many Voices' },
 
-        { id: 'SCP-689', clazz: 'Keter', nick: 'Haunter in the Dark', risk: 'Danger', notes: 'Vlam — hostile entity of darkness', img: 'https://i.imgur.com/q2p8v9R.png', clearance: 4},
-        { id: 'SCP-718', clazz: 'Keter', nick: 'Eyeball', risk: 'Warning', notes: 'Keneq — large ocular anomaly', img: 'https://i.imgur.com/zxk7e8V.png', clearance: 3},
-        { id: 'SCP-966', clazz: 'Euclid', nick: 'Sleep Killer', risk: 'Warning', notes: 'Keneq — predatory anomaly', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-1048', clazz: 'Keter', nick: 'Builder Bear', risk: 'Warning', notes: 'Vlam — hostile construct', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-3199', clazz: 'Keter', nick: 'Humans, Refuted', risk: 'Critical', notes: 'Keneq — high-threat cognitive hazard', img: 'https://i.imgur.com/placeholder.png', clearance: 5},
-        { id: 'SCP-294', clazz: 'Euclid', nick: 'The Coffee Machine', risk: 'Warning', notes: 'Vlam — anomalous beverage dispenser', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
+        { id: 'SCP-689', clazz: 'Keter', nick: 'Haunter in the Dark' },
+        { id: 'SCP-718', clazz: 'Keter', nick: 'Eyeball' },
+        { id: 'SCP-966', clazz: 'Euclid', nick: 'Sleep Killer' },
+        { id: 'SCP-1048', clazz: 'Keter', nick: 'Builder Bear' },
+        { id: 'SCP-3199', clazz: 'Keter', nick: 'Humans, Refuted' },
+        { id: 'SCP-294', clazz: 'Euclid', nick: 'The Coffee Machine' },
 
-        { id: 'SCP-087', clazz: 'Euclid', nick: 'The Stairwell', risk: 'Warning', notes: 'Vlam — bottomless stairwell anomaly', img: 'https://i.imgur.com/placeholder.png', clearance: 3},
-        { id: 'SCP-1000', clazz: 'Keter', nick: 'Bigfoot', risk: 'Danger', notes: 'Keneq — massive cryptid', img: 'https://i.imgur.com/placeholder.png', clearance: 4},
-        { id: 'SCP-1057', clazz: 'Safe', nick: 'Absence of Shark', risk: 'Caution', notes: 'Vlam — memetic absence', img: 'https://i.imgur.com/placeholder.png', clearance: 2},
-        { id: 'SCP-2761', clazz: 'Euclid', nick: 'Most of an Allosaurus', risk: 'Warning', notes: 'Vlam — biological anomaly', img: 'https://i.imgur.com/placeholder.png', clearance: 3}
+        { id: 'SCP-087', clazz: 'Euclid', nick: 'The Stairwell' },
+        { id: 'SCP-1000', clazz: 'Keter', nick: 'Bigfoot' },
+        { id: 'SCP-1057', clazz: 'Safe', nick: 'Absence of Shark' },
+        { id: 'SCP-2761', clazz: 'Euclid', nick: 'Most of an Allosaurus' }
       ];
 
-      const grid = document.getElementById('anomalyGrid');
-      const search = document.getElementById('anomalySearch');
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      const statTotal = document.getElementById('statTotal');
-      const statContained = document.getElementById('statContained');
-      const statHigh = document.getElementById('statHigh');
+      const tbody = document.getElementById('anomalyTableBody');
+      const searchInput = document.getElementById('anomalySearch');
+      const classFilter = document.getElementById('classFilter');
 
-      function buildCard(a){
-        const el = document.createElement('div');
-        el.className = 'anomaly-card';
-        el.innerHTML = `
-          <div style="display:flex;gap:.6rem;align-items:center">
-            <div style="width:64px;height:64px;background-image:url('${a.img}');background-size:cover;border-radius:6px;flex-shrink:0"></div>
-            <div style="flex:1">
-              <div class="id">${a.id}</div>
-              <div style="display:flex;gap:.5rem;align-items:center;margin-top:.35rem">
-                <div class="class ${a.clazz}">${a.clazz}</div>
-                <div style="color:var(--text-light);opacity:.8;font-size:.9rem">${a.nick}</div>
-              </div>
-            </div>
-          </div>
-          <div style="margin-top:.8rem;color:var(--text-light);opacity:.9">${a.notes}</div>
-        `;
-
-        el.addEventListener('click', ()=> openModal(a));
-        return el;
-      }
+      function idNum(id){ const m = id.match(/\d+/); return m ? m[0] : id; }
 
       function render(list){
-        grid.innerHTML = '';
-        list.forEach(a => grid.appendChild(buildCard(a)));
-        statTotal.textContent = list.length;
-        statContained.textContent = list.filter(x => x.clazz === 'Safe').length;
-        statHigh.textContent = list.filter(x => x.clazz === 'Keter').length;
+        if(!list || list.length === 0){ tbody.innerHTML = '<tr><td colspan="3" class="empty">No anomalies found</td></tr>'; return; }
+        tbody.innerHTML = '';
+        list.forEach(a => {
+          const row = document.createElement('tr');
+          const num = idNum(a.id);
+          row.innerHTML = `
+            <td><a class="click-row" href="/assets/anomalies/${num}.html">${a.id}</a></td>
+            <td><a class="click-row" href="/assets/anomalies/${num}.html"><span class="pill ${a.clazz}">${a.clazz}</span></a></td>
+            <td><a class="click-row" href="/assets/anomalies/${num}.html">${a.nick}</a></td>
+          `;
+          tbody.appendChild(row);
+        });
       }
 
-      // initial render
+      function applyFilters(){
+        const q = (searchInput.value || '').toLowerCase().trim();
+        const cls = classFilter.value;
+        let list = anomalies.slice();
+        if(q) list = list.filter(a => (a.id||'').toLowerCase().includes(q) || (a.nick||'').toLowerCase().includes(q));
+        if(cls !== 'all') list = list.filter(a => a.clazz === cls);
+        render(list);
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      classFilter.addEventListener('change', applyFilters);
+
+      // initial
       render(anomalies);
 
-      // search
-      search.addEventListener('input', (e)=>{
-        const q = (e.target.value || '').toLowerCase().trim();
-        const filtered = anomalies.filter(a => a.id.toLowerCase().includes(q) || a.nick.toLowerCase().includes(q) );
-        // keep class filter
-        const active = document.querySelector('.filter-btn.active').dataset.class;
-        const final = active === 'all' ? filtered : filtered.filter(x => x.clazz === active);
-        render(final);
-      });
-
-      // filters
-      filterBtns.forEach(btn => btn.addEventListener('click', ()=>{
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const cls = btn.dataset.class;
-        const q = (search.value || '').toLowerCase().trim();
-        let list = anomalies.slice();
-        if(q) list = list.filter(a => a.id.toLowerCase().includes(q) || a.nick.toLowerCase().includes(q));
-        const final = cls === 'all' ? list : list.filter(x => x.clazz === cls);
-        render(final);
-      }));
-
-      // modal
-      const modal = document.getElementById('anomalyModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalBody = document.getElementById('modalBody');
-      const modalClose = document.getElementById('modalClose');
-
-      function openModal(a){
-        modalTitle.textContent = a.id + ' — ' + a.nick;
-        modalBody.innerHTML = `
-          <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
-            <div style="width:220px;height:140px;background-image:url('${a.img}');background-size:cover;border-radius:6px;flex-shrink:0"></div>
-            <div style="flex:1">
-              <div class="meta">Class: <strong>${a.clazz}</strong> &nbsp; — &nbsp; Risk: <strong>${a.risk}</strong></div>
-              <p style="margin-top:.6rem;color:var(--text-light);opacity:.92">${a.notes}</p>
-              <p style="margin-top:.6rem;color:var(--text-light);opacity:.8;font-style:italic">Containment procedures and extended notes are placeholders in this prototype.</p>
-
-              <div style="margin-top:0.8rem;display:flex;gap:.6rem;align-items:center;">
-                <a class="btn-primary" href="/assets/anomalies/${a.id.match(/\d+/)[0]}.html">Open Full Entry</a>
-                <a class="btn-secondary" href="#" onclick="closeModal();return false;">Close</a>
-              </div>
-            </div>
-          </div>
-        `;
-        modal.setAttribute('aria-hidden','false');
-      }
-
-      function closeModal(){ modal.setAttribute('aria-hidden','true'); }
-      modalClose.addEventListener('click', closeModal);
-      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
-
+      // accessibility: focus on search when includes loaded
+      document.addEventListener('includesLoaded', ()=>{ searchInput.focus(); });
     })();
   </script>
 </body>

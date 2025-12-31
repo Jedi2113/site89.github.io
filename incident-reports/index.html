@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="required-clearance" content="1">
-  <title>Research Logs — Site-89</title>
+  <title>Incident Reports — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 <body>
@@ -12,22 +12,15 @@
   <div data-include="/components/navbar.html"></div>
 
   <main class="content">
-    <section class="about-box">
-      <h1>Research Logs</h1>
-      <p>Repository for research notes and experiment logs. Viewing requires security clearance &gt; 0. Creating entries requires membership of the Research/Scientific departments or clearance &gt; 4.</p>
-    </section>
-
     <section class="about-box ms-logs">
       <style>
-        /* M365-style header / table layout */
+        /* M365-styled header/table for incident reports */
         .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
         .ms-title h1{margin:0;font-size:1.5rem}
         .ms-title .ms-sub{margin:0;color:var(--text-light);font-size:.95rem}
         .ms-toolbar{display:flex;align-items:center;gap:.6rem}
         .ms-search{padding:.5rem .7rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:220px}
         .ms-btn-new{padding:.45rem .8rem;border-radius:6px;background:var(--accent-mint);color:var(--bg-dark);border:none}
-
-        /* Table styles */
         .ms-table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
         .ms-table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
         .ms-table th,.ms-table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
@@ -38,7 +31,6 @@
         .pill.Keter{background:rgba(146,0,0,0.06);color:var(--accent-red);border:1px solid rgba(146,0,0,0.06)}
         .empty{padding:1.2rem;color:var(--text-light)}
 
-        /* View modal */
         .view-modal{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);z-index:1800}
         .view-modal[aria-hidden="false"]{display:flex}
         .view-modal .modal-box{background:var(--bg-card);padding:1.2rem;border-radius:10px;max-width:900px;width:96%;border:1px solid rgba(255,255,255,0.03)}
@@ -49,53 +41,54 @@
 
       <div class="ms-header">
         <div class="ms-title">
-          <h1>Research Logs</h1>
-          <p class="ms-sub">Repository for research notes and experiment logs. Viewing requires security clearance &gt; 0. Creating entries requires membership of the Research/Scientific departments or clearance &gt; 4.</p>
+          <h1>Incident Reports</h1>
+          <p class="ms-sub">Logged incident reports — click any title to open the full report. Anyone with ScD or clearance ≥ 1 can view; creation requires ScD or clearance ≥ 3.</p>
         </div>
 
         <div class="ms-toolbar">
-          <input id="logSearch" class="ms-search" placeholder="Search logs by title, tags, or content…">
-          <button id="newLogBtn" class="ms-btn-new" style="display:none">+ New</button>
-        </div>
-      </div>
-
-      <!-- Modal create form -->
-      <div id="createModal" class="modal" aria-hidden="true" style="display:none">
-        <div class="modal-content" role="dialog" aria-modal="true">
-          <div class="modal-header">
-            <h2>Create New Research Log</h2>
-            <button id="closeModalBtn" class="btn-link" title="Close">✕</button>
-          </div>
-
-          <form id="createLogForm">
-            <label>Title <input id="logTitle" placeholder="Title" required></label>
-            <label>Tags <input id="logTags" placeholder="Tags (comma separated)"></label>
-            <label>Content <textarea id="logContent" placeholder="Entry content" style="min-height:200px" required></textarea></label>
-            <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createLogBtn" class="btn-primary" type="submit">Create</button><button id="cancelLogBtn" class="btn-secondary" type="button">Cancel</button></div>
-            <p id="logFeedback" class="feedback"></p>
-          </form>
+          <input id="incidentSearch" class="ms-search" placeholder="Search incidents by title or tags…">
+          <button id="newIncidentBtn" class="ms-btn-new" style="display:none">+ New</button>
         </div>
       </div>
 
       <h2 style="margin-top:1rem">Entries</h2>
-      <table class="ms-table" aria-describedby="researchLogsDesc">
+      <table class="ms-table" aria-describedby="incidentDesc">
         <thead>
           <tr><th style="width:1px">Title</th><th>Tags</th></tr>
         </thead>
-        <tbody id="logsTableBody">
+        <tbody id="incTableBody">
           <tr><td colspan="2" class="empty">Loading…</td></tr>
         </tbody>
       </table>
-      <div id="researchLogsDesc" style="display:none">Click any title to view the full entry.</div>
+      <div id="incidentDesc" style="display:none">Click any title to view the full incident report.</div>
 
       <!-- View modal -->
-      <div id="viewModal" class="view-modal" aria-hidden="true">
+      <div id="viewIncidentModal" class="view-modal" aria-hidden="true">
         <div class="modal-box" role="dialog" aria-modal="true">
-          <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="viewModalTitle">Title</h2><button id="viewModalClose" class="btn-link">✕</button></div>
-          <div id="viewModalMeta" class="meta"></div>
-          <div id="viewModalBody" style="margin-top:.6rem"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="viewIncidentTitle">Title</h2><button id="viewIncidentClose" class="btn-link">✕</button></div>
+          <div id="viewIncidentMeta" class="meta"></div>
+          <div id="viewIncidentBody" style="margin-top:.6rem"></div>
         </div>
       </div>
+
+      <!-- Create modal (same pattern as research logs) -->
+      <div id="createIncidentModal" class="modal" aria-hidden="true" style="display:none">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <div class="modal-header">
+            <h2>Create New Incident Report</h2>
+            <button id="closeIncidentModal" class="btn-link" title="Close">✕</button>
+          </div>
+
+          <form id="createIncidentForm">
+            <label>Title <input id="incTitle" placeholder="Title" required></label>
+            <label>Tags <input id="incTags" placeholder="Tags (comma separated)"></label>
+            <label>Content <textarea id="incContent" placeholder="Incident details" style="min-height:200px" required></textarea></label>
+            <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createIncidentBtn" class="btn-primary" type="submit">Create</button><button id="cancelIncidentBtn" class="btn-secondary" type="button">Cancel</button></div>
+            <p id="incFeedback" class="feedback"></p>
+          </form>
+        </div>
+      </div>
+
     </section>
   </main>
 
@@ -103,6 +96,6 @@
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
-  <script type="module" src="/assets/js/researchLogs.js"></script>
+  <script type="module" src="/assets/js/incidentReports.js"></script>
 </body>
 </html>
