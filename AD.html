@@ -10,79 +10,341 @@
   <link rel="stylesheet" href="assets/css/main.css">
 
   <style>
-    /* AD hub specific styles */
+    /* Corporate/Government AD Styling */
     .ad-hero {
-      min-height: 70vh;
+      min-height: 50vh;
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
       padding: 3rem 1rem;
-      background: linear-gradient(180deg, rgba(0,0,0,0.55), transparent), radial-gradient(circle at 10% 10%, rgba(78,250,170,0.03), transparent);
+      background: linear-gradient(180deg, rgba(20,40,60,0.7), rgba(0,0,0,0.5)), linear-gradient(90deg, rgba(78,250,170,0.08) 0%, transparent 50%, rgba(78,250,170,0.08) 100%);
+      border-bottom: 2px solid rgba(78,250,170,0.2);
     }
     .ad-hero .title {
       font-family: var(--font-head);
       font-weight: 900;
       font-size: clamp(2rem, 4.8vw, 3.6rem);
-      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      color: var(--accent-mint);
       margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
     }
     .ad-hero .subtitle {
       color: var(--text-light);
       opacity: 0.9;
       font-size: 1.05rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+
+    /* Corporate action buttons */
+    .ad-action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .ad-action-btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, rgba(78,250,170,0.15), rgba(78,250,170,0.05));
+      border: 1px solid rgba(78,250,170,0.4);
+      color: var(--accent-mint);
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ad-action-btn:hover {
+      background: linear-gradient(135deg, rgba(78,250,170,0.3), rgba(78,250,170,0.15));
+      border-color: rgba(78,250,170,0.7);
+      box-shadow: 0 0 20px rgba(78,250,170,0.1);
     }
 
     .ad-grid {
       display: grid;
-      grid-template-columns: 320px 1fr 320px;
-      gap: 1.25rem;
-      max-width: 1200px;
-      margin: 1.5rem auto 2rem;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 1.5rem;
+      max-width: 1280px;
+      margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    /* Left nav */
+    /* Left navigation sidebar */
     .ad-sidebar {
       background: var(--bg-card);
-      border: 1px solid rgba(78,250,170,0.04);
+      border: 1px solid rgba(78,250,170,0.08);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.25rem;
       position: sticky;
-      top: 92px;
+      top: 110px;
       height: fit-content;
     }
-    .ad-sidebar h4 { margin:0 0 .5rem 0; color: var(--accent-mint); font-family: var(--font-mono); }
-    .ad-nav a { display:block; padding: .55rem .6rem; border-radius:6px; color: var(--text-light); text-decoration:none; margin-bottom:.45rem; }
-    .ad-nav a:hover { background: rgba(78,250,170,0.03); color: var(--accent-mint); }
+    .ad-sidebar h4 {
+      margin: 0 0 0.75rem 0;
+      color: var(--accent-mint);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(78,250,170,0.15);
+      padding-bottom: 0.5rem;
+    }
+    .ad-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .ad-nav a {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      border-left: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .ad-nav a:hover {
+      background: rgba(78,250,170,0.08);
+      color: var(--accent-mint);
+      border-left-color: var(--accent-mint);
+      padding-left: 1rem;
+    }
 
     /* Main content */
     .ad-main { background: transparent; }
-    .ad-card { background: var(--bg-card); border: 1px solid rgba(78,250,170,0.04); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .ad-card h3 { color: var(--accent-mint); margin-top:0; }
-    .ad-card .meta { font-family: var(--font-mono); color: rgba(78,250,170,0.6); font-size: .9rem; margin-bottom:.75rem; }
+    .ad-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.08);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .ad-card h3 {
+      color: var(--accent-mint);
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
+      border-bottom: 1px solid rgba(78,250,170,0.12);
+      padding-bottom: 0.75rem;
+    }
+    .ad-card h4 {
+      color: var(--accent-teal);
+      margin: 1rem 0 0.5rem 0;
+    }
+    .ad-card .meta {
+      font-family: var(--font-mono);
+      color: rgba(78,250,170,0.6);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
 
-    .ad-resources { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: .9rem; }
-    .ad-resource { background: linear-gradient(135deg, rgba(78,250,170,0.02), transparent); padding: .85rem; border-radius:8px; border:1px solid rgba(78,250,170,0.03); }
-    .ad-resource h4 { margin:0 0 .4rem 0; color:var(--accent-teal); }
-    .ad-resource p { margin:0; color:var(--text-light); opacity:0.86; font-size:.95rem; }
+    .ad-resources {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .ad-resource {
+      background: linear-gradient(135deg, rgba(78,250,170,0.04), transparent);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(78,250,170,0.1);
+      transition: all 0.3s ease;
+    }
+    .ad-resource:hover {
+      background: linear-gradient(135deg, rgba(78,250,170,0.08), rgba(78,250,170,0.02));
+      border-color: rgba(78,250,170,0.2);
+    }
+    .ad-resource h4 {
+      margin: 0 0 0.5rem 0;
+      color: var(--accent-teal);
+    }
+    .ad-resource p {
+      margin: 0 0 0.5rem 0;
+      color: var(--text-light);
+      opacity: 0.86;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
 
-    /* Right column quick info */
-    .ad-quick { background: var(--bg-card); border:1px solid rgba(78,250,170,0.04); padding:1rem; border-radius:8px; }
-    .ad-team { display:flex; gap:.6rem; flex-wrap:wrap; }
-    .ad-team .member { width:100%; padding:.5rem; border-radius:6px; background: rgba(78,250,170,0.02); border:1px solid rgba(78,250,170,0.015); }
+    /* Board of Directors section */
+    .bod-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .bod-card {
+      background: linear-gradient(135deg, rgba(78,250,170,0.06), transparent);
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid rgba(78,250,170,0.12);
+    }
+    .bod-card .title {
+      color: var(--accent-mint);
+      font-weight: 700;
+      margin: 0 0 0.25rem 0;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bod-card .name {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+    .bod-card .department {
+      color: rgba(78,250,170,0.7);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
 
-    .full-bleed-banner { margin: 1rem 0; padding: 1.25rem; background: linear-gradient(90deg, rgba(78,250,170,0.03), rgba(0,124,107,0.02)); border-radius:8px; color:var(--text-light); }
+    /* Employee of the Month */
+    .eotm-box {
+      background: linear-gradient(135deg, rgba(78,250,170,0.12), rgba(0,124,107,0.08));
+      border: 2px solid rgba(78,250,170,0.25);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .eotm-box h4 {
+      color: var(--accent-mint);
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+    }
+    .eotm-input-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .eotm-input-group input {
+      flex: 1;
+      padding: 0.6rem 0.75rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(78,250,170,0.2);
+      color: var(--text-light);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+    }
+    .eotm-input-group input::placeholder {
+      color: rgba(78,250,170,0.4);
+    }
+    .eotm-input-group input:focus {
+      outline: none;
+      border-color: rgba(78,250,170,0.5);
+      background: rgba(78,250,170,0.03);
+    }
+    .eotm-input-group button {
+      padding: 0.6rem 1.5rem;
+      background: rgba(78,250,170,0.2);
+      border: 1px solid rgba(78,250,170,0.4);
+      color: var(--accent-mint);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .eotm-input-group button:hover {
+      background: rgba(78,250,170,0.35);
+      border-color: var(--accent-mint);
+    }
+    .eotm-display {
+      background: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .eotm-display .label {
+      color: rgba(78,250,170,0.6);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .eotm-display .name {
+      color: var(--accent-mint);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .eotm-display .info {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
 
-    /* Visual placeholders/images */
-    .ad-figure { width:100%; height:220px; background-size:cover; background-position:center; border-radius:6px; margin-bottom: .75rem; }
+    /* Right column */
+    .ad-quick {
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.08);
+      padding: 1.25rem;
+      border-radius: 8px;
+      position: sticky;
+      top: 110px;
+      height: fit-content;
+    }
+    .ad-quick h4 {
+      color: var(--accent-mint);
+      margin: 0 0 0.75rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(78,250,170,0.12);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ad-notice {
+      color: var(--text-light);
+      opacity: 0.85;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(78,250,170,0.08);
+    }
+    .ad-notice:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
 
-    @media (max-width: 960px) {
+    /* Status indicators */
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      background: rgba(78,250,170,0.15);
+      border: 1px solid rgba(78,250,170,0.3);
+      color: var(--accent-mint);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .full-bleed-banner {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: linear-gradient(90deg, rgba(78,250,170,0.05), rgba(0,124,107,0.03));
+      border-left: 3px solid rgba(78,250,170,0.3);
+      border-radius: 6px;
+      color: var(--text-light);
+    }
+
+    @media (max-width: 1024px) {
       .ad-grid { grid-template-columns: 1fr; }
-      .ad-sidebar { position:relative; top:auto; }
+      .ad-sidebar, .ad-quick { position: relative; top: auto; }
+    }
+
+    @media (max-width: 640px) {
       .ad-hero { padding: 2rem 1rem; }
+      .ad-action-buttons { flex-direction: column; }
+      .ad-action-btn { width: 100%; justify-content: center; }
     }
   </style>
   <meta name="required-clearance" content="2">
@@ -95,183 +357,363 @@
   <!-- Navbar -->
   <div data-include="components/navbar.html"></div>
 
-  <!-- Hero -->
+  <!-- Hero Section -->
   <section class="ad-hero">
     <div>
-      <div class="title">» Administrative Department - Hub «</div>
-      <div class="subtitle">The Administrative Department serves as the backbone of Site-89's internal governance, overseeing all non-anomalous operations to ensure efficiency, security, and compliance with Foundation protocol.</div>
-      <div style="margin-top:1rem;"><a href="departments.html" class="btn-secondary">← Back to Departments</a></div>
+      <div class="title">Administrative Department</div>
+      <div class="subtitle">
+        Governance, Policy, and Operations Management for Site-89
+      </div>
+      <div class="ad-action-buttons">
+        <a href="https://forms.gle/placeholder-info-requests" class="ad-action-btn" target="_blank">📋 Information Requests</a>
+        <a href="https://forms.gle/placeholder-reporting" class="ad-action-btn" target="_blank">📢 Incident Reporting</a>
+        <a href="#board" class="ad-action-btn">👥 Board of Directors</a>
+        <a href="departments.html" class="ad-action-btn">← Back to Departments</a>
+      </div>
     </div>
   </section>
 
-  <!-- Grid -->
+  <!-- Main Content Grid -->
   <div class="ad-grid">
 
-    <!-- Sidebar -->
+    <!-- Left Sidebar Navigation -->
     <aside class="ad-sidebar">
-      <h4>AD Quick Links</h4>
+      <h4>Quick Navigation</h4>
       <div class="ad-nav">
-        <a href="#divisions">Divisions</a>
+        <a href="#overview">Overview</a>
         <a href="#board">Board of Directors</a>
-        <a href="#internalops">Internal Operations</a>
-        <a href="#resources">Resources</a>
-        <a href="#contacts">Contacts</a>
-        <a href="#forms">Forms & Templates</a>
+        <a href="#divisions">Divisions</a>
+        <a href="#eotm">Employee of the Month</a>
+        <a href="#procedures">Procedures</a>
+        <a href="#forms">Forms & Resources</a>
+        <a href="#contacts">Directory</a>
       </div>
 
-      <div style="height:12px"></div>
-      <h4>Recent Notices</h4>
-      <div class="ad-notice" style="font-size:.92rem;color:var(--text-light);opacity:.86;">Daily audit completed — no critical findings.</div>
-      <div style="height:8px"></div>
-      <div class="ad-notice" style="font-size:.9rem;color:var(--text-light);opacity:.86;">Staff briefing at 09:00 — Control Room, ADZ.</div>
+      <div style="height: 1rem;"></div>
+      <h4>Status</h4>
+      <div class="ad-notice">
+        ✓ All systems operational
+      </div>
+      <div class="ad-notice">
+        ⚡ Staff briefing: 09:00 ADZ
+      </div>
 
+      <div style="height: 1rem;"></div>
+      <h4>Current Level</h4>
+      <div class="ad-notice">
+        <span class="status-badge">ACTIVE</span>
+      </div>
     </aside>
 
-    <!-- Main -->
+    <!-- Main Content -->
     <main class="ad-main">
 
-      <div id="divisions" class="ad-card">
-        <h3>» Administrative Department - Divisions «</h3>
-        <div class="meta">Members of the Administrative Department, executing routine inspections.</div>
-        <div class="ad-figure" style="background-image:url('https://i.imgur.com/WHNckoL.png');"></div>
-        <p>The Administrative Department coordinates policy, personnel, budgeting, and audits across Site-89. Below are primary divisions and quick links to their resources and contacts.</p>
+      <!-- Overview Section -->
+      <section id="overview" class="ad-card">
+        <h3>Departmental Overview</h3>
+        <div class="meta">Administrative Governance Structure</div>
+        <p>
+          The Administrative Department serves as the primary governance body for Site-89 operations. We oversee policy implementation, personnel management, resource allocation, budgeting, and compliance with Foundation protocols. Our mission is to ensure efficient and secure operations across all site facilities.
+        </p>
+        <p style="margin-top: 1rem;">
+          <strong>Key Responsibilities:</strong>
+        </p>
+        <ul style="color: var(--text-light); opacity: 0.9;">
+          <li>Strategic planning and policy development</li>
+          <li>Personnel administration and oversight</li>
+          <li>Budget management and resource allocation</li>
+          <li>Compliance auditing and reporting</li>
+          <li>Internal communications and coordination</li>
+          <li>Security clearance administration</li>
+        </ul>
+      </section>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: .9rem; margin-top: .9rem;">
-          <div class="ad-resource">
-            <h4>Board of Directors</h4>
-            <p>Site Director: Dr. A. Rosewood<br>Contact: <a href="mailto:bod@site89.scp">bod@site89.scp</a></p>
-            <p style="margin-top:.5rem;font-style:italic;color:var(--text-light);opacity:.8;">"What do you mean you're at soup?"</p>
-            <p style="margin-top:.6rem;color:var(--text-light);opacity:.9;">Highest governing body within the Administrative Department. Visit: ADZ — BoD Section.</p>
+      <!-- Board of Directors Section -->
+      <section id="board" class="ad-card">
+        <h3>Board of Directors</h3>
+        <div class="meta">Site Leadership Council</div>
+        <div class="bod-grid">
+          <div class="bod-card">
+            <div class="title">Site Director</div>
+            <div class="name">Dr. A. Rosewood</div>
+            <div class="department">Executive Authority</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Primary authority for site operations and policy decisions.
+            </p>
           </div>
 
+          <div class="bod-card">
+            <div class="title">Assistant Site Director</div>
+            <div class="name">K. Rehwald</div>
+            <div class="department">Operations Support</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Deputy authority and operational oversight.
+            </p>
+          </div>
+
+          <div class="bod-card">
+            <div class="title">Security Director</div>
+            <div class="name">A. Andrews</div>
+            <div class="department">Security & Containment</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Oversees security protocols and containment procedures.
+            </p>
+          </div>
+
+          <div class="bod-card">
+            <div class="title">Assistant Security Director</div>
+            <div class="name">"Storm"</div>
+            <div class="department">Security Operations</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Field security operations and tactical coordination.
+            </p>
+          </div>
+
+          <div class="bod-card">
+            <div class="title">Scientific Director</div>
+            <div class="name">K. Fisher</div>
+            <div class="department">Research & Development</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Manages research operations and scientific oversight.
+            </p>
+          </div>
+
+          <div class="bod-card">
+            <div class="title">External Affairs Director</div>
+            <div class="name">K. Rehwald</div>
+            <div class="department">Relations & Diplomacy</div>
+            <p style="margin: 0; color: var(--text-light); opacity: 0.8; font-size: 0.9rem;">
+              Manages external relations and diplomatic affairs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Employee of the Month -->
+      <section id="eotm" class="ad-card">
+        <h3>Employee of the Month</h3>
+        <div class="meta">Personnel Recognition Program</div>
+        <div class="eotm-box">
+          <h4>Lookup Employee</h4>
+          <div class="eotm-input-group">
+            <input type="text" id="eotmPid" placeholder="Enter Personnel ID (PID)" />
+            <button id="eotmLookupBtn">Search</button>
+          </div>
+          <div id="eotmDisplay" class="eotm-display" style="display: none;">
+            <div class="label">Employee of the Month</div>
+            <div class="name" id="eotmName">-</div>
+            <div class="info" id="eotmInfo">-</div>
+          </div>
+          <div id="eotmError" style="color: var(--accent-red); margin-top: 0.5rem; display: none;"></div>
+        </div>
+      </section>
+
+      <!-- Divisions Section -->
+      <section id="divisions" class="ad-card">
+        <h3>Administrative Divisions</h3>
+        <div class="meta">Operational Subdivisions</div>
+        <div class="ad-resources">
           <div class="ad-resource">
             <h4>Internal Operations</h4>
-            <p>Manager: J. Beck<br>Contact: <a href="mailto:io@site89.scp">io@site89.scp</a></p>
-            <p style="margin-top:.5rem;font-style:italic;color:var(--text-light);opacity:.8;">"Days since fraud committed…"</p>
-            <p style="margin-top:.6rem;color:var(--text-light);opacity:.9;">Monitoring site activity, personnel conduct, and procedural compliance. Visit: Control Room, ADZ.</p>
+            <p>Manager: J. Beck</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Conducts routine patrols, audits, and compliance inspections across all site areas.
+            </p>
           </div>
 
           <div class="ad-resource">
-            <h4>Records & Documentation</h4>
-            <p>Policy manuals, archival records, and audit logs. Access: secure portal (placeholder).</p>
+            <h4>Records & Archives</h4>
+            <p>Data Management & Documentation</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Maintains institutional records, policies, and archival documentation.
+            </p>
           </div>
 
           <div class="ad-resource">
-            <h4>Ethics & Review Board</h4>
-            <p>Responsible for ethical oversight and review of sensitive operations.</p>
+            <h4>Personnel Services</h4>
+            <p>HR & Staff Administration</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Manages personnel files, clearances, and administrative staffing.
+            </p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Budget & Finance</h4>
+            <p>Resource Allocation</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Oversees site budgeting, expenditures, and financial compliance.
+            </p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Ethics & Compliance</h4>
+            <p>Oversight & Review</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Responsible for ethical oversight and sensitive operations review.
+            </p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Communications</h4>
+            <p>Internal Coordination</p>
+            <p style="margin-top: 0.5rem; font-style: italic; font-size: 0.85rem;">
+              Manages internal announcements and inter-departmental communications.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div id="board" class="ad-card">
-        <h3>Board of Directors</h3>
-        <div class="meta">Composition and quick contacts</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem;">
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Site Director</strong>
-            <div>Dr. A. Rosewood</div>
-            <div style="margin-top:.45rem;"><a href="#">BoD Section — Direction</a></div>
-          </div>
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Assistant Site Director</strong>
-            <div>K. Rehwald</div>
-            <div style="margin-top:.45rem;"><a href="#">View Calendar & Minutes</a></div>
-          </div>
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Board Member</strong>
-            <div>A. Andrews</div>
-            <div style="margin-top:.45rem;"><a href="#">Security Director</a></div>
-          </div>
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Board Member</strong>
-            <div>"Storm"</div>
-            <div style="margin-top:.45rem;"><a href="#">Assistant Security Director</a></div>
-          </div>
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Board Member</strong>
-            <div>K. Fisher</div>
-            <div style="margin-top:.45rem;"><a href="#">Scientific Director</a></div>
-          </div>
-          <div style="padding:.75rem;background:rgba(78,250,170,0.02);border-radius:8px;">
-            <strong>Board Member</strong>
-            <div>K. Rehwald</div>
-            <div style="margin-top:.45rem;"><a href="#">Dir. External Affairs</a></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="internalops" class="ad-card">
-        <h3>Internal Operations</h3>
-        <div class="meta">Manager of Internal Operations: J. Beck</div>
-        <div style="display:flex;gap:.9rem;flex-wrap:wrap;">
-          <div style="flex:1;min-width:240px;">
-            <div class="ad-figure" style="background-image:url('https://i.imgur.com/8zKFRME.png');height:180px"></div>
-            <p>Internal Operations conducts patrols, audits, and inspections across the site. They report findings to central management and coordinate corrective action when policies are breached.</p>
-          </div>
-
-          <div style="flex:1;min-width:240px;">
-            <div class="ad-card" style="padding:.6rem;">
-              <strong>Quick Ops</strong>
-              <ul style="margin:.6rem 0 0 1rem;color:var(--text-light);opacity:.9;">
-                <li>Daily patrol schedule (placeholder)</li>
-                <li>Incident reporting form</li>
-                <li>Audit request portal</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="resources" class="ad-card">
-        <h3>Resources & Tools</h3>
+      <!-- Procedures Section -->
+      <section id="procedures" class="ad-card">
+        <h3>Standard Procedures</h3>
+        <div class="meta">Policy & Protocol Documentation</div>
         <div class="ad-resources">
-          <div class="ad-resource"><h4>Policy Manual (v1.4)</h4><p>Comprehensive operational policies. [download placeholder]</p></div>
-          <div class="ad-resource"><h4>Audit Logs</h4><p>Searchable audit records (placeholder).</p></div>
-          <div class="ad-resource"><h4>Forms & Templates</h4><p>Common forms for requests and approvals.</p></div>
-          <div class="ad-resource"><h4>Staff Roster</h4><p>Roster and clearance list (placeholder).</p></div>
-        </div>
-      </div>
+          <div class="ad-resource">
+            <h4>Request Processing</h4>
+            <p>Standard timeline: 2-5 business days for most administrative requests.</p>
+          </div>
 
-      <div id="contacts" class="ad-card">
-        <h3>Contacts</h3>
-        <div class="meta">Primary AD contacts</div>
-        <div class="ad-team">
-          <div class="member">Dr. A. Rosewood — Site Director — <a href="mailto:bod@site89.scp">bod@site89.scp</a></div>
-          <div class="member">J. Beck — Internal Operations — <a href="mailto:io@site89.scp">io@site89.scp</a></div>
-          <div class="member">Administrative HQ — ad-hq@site89.scp</div>
+          <div class="ad-resource">
+            <h4>Incident Reporting</h4>
+            <p>Use the Incident Reporting Form for any operational anomalies or breaches.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Clearance Updates</h4>
+            <p>Contact Personnel Services for security clearance changes or upgrades.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Appeal Process</h4>
+            <p>Personnel may appeal administrative decisions through formal review procedures.</p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <!-- Forms & Resources -->
+      <section id="forms" class="ad-card">
+        <h3>Forms & Resources</h3>
+        <div class="meta">Administrative Documents</div>
+        <div class="ad-resources">
+          <div class="ad-resource">
+            <h4>Policy Manual (v1.4)</h4>
+            <p>Complete operational policy reference guide.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Personnel Request Form</h4>
+            <p>For staffing requests and personnel-related inquiries.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Incident Report Form</h4>
+            <p>For operational anomalies and security concerns.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Audit Logs</h4>
+            <p>Searchable historical audit records and compliance data.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Staff Roster</h4>
+            <p>Active personnel roster and clearance verification.</p>
+          </div>
+
+          <div class="ad-resource">
+            <h4>Site Regulations</h4>
+            <p>Foundation regulations applicable to Site-89 operations.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contacts Directory -->
+      <section id="contacts" class="ad-card">
+        <h3>Contacts & Directory</h3>
+        <div class="meta">Primary Administrative Contacts</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Site Director</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">Dr. A. Rosewood</div>
+            <a href="mailto:rosewood@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">rosewood@site89.scp</a>
+          </div>
+
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Operations Manager</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">J. Beck</div>
+            <a href="mailto:io@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">io@site89.scp</a>
+          </div>
+
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Admin Headquarters</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">Main Office</div>
+            <a href="mailto:ad-hq@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">ad-hq@site89.scp</a>
+          </div>
+
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Personnel Services</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">HR Division</div>
+            <a href="mailto:personnel@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">personnel@site89.scp</a>
+          </div>
+
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Incident Reporting</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">Emergency Line</div>
+            <a href="mailto:incidents@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">incidents@site89.scp</a>
+          </div>
+
+          <div style="padding: 1rem; background: rgba(78,250,170,0.04); border-radius: 6px;">
+            <strong style="color: var(--accent-mint);">Compliance & Ethics</strong>
+            <div style="color: var(--text-light); margin: 0.5rem 0;">Review Board</div>
+            <a href="mailto:ethics@site89.scp" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem;">ethics@site89.scp</a>
+          </div>
+        </div>
+      </section>
 
       <div class="full-bleed-banner">
-        <strong>Notice:</strong> This is an administrative hub prototype. All links are placeholders for now — site staff should use official AD portals for sensitive operations.
+        <strong>Official Notice:</strong> This is the official Administrative Department hub for Site-89. For sensitive operations, use the secure internal portal. All communications are logged per Foundation protocol.
       </div>
 
     </main>
 
-    <!-- Right column -->
+    <!-- Right Sidebar -->
     <aside class="ad-quick">
-      <div class="ad-card">
-        <h4>Announcements</h4>
-        <p style="margin:0;color:var(--text-light);opacity:0.9;">No critical notices.</p>
+      <h4>Announcements</h4>
+      <div class="ad-notice">
+        All systems operational. No critical notices.
       </div>
 
-      <div class="ad-card">
-        <h4>Shortcuts</h4>
-        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;">
-          <a class="btn-secondary" href="#resources">Open Resources</a>
-          <a class="btn-secondary" href="#divisions">View Divisions</a>
-          <a class="btn-secondary" href="#contacts">Contact AD</a>
+      <div style="height: 1rem;"></div>
+      <h4>Quick Actions</h4>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
+        <a class="ad-action-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSeiIxlU5gILZeh14zXROJaaDCA9mWOhjxw1JO-l_jq8YoG17w/viewform" target="_blank" style="justify-content: center; font-size: 0.85rem;">📋 Info Request</a>
+        <a class="ad-action-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSfVTR0_Wboa0WCAC1DceQ9054yWMLAIFt5dRqIUK0llq_c3Qw/viewform" target="_blank" style="justify-content: center; font-size: 0.85rem;">📢 Report Issue</a>
+      </div>
+
+      <div style="height: 1rem;"></div>
+      <h4>Recent Updates</h4>
+      <div class="ad-notice">
+        Budget review in progress
+      </div>
+      <div class="ad-notice">
+        New clearance procedures published
+      </div>
+      <div class="ad-notice">
+        Q4 audit scheduled
+      </div>
+
+      <div style="height: 1rem;"></div>
+      <h4>Department Stats</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem;">
+        <div style="padding: 0.6rem; background: rgba(78,250,170,0.08); border-radius: 4px; text-align: center;">
+          <div style="font-size: 0.85rem; color: rgba(78,250,170,0.7);">PERSONNEL</div>
+          <div style="font-size: 1.3rem; color: var(--accent-mint); font-weight: 700;">127</div>
+        </div>
+        <div style="padding: 0.6rem; background: rgba(78,250,170,0.08); border-radius: 4px; text-align: center;">
+          <div style="font-size: 0.85rem; color: rgba(78,250,170,0.7);">DIVISIONS</div>
+          <div style="font-size: 1.3rem; color: var(--accent-mint); font-weight: 700;">6</div>
         </div>
       </div>
-
-      <div class="ad-card">
-        <h4>Recent Activity</h4>
-        <ul style="margin:0 0 0 1rem;color:var(--text-light);opacity:.9;">
-          <li>Audit 2025-09 complete</li>
-          <li>Budget review pending</li>
-        </ul>
-      </div>
-
     </aside>
 
   </div>
@@ -281,5 +723,54 @@
 
   <script src="assets/js/include.js"></script>
   <script type="module" src="assets/js/auth.js"></script>
+
+  <script type="module">
+    import { getFirestore, collection, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    document.addEventListener('includesLoaded', () => {
+      const db = getFirestore();
+      const eotmPid = document.getElementById('eotmPid');
+      const eotmLookupBtn = document.getElementById('eotmLookupBtn');
+      const eotmDisplay = document.getElementById('eotmDisplay');
+      const eotmError = document.getElementById('eotmError');
+      const eotmName = document.getElementById('eotmName');
+      const eotmInfo = document.getElementById('eotmInfo');
+
+      eotmLookupBtn.addEventListener('click', async () => {
+        const pid = (eotmPid.value || '').trim();
+        if (!pid) {
+          eotmError.textContent = 'Please enter a Personnel ID.';
+          eotmError.style.display = 'block';
+          eotmDisplay.style.display = 'none';
+          return;
+        }
+
+        try {
+          const docSnap = await getDoc(doc(db, 'personnel', pid));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            eotmName.textContent = data.name || 'Unknown';
+            eotmInfo.textContent = `${data.rank || '-'} | ${data.department || '-'} | Clearance: ${data.clearance || '-'}`;
+            eotmDisplay.style.display = 'block';
+            eotmError.style.display = 'none';
+          } else {
+            eotmError.textContent = `Personnel ID "${pid}" not found.`;
+            eotmError.style.display = 'block';
+            eotmDisplay.style.display = 'none';
+          }
+        } catch (err) {
+          eotmError.textContent = 'Error retrieving personnel data.';
+          eotmError.style.display = 'block';
+          eotmDisplay.style.display = 'none';
+        }
+      });
+
+      // Allow Enter key to trigger search
+      eotmPid.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') eotmLookupBtn.click();
+      });
+    });
+  </script>
+
 </body>
 </html>

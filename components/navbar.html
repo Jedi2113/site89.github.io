@@ -11,6 +11,7 @@
     <div class="nav-dropdown-parent">
       <a href="#">Foundation Archives <i class="fa-solid fa-caret-down"></i></a>
       <div class="nav-dropdown-content">
+        <a href="/archives.html">Archives Hub</a>
         <a href="/personnel-files.html">Personnel Files</a>
         <a href="/goi-poi.html">Groups of Interest / Persons of Interest</a>
         <a href="/anomalies.html">Anomalies</a>
@@ -19,17 +20,18 @@
       </div>
     </div>
 
-    <a href="/site-management.html">Site Management</a>
     <a href="/guides.html">Guides</a>
-    <a href="/emails.html">Emails</a>
   </div>
 
   <!-- Right side: socials + login -->
   <div class="nav-right">
-    <div class="social-buttons">
-      <a href="https://www.instagram.com/site.89_rp/" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="https://www.youtube.com/@scpfoundation.site.89" target="_blank"><i class="fab fa-youtube"></i></a>
-      <a href="https://discord.gg/UdefBEPYhp" target="_blank"><i class="fab fa-discord"></i></a>
+    <div class="nav-search" id="navSearch">
+      <input id="siteSearchInput" placeholder="Search site…" aria-label="Search site" autocomplete="off">
+      <div id="siteSearchResults" class="search-results" role="listbox" aria-hidden="true"></div>
+    </div>
+
+    <div class="nav-mail-wrapper">
+      <a href="/emails.html" id="navMailBtn" class="nav-mail" title="Mail"><i class="fa-solid fa-envelope"></i></a>
     </div>
 
     <!-- LOGIN BUTTON WITH CLICKABLE DROPDOWN -->
@@ -151,3 +153,71 @@
   });
 </script>
 
+<script>
+// Lightweight site search (client-side index) — runs after includes load
+document.addEventListener('includesLoaded', () => {
+  const input = document.getElementById('siteSearchInput');
+  const resultsEl = document.getElementById('siteSearchResults');
+  if(!input || !resultsEl) return;
+
+  // Build index from navbar links + a few manual entries
+  const anchors = Array.from(document.querySelectorAll('#main-nav a'));
+  const manual = [
+    { title: 'Home', href: '/' , desc: 'Site-89 Home' },
+    { title: 'Archives Hub', href: '/archives.html', desc: 'Browse all archives' },
+    { title: 'Personnel Files', href: '/personnel-files.html', desc: 'Personnel records and PIDs' },
+    { title: 'Anomalies', href: '/anomalies.html', desc: 'Anomalies index' },
+    { title: 'Research Logs', href: '/research-logs.html', desc: 'Research entries' },
+    { title: 'Incident Reports', href: '/incident-reports.html', desc: 'Incident reporting' },
+    { title: 'Emails', href: '/emails.html', desc: 'Site Mail' },
+    { title: 'Guides', href: '/guides.html', desc: 'Operational guides' },
+    { title: 'Site Management', href: '/site-management.html', desc: 'Site management tools' }
+  ];
+
+  const indexMap = new Map();
+  anchors.forEach(a => {
+    const t = a.textContent.trim(); const h = a.getAttribute('href') || '/';
+    if(t && !indexMap.has(h)) indexMap.set(h, { title: t, href: h, desc: a.title || '' });
+  });
+  manual.forEach(m => { if(!indexMap.has(m.href)) indexMap.set(m.href, m); });
+  const index = Array.from(indexMap.values());
+
+  let active = -1;
+  function renderResults(list){
+    resultsEl.innerHTML = '';
+    if(!list || list.length === 0){ resultsEl.innerHTML = '<div class="search-empty">No results</div>'; resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false'); return; }
+    list.slice(0,8).forEach((r, i) => {
+      const el = document.createElement('div');
+      el.className = 'search-result';
+      el.setAttribute('role','option');
+      el.innerHTML = `<div style="flex:1"><div class='title'>${r.title}</div><div class='desc' style='font-size:.85rem;color:var(--text-light);opacity:.8'>${r.desc || r.href}</div></div>`;
+      el.addEventListener('mousedown', (ev)=>{ ev.preventDefault(); window.location.href = r.href; });
+      resultsEl.appendChild(el);
+    });
+    resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false');
+  }
+
+  function clearResults(){ resultsEl.classList.remove('active'); resultsEl.setAttribute('aria-hidden','true'); resultsEl.innerHTML = ''; active = -1; }
+
+  let debounceTimer = null;
+  input.addEventListener('input', (e)=>{
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(()=>{
+      const q = input.value.trim().toLowerCase();
+      if(!q){ clearResults(); return; }
+      const matches = index.filter(it => (it.title||'').toLowerCase().includes(q) || (it.desc||'').toLowerCase().includes(q) || (it.href||'').toLowerCase().includes(q));
+      renderResults(matches);
+    }, 150);
+  });
+
+  input.addEventListener('keydown', (e)=>{
+    const items = Array.from(resultsEl.querySelectorAll('.search-result'));
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(items.length){ active = Math.min(items.length-1, active+1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[Math.max(active,0)]?.scrollIntoView({block:'nearest'}); }}
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); if(items.length){ active = Math.max(0, active-1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[active]?.scrollIntoView({block:'nearest'}); }}
+    else if(e.key === 'Enter'){ e.preventDefault(); const items = Array.from(resultsEl.querySelectorAll('.search-result')); if(items[active]) items[active].dispatchEvent(new MouseEvent('mousedown')); }
+    else if(e.key === 'Escape'){ input.value=''; clearResults(); }
+  });
+
+  document.addEventListener('click', (ev)=>{ if(!document.getElementById('navSearch').contains(ev.target)) clearResults(); });
+});
+</script>

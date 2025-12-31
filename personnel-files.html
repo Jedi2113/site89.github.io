@@ -65,6 +65,14 @@
       margin: 0;
     }
 
+    .personnel-card-pid {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.75;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+
     /* Modal Styles */
     .modal {
       display: none;
@@ -240,6 +248,10 @@
             <div class="modal-detail-value" id="modalDept">—</div>
           </div>
           <div class="modal-detail-row">
+            <div class="modal-detail-label">PID:</div>
+            <div class="modal-detail-value" id="modalPID">—</div>
+          </div>
+          <div class="modal-detail-row">
             <div class="modal-detail-label">Clearance:</div>
             <div class="modal-detail-value" id="modalClearance">—</div>
           </div>
@@ -279,6 +291,16 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Mask a PID by replacing all but the last 3 characters with █
+    function maskPID(pid) {
+      if (!pid) return '';
+      const s = String(pid);
+      if (s.length <= 3) return s;
+      const last = s.slice(-3);
+      const maskLen = Math.max(0, s.length - 3);
+      return '█'.repeat(maskLen) + last;
+    }
+
     // Load personnel from Firebase
     async function loadPersonnel() {
       const personnelGrid = document.getElementById("personnelGrid");
@@ -297,10 +319,11 @@
           const card = document.createElement("div");
           card.className = "personnel-card";
 
-          const photoUrl = char.profileImage || "https://via.placeholder.com/240x200?text=" + encodeURIComponent(char.name || "No Name");
+          const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+          const maskedPid = maskPID(char.pid || '');
 
           card.innerHTML = `
-            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://via.placeholder.com/240x200?text=No Photo'">
+            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
             <div class="personnel-card-info">
               <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
               <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
@@ -322,8 +345,9 @@
       document.getElementById("modalName").textContent = char.name || "Unknown";
       document.getElementById("modalRank").textContent = char.rank || "—";
       document.getElementById("modalDept").textContent = char.department || "—";
+      document.getElementById("modalPID").textContent = maskPID(char.pid || '') || '—';
       document.getElementById("modalClearance").textContent = char.clearance || "—";
-      document.getElementById("modalPhoto").src = char.profileImage || "https://via.placeholder.com/150";
+      document.getElementById("modalPhoto").src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
 
       const bioSection = document.getElementById("modalBioSection");
       if (char.bio && char.bio.trim()) {

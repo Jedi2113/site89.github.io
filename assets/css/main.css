@@ -457,6 +457,27 @@ footer {
 /* small responsive tweaks */
 @media (max-width: 1000px){ .mail-view { min-width: unset; padding:.8rem } .mail-left{width:100%;flex-direction:row;gap:.6rem} .mail-list{flex:0 0 40%;} }
 
+/* ─────────── Archives hub styles ─────────── */
+.archives-hero { background: linear-gradient(90deg, rgba(0,0,0,0.06), transparent); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+.archives-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.archive-card { background: var(--bg-card); border: 1px solid rgba(78,250,170,0.04); padding: 1rem; border-radius: 8px; color: var(--text-light); text-decoration: none; display: flex; flex-direction: column; gap: .5rem; transition: transform .12s ease, box-shadow .12s ease; }
+.archive-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+.archive-card h3 { margin: 0; font-size: 1rem; }
+.archive-card p { margin: 0; color: var(--text-light); opacity: .86 }
+
+/* ─────────── Navbar search styles ─────────── */
+.nav-search { position: relative; display:inline-flex; align-items:center; }
+.nav-search input { width: 220px; padding: .4rem .6rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.04); background: #0f0f10; color: var(--text-light); transition: box-shadow .12s ease; }
+.nav-search input:focus { outline: none; box-shadow: 0 6px 18px rgba(78,250,170,0.06); }
+.search-results { position: absolute; top: calc(100% + 8px); left: 0; width: 360px; max-width: 90vw; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); z-index: 1200; overflow: hidden; display: none; }
+.search-results.active { display: block; }
+.search-result { padding: .6rem .8rem; cursor: pointer; display:flex; align-items:flex-start; gap:.6rem; }
+.search-result:hover { background: rgba(78,250,170,0.02); }
+.search-result .title { font-weight:700; }
+.search-empty { padding: .6rem .8rem; color:var(--text-light); opacity:.8 }
+
+@media (max-width: 800px){ .nav-search input { width: 140px; } .search-results { width: 260px } }
+
 /* helper spacing */
 .kv { display:flex; gap:.6rem; align-items:center }
 .kv .label { color:var(--text-light); opacity:.9; font-weight:700 }

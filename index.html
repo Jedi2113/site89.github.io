@@ -607,12 +607,12 @@
 
     <div class="info-card">
       <div class="card-icon">
-        <i class="fas fa-archive"></i>
+        <i class="fa-solid fa-envelope"></i>
       </div>
-      <h3 class="card-title">Archives</h3>
-      <p class="card-description">Secure access to classified archives including anomalies, research logs, and incident reports.</p>
-      <a href="#" class="card-link">
-        Access Archives <i class="fas fa-arrow-right"></i>
+      <h3 class="card-title">Mail</h3>
+      <p class="card-description">Secure communication between Site-89 personnel.</p>
+      <a href="emails.html" class="card-link">
+        Access Mail <i class="fas fa-arrow-right"></i>
       </a>
     </div>
 
@@ -629,12 +629,12 @@
 
     <div class="info-card">
       <div class="card-icon">
-        <i class="fas fa-cog"></i>
+        <i class="fas fa-archive"></i>
       </div>
-      <h3 class="card-title">Management</h3>
-      <p class="card-description">Administrative tools and site management systems for authorized personnel only.</p>
-      <a href="site-management.html" class="card-link">
-        Management Portal <i class="fas fa-arrow-right"></i>
+      <h3 class="card-title">Archives</h3>
+      <p class="card-description">Secure access to classified archives including anomalies, research logs, and incident reports.</p>
+      <a href="archives.html" class="card-link">
+        Access Archives <i class="fas fa-arrow-right"></i>
       </a>
     </div>
 
@@ -659,15 +659,15 @@
         <div class="featured-item-label">Active Personnel</div>
       </div>
       <div class="featured-item">
-        <div class="featured-item-number" id="statDepartments">0</div>
-        <div class="featured-item-label">Departments</div>
+        <div class="featured-item-number" id="statDepartments">4</div>
+        <div class="featured-item-label">Hours in Development</div>
       </div>
       <div class="featured-item">
         <div class="featured-item-number">4</div>
         <div class="featured-item-label">Development Phases</div>
       </div>
       <div class="featured-item">
-        <div class="featured-item-number" id="statAnomalies">0</div>
+        <div class="featured-item-number" id="statAnomalies">31</div>
         <div class="featured-item-label">Anomalies Contained</div>
       </div>
     </div>
@@ -735,6 +735,19 @@
     }
 
     loadStats();
+
+    // Hours since Feb 1, 2024 (Hours in Development)
+    function updateHoursInDev(){
+      const el = document.getElementById('statDepartments');
+      if(!el) return;
+      const start = new Date('2024-02-01T00:00:00Z');
+      const ms = Date.now() - start.getTime();
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      el.textContent = hours.toLocaleString();
+    }
+    updateHoursInDev();
+    // refresh every minute to keep it current
+    setInterval(updateHoursInDev, 60 * 1000);
 
     // Sticky nav
     document.addEventListener("scroll", () => {
