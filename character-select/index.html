@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- TinyMCE Rich Text Editor -->
+  <script src="https://cdn.tiny.cloud/1/5f8mhe8vn3j7a3lsm3lk0jc7lgw8d6a1bj6m8k7l9n0p1q2r3s4t5u/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
   <!-- Theme System -->
   <script type="module">
@@ -455,6 +457,26 @@
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
 
+  <script>
+    // Initialize TinyMCE Rich Text Editor
+    tinymce.init({
+      selector: '#charEditorBio',
+      plugins: 'lists link image code textcolor',
+      toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
+      menubar: 'file edit view insert format tools',
+      height: 300,
+      theme: 'silver',
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      setup: function(editor) {
+        // Update the hidden textarea when TinyMCE changes
+        editor.on('change', function() {
+          tinymce.get('charEditorBio').save();
+        });
+      }
+    });
+  </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
@@ -799,10 +821,14 @@
       saveCharProfileBtn.textContent = "Saving...";
 
       try {
+        // Get bio from TinyMCE editor
+        const editor = tinymce.get('charEditorBio');
+        const bioContent = editor ? editor.getContent() : charEditorBio.value;
+
         const charRef = doc(db, "characters", currentEditingCharId);
         await updateDoc(charRef, {
           rank: charEditorRank.value,
-          bio: charEditorBio.value,
+          bio: bioContent,
           profileImage: charEditorImage.src
         });
 
@@ -837,9 +863,17 @@
           currentEditingCharId = charId;
           editCharName.textContent = char.name;
           charEditorRank.value = char.rank || "";
-          charEditorBio.value = char.bio || "";
           charImgurLink.value = char.profileImage || "";
           charEditorImage.src = char.profileImage || "https://via.placeholder.com/150";
+          
+          // Load bio into TinyMCE editor
+          const editor = tinymce.get('charEditorBio');
+          if (editor) {
+            editor.setContent(char.bio || "");
+          } else {
+            charEditorBio.value = char.bio || "";
+          }
+          
           charEditor.classList.add("active");
           charEditorFeedback.style.display = "none";
         });
