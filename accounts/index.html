@@ -104,6 +104,15 @@
       <p id="passwordFeedback" class="feedback"></p>
     </div>
 
+    <!-- Department Portals -->
+    <div class="about-box">
+      <h2>Department Portals</h2>
+      <p>Access administrative tools based on your character's department.</p>
+      <div id="departmentPortals" style="display:flex;flex-direction:column;gap:0.5rem;">
+        <p style="opacity:0.8;font-size:0.9rem;">Loading portals...</p>
+      </div>
+    </div>
+
     <!-- Logout -->
     <div class="about-box">
       <button id="logoutBtn" style="background-color:#920000;">Logout</button>
@@ -117,7 +126,7 @@
   <script type="module" src="/assets/js/auth.js"></script>
 
   <script type="module">
-    import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getAuth, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const auth = getAuth();
@@ -129,6 +138,60 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const changePasswordForm = document.getElementById("changePasswordForm");
     const passwordFeedback = document.getElementById("passwordFeedback");
+    const departmentPortalsDiv = document.getElementById("departmentPortals");
+
+    // Load user data and department portals
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        accountEmail.textContent = user.email;
+        accountUID.textContent = user.uid.substring(0, 12) + "...";
+
+        // Load user's character and check department
+        try {
+          const q = query(collection(db, "characters"), where("linkedUID", "==", user.uid));
+          const querySnapshot = await getDocs(q);
+
+          const portals = [];
+
+          querySnapshot.forEach(doc => {
+            const char = doc.data();
+            const department = char.department || "";
+
+            // AD/IO Personnel Manager
+            if (department.includes("AD") || department.includes("Internal Operations")) {
+              portals.push({
+                name: "IO Personnel Manager",
+                icon: "fa-users",
+                desc: "Manage personnel records, ranks, and photographs",
+                href: "/admin/io-personnel-manager/"
+              });
+            }
+          });
+
+          // Display portals
+          if (portals.length === 0) {
+            departmentPortalsDiv.innerHTML = '<p style="opacity:0.8;font-size:0.9rem;">No department portals available for your character.</p>';
+          } else {
+            departmentPortalsDiv.innerHTML = portals.map(p => `
+              <a href="${p.href}" style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:var(--bg-soft);border:1px solid var(--accent-teal);border-radius:6px;text-decoration:none;color:var(--text-light);transition:all 0.2s ease;">
+                <i class="fa-solid ${p.icon}" style="color:var(--accent-mint);font-size:1.2rem;"></i>
+                <div style="flex:1;">
+                  <div style="color:var(--accent-mint);font-weight:600;">${p.name}</div>
+                  <div style="font-size:0.85rem;opacity:0.8;">${p.desc}</div>
+                </div>
+                <i class="fa-solid fa-arrow-right" style="color:var(--accent-mint);"></i>
+              </a>
+            `).join("");
+          }
+        } catch (err) {
+          console.error("Error loading character:", err);
+          departmentPortalsDiv.innerHTML = '<p style="color:var(--accent-red);">Error loading portals</p>';
+        }
+      } else {
+        accountEmail.textContent = "Not logged in";
+        accountUID.textContent = "—";
+      }
+    });
 
     // Display current user info
     auth.onAuthStateChanged(async (user) => {

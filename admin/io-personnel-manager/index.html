@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 IO Personnel Manager</title>
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .personnel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .personnel-card {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-teal);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .personnel-card:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 16px rgba(78, 250, 170, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .personnel-card-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--accent-teal), var(--bg-dark));
+      object-fit: cover;
+    }
+
+    .personnel-card-info {
+      padding: 1.2rem;
+    }
+
+    .personnel-card-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--accent-mint);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .personnel-card-rank {
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      margin: 0 0 0.3rem 0;
+    }
+
+    .personnel-card-dept {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .personnel-card-pid {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.75;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .personnel-card-btn {
+      display: block;
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background: var(--accent-mint);
+      color: #06100e;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .personnel-card-btn:hover {
+      background: var(--accent-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(78, 250, 170, 0.3);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-mint);
+      border-radius: 10px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 1rem;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--accent-mint);
+      font-size: 1.8rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--accent-mint);
+      transition: color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--accent-teal);
+    }
+
+    .modal-body {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--accent-teal);
+    }
+
+    .modal-details {
+      flex: 1;
+    }
+
+    .modal-detail-row {
+      display: flex;
+      margin-bottom: 1rem;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .modal-detail-label {
+      font-weight: 600;
+      color: var(--accent-mint);
+      min-width: 100px;
+      font-size: 0.95rem;
+    }
+
+    .modal-detail-value {
+      color: var(--text-light);
+      flex: 1;
+    }
+
+    .modal-detail-input {
+      background: var(--bg-soft);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+      border-radius: 6px;
+      padding: 0.5rem;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .modal-detail-input:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 8px rgba(78, 250, 170, 0.2);
+    }
+
+    .modal-photo-url-input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      background: var(--bg-soft);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+      border-radius: 6px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .modal-photo-url-input:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 8px rgba(78, 250, 170, 0.2);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--accent-teal);
+      padding-top: 1.5rem;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn-save {
+      background: var(--accent-mint);
+      color: #06100e;
+    }
+
+    .btn-save:hover {
+      background: var(--accent-teal);
+      box-shadow: 0 4px 12px rgba(78, 250, 170, 0.3);
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-light);
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--accent-mint);
+      color: var(--accent-mint);
+    }
+
+    .feedback {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    .feedback.success {
+      background: rgba(78, 250, 170, 0.1);
+      color: var(--accent-mint);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+    }
+
+    .feedback.error {
+      background: rgba(176, 0, 0, 0.1);
+      color: #ff6b6b;
+      border: 1px solid rgba(176, 0, 0, 0.3);
+    }
+
+    .access-denied {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-light);
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div data-include="/components/header.html"></div>
+
+  <!-- Navbar -->
+  <div data-include="/components/navbar.html"></div>
+
+  <!-- Main Content -->
+  <section class="content">
+    <div class="about-box" style="margin-bottom: 2rem;">
+      <h2>IO Personnel Manager</h2>
+      <p>Administrative Department Internal Operations - Edit personnel records, ranks, class, and photographs.</p>
+    </div>
+
+    <div id="accessDenied" class="access-denied" style="display:none;">
+      <i class="fas fa-lock" style="font-size:3rem;margin-bottom:1rem;opacity:0.5;display:block;"></i>
+      <h2>Access Denied</h2>
+      <p>Only characters from the Administrative Department - Internal Operations can access this page.</p>
+    </div>
+
+    <div id="personnelGrid" class="personnel-grid" style="display:none;">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
+    </div>
+  </section>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit <span id="editPersonnelName"></span></h2>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Photo URL</label>
+        <input id="editPhotoUrl" class="modal-photo-url-input" placeholder="https://example.com/photo.jpg">
+        <div style="text-align:center;margin:1rem 0;">
+          <img id="editPhotoPreview" src="" alt="Photo preview" style="max-width:150px;max-height:150px;border-radius:8px;border:2px solid var(--accent-teal);">
+        </div>
+      </div>
+
+      <div>
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Rank</label>
+        <input id="editRank" class="modal-detail-input" placeholder="e.g., Captain, Specialist">
+      </div>
+
+      <div style="margin-top:1rem;">
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Personnel Class</label>
+        <input id="editClass" class="modal-detail-input" placeholder="e.g., Administrative, O5-Council">
+      </div>
+
+      <div id="editFeedback" style="display:none;"></div>
+
+      <div class="modal-actions">
+        <button class="btn-save" onclick="savePersonnelChanges()">Save Changes</button>
+        <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentEditingPID = null;
+    const accessDeniedDiv = document.getElementById('accessDenied');
+    const personnelGrid = document.getElementById('personnelGrid');
+    const editModal = document.getElementById('editModal');
+    const editFeedback = document.getElementById('editFeedback');
+
+    // Check auth and load personnel
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        accessDeniedDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        // Get current user's character
+        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
+        const charSnap = await getDocs(q);
+        
+        // Check if character is in AD/IO
+        let hasAccess = false;
+        charSnap.forEach(doc => {
+          const char = doc.data();
+          if ((char.department || '').includes('AD') || (char.department || '').includes('Internal Operations')) {
+            hasAccess = true;
+          }
+        });
+
+        if (!hasAccess) {
+          accessDeniedDiv.style.display = 'block';
+          return;
+        }
+
+        // Load all personnel
+        personnelGrid.style.display = 'grid';
+        loadPersonnel();
+
+      } catch (err) {
+        console.error('Access check error:', err);
+        accessDeniedDiv.style.display = 'block';
+      }
+    });
+
+    async function loadPersonnel() {
+      const snaps = await getDocs(collection(db, 'characters'));
+      const personnel = [];
+      
+      snaps.forEach(docSnap => {
+        personnel.push({ pid: docSnap.id, ...docSnap.data() });
+      });
+
+      // Sort by name
+      personnel.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      personnelGrid.innerHTML = '';
+
+      if (personnel.length === 0) {
+        personnelGrid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;">No personnel found.</div>';
+        return;
+      }
+
+      personnel.forEach(char => {
+        const card = document.createElement('div');
+        card.className = 'personnel-card';
+
+        const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+
+        card.innerHTML = `
+          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
+          <div class="personnel-card-info">
+            <h3 class="personnel-card-name">${char.name || 'Unknown'}</h3>
+            <p class="personnel-card-rank">${char.rank || 'Unassigned'}</p>
+            <p class="personnel-card-dept">${char.department || 'Unassigned'}</p>
+            <p class="personnel-card-pid">${char.pid || 'No PID'}</p>
+            <button class="personnel-card-btn" onclick="openEditModal('${char.pid}', '${char.name || ''}')">Edit</button>
+          </div>
+        `;
+
+        personnelGrid.appendChild(card);
+      });
+    }
+
+    window.openEditModal = async function(pid, name) {
+      currentEditingPID = pid;
+      document.getElementById('editPersonnelName').textContent = name;
+      
+      try {
+        // Get character data
+        const chars = await getDocs(collection(db, 'characters'));
+        let char = null;
+        
+        chars.forEach(doc => {
+          if (doc.data().pid === pid) {
+            char = doc.data();
+          }
+        });
+
+        if (!char) {
+          alert('Character not found');
+          return;
+        }
+
+        // Populate form
+        document.getElementById('editPhotoUrl').value = char.profileImage || '';
+        document.getElementById('editPhotoPreview').src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+        document.getElementById('editRank').value = char.rank || '';
+        document.getElementById('editClass').value = char['class'] || '';
+        
+        editFeedback.style.display = 'none';
+        editModal.classList.add('show');
+      } catch (err) {
+        console.error('Error loading character:', err);
+        alert('Error loading character data');
+      }
+    };
+
+    window.closeEditModal = function() {
+      editModal.classList.remove('show');
+      currentEditingPID = null;
+      editFeedback.style.display = 'none';
+    };
+
+    // Update photo preview when URL changes
+    document.getElementById('editPhotoUrl').addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url) {
+        document.getElementById('editPhotoPreview').src = url;
+      }
+    });
+
+    window.savePersonnelChanges = async function() {
+      if (!currentEditingPID) return;
+
+      const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
+      const rank = (document.getElementById('editRank').value || '').trim();
+      const personClass = (document.getElementById('editClass').value || '').trim();
+
+      try {
+        // Find and update character by PID
+        const chars = await getDocs(collection(db, 'characters'));
+        let charDocId = null;
+
+        chars.forEach(doc => {
+          if (doc.data().pid === currentEditingPID) {
+            charDocId = doc.id;
+          }
+        });
+
+        if (!charDocId) {
+          showEditFeedback('Character not found', 'error');
+          return;
+        }
+
+        // Update character
+        const updateData = {};
+        if (photoUrl) updateData.profileImage = photoUrl;
+        if (rank) updateData.rank = rank;
+        if (personClass) updateData['class'] = personClass;
+
+        await updateDoc(doc(db, 'characters', charDocId), updateData);
+
+        showEditFeedback('Personnel record updated successfully!', 'success');
+        setTimeout(() => {
+          closeEditModal();
+          loadPersonnel();
+        }, 1500);
+
+      } catch (err) {
+        console.error('Error saving changes:', err);
+        showEditFeedback('Error saving changes: ' + err.message, 'error');
+      }
+    };
+
+    function showEditFeedback(message, type) {
+      editFeedback.className = 'feedback ' + type;
+      editFeedback.textContent = message;
+      editFeedback.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
