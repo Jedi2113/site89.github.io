@@ -49,6 +49,7 @@ html, body { height: 100%; }
 body {
   font-family: var(--font-body);
   background: linear-gradient(180deg, var(--bg-dark), var(--bg-soft) 100%);
+  background-attachment: fixed;
   color: var(--text-light);
   margin: 0;
   -webkit-font-smoothing: antialiased;
