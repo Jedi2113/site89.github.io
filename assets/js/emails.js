@@ -59,8 +59,31 @@ document.addEventListener('includesLoaded', () => {
 
   folderEls.forEach(f => f.addEventListener('click', ()=> setActiveFolder(f.dataset.folder)));
 
-  composeBtn.addEventListener('click', ()=> { composeModal.style.display = 'block'; composeTo.focus(); });
-  composeClose.addEventListener('click', ()=> { composeModal.style.display = 'none'; clearCompose(); });
+  composeBtn.addEventListener('click', ()=> { 
+    composeModal.style.display = 'block'; 
+    composeTo.focus();
+    // Initialize TinyMCE for compose body when modal opens
+    if (tinymce && !tinymce.get('composeBody')) {
+      tinymce.init({
+        selector: '#composeBody',
+        plugins: 'lists link image code textcolor',
+        toolbar: 'bold italic underline | bullist numlist | link image | forecolor | code',
+        height: 300,
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        menubar: false,
+        statusbar: false
+      });
+    }
+  });
+  composeClose.addEventListener('click', ()=> { 
+    composeModal.style.display = 'none'; 
+    // Remove TinyMCE editor when closing modal
+    if (tinymce.get('composeBody')) {
+      tinymce.remove('#composeBody');
+    }
+    clearCompose(); 
+  });
 
   function clearCompose(){ 
     composeTo.value=''; 

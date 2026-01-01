@@ -457,26 +457,6 @@
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
 
-  <script>
-    // Initialize TinyMCE Rich Text Editor
-    tinymce.init({
-      selector: '#charEditorBio',
-      plugins: 'lists link image code textcolor',
-      toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
-      menubar: 'file edit view insert format tools',
-      height: 300,
-      theme: 'silver',
-      skin: 'oxide-dark',
-      content_css: 'dark',
-      setup: function(editor) {
-        // Update the hidden textarea when TinyMCE changes
-        editor.on('change', function() {
-          tinymce.get('charEditorBio').save();
-        });
-      }
-    });
-  </script>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
@@ -796,6 +776,10 @@
     closeCharEditor.addEventListener("click", () => {
       charEditor.classList.remove("active");
       charEditorFeedback.style.display = "none";
+      // Remove TinyMCE when closing modal
+      if (tinymce.get('charEditorBio')) {
+        tinymce.remove('#charEditorBio');
+      }
     });
 
     updatePhotoBtn.addEventListener("click", () => {
@@ -866,12 +850,39 @@
           charImgurLink.value = char.profileImage || "";
           charEditorImage.src = char.profileImage || "https://via.placeholder.com/150";
           
-          // Load bio into TinyMCE editor
-          const editor = tinymce.get('charEditorBio');
-          if (editor) {
-            editor.setContent(char.bio || "");
+          // Initialize TinyMCE if not already done
+          if (!tinymce.get('charEditorBio')) {
+            tinymce.init({
+              selector: '#charEditorBio',
+              plugins: 'lists link image code textcolor',
+              toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
+              menubar: 'file edit view insert format tools',
+              height: 300,
+              skin: 'oxide-dark',
+              content_css: 'dark',
+              setup: function(editor) {
+                editor.on('change', function() {
+                  tinymce.get('charEditorBio').save();
+                });
+              }
+            });
+            // Wait a moment for TinyMCE to initialize, then load content
+            setTimeout(() => {
+              const editor = tinymce.get('charEditorBio');
+              if (editor) {
+                editor.setContent(char.bio || "");
+              } else {
+                charEditorBio.value = char.bio || "";
+              }
+            }, 100);
           } else {
-            charEditorBio.value = char.bio || "";
+            // TinyMCE already initialized, just load content
+            const editor = tinymce.get('charEditorBio');
+            if (editor) {
+              editor.setContent(char.bio || "");
+            } else {
+              charEditorBio.value = char.bio || "";
+            }
           }
           
           charEditor.classList.add("active");
