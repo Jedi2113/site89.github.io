@@ -115,19 +115,29 @@ document.addEventListener('includesLoaded', ()=>{
       if(!canCreateIncident()){ feedback.textContent = 'You do not have permission to create incident reports.'; return; }
       const title = document.getElementById('incTitle').value.trim();
       const tags = document.getElementById('incTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const content = document.getElementById('incContent').value.trim();
-      if(!title || !content) { feedback.textContent = 'Title and content required.'; return; }
+      const docUrl = document.getElementById('incDocUrl').value.trim();
+      if(!title || !docUrl) { feedback.textContent = 'Title and document link required.'; return; }
       try{
         const ch = getSelectedCharacter();
         const author = ch ? (ch.name || auth.currentUser.email) : auth.currentUser.email;
-        await addDoc(collection(db,'incidentReports'), { title, tags, content, author, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid });
+        await addDoc(collection(db,'incidentReports'), { title, tags, docUrl, author, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid });
         feedback.style.color='var(--accent-mint)'; feedback.textContent = 'Report created.'; createForm.reset(); createModal.style.display='none'; createModal.setAttribute('aria-hidden','true');
       } catch(err){ feedback.style.color='var(--accent-red)'; feedback.textContent = 'Error: ' + err.message; }
     });
   }
 
   // view modal
-  function openView(d){ viewModalTitle.textContent = d.title || '(untitled)'; viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`; viewModalBody.innerHTML = (d.content||'').replace(/\n/g,'<br>'); viewModal.setAttribute('aria-hidden','false'); }
+  function openView(d){
+    viewModalTitle.textContent = d.title || '(untitled)';
+    viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
+    if(d.docUrl){
+      const safeUrl = String(d.docUrl);
+      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p><p style="margin-top:.6rem;color:var(--text-light);opacity:.9">${safeUrl}</p>`;
+    } else {
+      viewModalBody.innerHTML = '<em>No document link provided.</em>';
+    }
+    viewModal.setAttribute('aria-hidden','false');
+  }
   function closeView(){ viewModal.setAttribute('aria-hidden','true'); }
   if(viewModalClose) viewModalClose.addEventListener('click', closeView);
   if(viewModal) viewModal.addEventListener('click', (ev)=>{ if(ev.target === viewModal) closeView(); });

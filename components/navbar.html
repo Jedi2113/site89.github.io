@@ -48,16 +48,34 @@
       <a href="/emails/" id="navMailBtn" class="nav-mail" title="Mail"><i class="fa-solid fa-envelope"></i></a>
     </div>
 
-    <!-- LOGIN BUTTON WITH CLICKABLE DROPDOWN -->
-    <div class="nav-login" id="navLogin">
-      <i class="fa-solid fa-user"></i>
-      <span id="navLoginText">Login</span>
+    <!-- ACCOUNTS BUTTON WITH DROPDOWN -->
+    <div class="nav-accounts" id="navAccounts">
+      <button class="nav-accounts-btn" id="navAccountsBtn">
+        <i class="fa-solid fa-user"></i>
+        <span id="navAccountsText">Login</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:0.8rem;"></i>
+      </button>
 
-      <!-- Dropdown -->
-      <div class="nav-dropdown-content nav-dropdown-login" id="navDropdown">
-        <a href="/character-select/">Manage Characters</a>
-        <a href="/accounts/">Manage Account</a>
-        <a href="#" id="logoutBtn">Logout</a>
+      <!-- Accounts Dropdown -->
+      <div class="nav-dropdown-content nav-dropdown-accounts hidden" id="navAccountsDropdown">
+        <a href="/accounts/" class="accounts-dropdown-item">
+          <i class="fa-solid fa-gear"></i>
+          <span>Manage Account</span>
+        </a>
+        <a href="/character-select/" class="accounts-dropdown-item">
+          <i class="fa-solid fa-masks-theater"></i>
+          <span>Manage Characters</span>
+        </a>
+        <div class="accounts-dropdown-divider"></div>
+        <button id="themeToggleBtn" class="accounts-dropdown-item theme-toggle">
+          <i class="fa-solid fa-sun" id="themeIcon"></i>
+          <span id="themeText">Dark Mode</span>
+        </button>
+        <div class="accounts-dropdown-divider"></div>
+        <button id="logoutBtn" class="accounts-dropdown-item logout-item">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   </div>
@@ -73,7 +91,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #111;
+    background-color: var(--bg-soft);
+    border-bottom: 1px solid var(--card-border);
   }
 
   .nav-left, .nav-right {
@@ -83,13 +102,14 @@
   }
 
   .nav-left a, .nav-right a {
-    color: #fff;
+    color: var(--text-light);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
   }
 
   .nav-left a:hover, .nav-right a:hover {
-    color: #8B0000;
+    color: var(--accent-mint);
   }
 
   .nav-dropdown-parent {
@@ -97,21 +117,30 @@
   }
 
   /* Default dropdown style */
-  .nav-dropdown-content {
+  .nav-dropdown-parent > .nav-dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
-    background: #111;
-    border: 1px solid #8B0000;
+    background: var(--bg-card);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
     min-width: 200px;
     z-index: 1000;
-    padding: 10px 0;
+    padding: 8px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
-  .nav-dropdown-content a {
+  .nav-dropdown-parent > .nav-dropdown-content a {
     display: block;
     padding: 8px 12px;
     white-space: nowrap;
+    color: var(--text-light);
+    text-decoration: none;
+  }
+
+  .nav-dropdown-parent > .nav-dropdown-content a:hover {
+    background: rgba(78, 250, 170, 0.1);
+    color: var(--accent-mint);
   }
 
   /* Archives open on hover */
@@ -119,14 +148,112 @@
     display: block;
   }
 
-  /* LOGIN DROPDOWN FIXES */
-  .nav-login {
+  /* LOGIN/ACCOUNTS DROPDOWN FIXES */
+  .nav-accounts {
     position: relative;
     cursor: pointer;
   }
 
-  .nav-dropdown-login {
+  .nav-accounts-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    font-family: var(--font-body);
+  }
+
+  .nav-accounts-btn:hover {
+    border-color: var(--accent-mint);
+    background: rgba(78, 250, 170, 0.05);
+  }
+
+  /* Accounts dropdown specific styling */
+  .nav-dropdown-accounts {
+    display: none !important;
+    position: absolute;
     right: 0;
+    top: 100%;
+    min-width: 220px;
+    padding: 0.5rem 0;
+    background: var(--bg-card);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  .nav-dropdown-accounts.hidden {
+    display: none !important;
+  }
+
+  .nav-dropdown-accounts:not(.hidden) {
+    display: block !important;
+  }
+
+  .accounts-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-align: left;
+  }
+
+  .accounts-dropdown-item:hover {
+    background-color: rgba(78, 250, 170, 0.1);
+    color: var(--accent-mint);
+  }
+
+  .accounts-dropdown-item i {
+    width: 1.2rem;
+    text-align: center;
+  }
+
+  .accounts-dropdown-item span {
+    flex: 1;
+  }
+
+  .accounts-dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.3rem 0;
+  }
+
+  .logout-item {
+    color: var(--accent-red);
+  }
+
+  .logout-item:hover {
+    background-color: rgba(176, 0, 0, 0.1) !important;
+    color: #ff6b6b;
+  }
+
+  .theme-toggle {
+    position: relative;
+  }
+
+  /* Hide old login styling */
+  .nav-login {
+    display: none !important;
+  }
+
+  .nav-dropdown-login {
+    display: none !important;
   }
 
   .hidden {
@@ -150,61 +277,168 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: #0e1113;
+    background: var(--bg-soft);
     padding: 0.9rem 1rem;
     z-index: 1000;
-    display: flex;
     flex-direction: column;
     gap: 0.45rem;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--card-border);
   }
 
   .mobile-menu a {
-    color: #fff;
+    color: var(--text-light);
     padding: 0.6rem 0.8rem;
     border-radius: 6px;
     text-decoration: none;
+    transition: all 0.2s ease;
   }
 
-  .mobile-menu a:hover { background: rgba(78,250,170,0.03); color: var(--accent-mint); }
-
-  .social-buttons a {
-    font-size: 1.2rem;
-    transition: color 0.2s;
+  .mobile-menu a:hover {
+    background: rgba(78, 250, 170, 0.08);
+    color: var(--accent-mint);
   }
 
-  .social-buttons a:hover {
-    color: #8B0000;
+  /* Light mode navbar adjustments */
+  html[data-theme="light"] #main-nav {
+    background-color: var(--bg-card);
+    border-bottom-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .nav-left a,
+  html[data-theme="light"] .nav-right a {
+    color: #1A1A1A;
+  }
+
+  html[data-theme="light"] .nav-left a:hover,
+  html[data-theme="light"] .nav-right a:hover {
+    color: var(--accent-teal);
+  }
+
+  html[data-theme="light"] .nav-dropdown-parent > .nav-dropdown-content {
+    background: var(--bg-card);
+    border-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .nav-dropdown-parent > .nav-dropdown-content a {
+    color: #1A1A1A;
+  }
+
+  html[data-theme="light"] .nav-dropdown-parent > .nav-dropdown-content a:hover {
+    background: rgba(0, 163, 137, 0.08);
+    color: var(--accent-teal);
+  }
+
+  html[data-theme="light"] .nav-accounts-btn {
+    border-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .nav-accounts-btn:hover {
+    background: rgba(0, 163, 137, 0.08);
+    border-color: var(--accent-teal);
+  }
+
+  html[data-theme="light"] .nav-dropdown-accounts {
+    background: var(--bg-card);
+    border-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .accounts-dropdown-item {
+    color: #1A1A1A;
+  }
+
+  html[data-theme="light"] .accounts-dropdown-item:hover {
+    background-color: rgba(0, 163, 137, 0.08);
+    color: var(--accent-teal);
+  }
+
+  html[data-theme="light"] .accounts-dropdown-divider {
+    background: #D0D0D0;
+  }
+
+  html[data-theme="light"] .mobile-menu {
+    background: var(--bg-card);
+    border-bottom-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .mobile-menu a {
+    color: #1A1A1A;
+  }
+
+  html[data-theme="light"] .mobile-menu a:hover {
+    background: rgba(0, 163, 137, 0.08);
+    color: var(--accent-teal);
   }
 </style>
 
-<script>
-  const navLogin = document.getElementById("navLogin");
-  const navDropdown = document.getElementById("navDropdown");
-  const navLoginText = document.getElementById("navLoginText");
+<script type="module">
+  import { ThemeManager } from '/assets/js/theme.js';
 
-  // Placeholder until real login system added
-  const userLoggedIn = true;
+  // Initialize theme on load
+  document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
+    updateThemeUI();
+  });
 
-  if (userLoggedIn) {
-    navLoginText.textContent = "Username"; // Replace with actual username later
-  } else {
-    navDropdown.classList.add("hidden");
+  // Update UI to reflect current theme
+  function updateThemeUI() {
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    if (!themeIcon || !themeText) return;
+
+    if (ThemeManager.isDark()) {
+      themeIcon.className = 'fa-solid fa-moon';
+      themeText.textContent = 'Light Mode';
+    } else {
+      themeIcon.className = 'fa-solid fa-sun';
+      themeText.textContent = 'Dark Mode';
+    }
   }
 
-  navLogin.addEventListener("click", (e) => {
-    e.stopPropagation(); 
-    navDropdown.classList.toggle("hidden");
+  // Theme toggle button
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      ThemeManager.toggle();
+      updateThemeUI();
+    });
+  }
+
+  // Listen for theme changes from other tabs/windows
+  window.addEventListener('themechange', () => {
+    updateThemeUI();
   });
 
-  document.addEventListener("click", () => {
-    navDropdown.classList.add("hidden");
-  });
+  // Accounts dropdown toggle
+  const navAccounts = document.getElementById('navAccounts');
+  const navAccountsBtn = document.getElementById('navAccountsBtn');
+  const navAccountsDropdown = document.getElementById('navAccountsDropdown');
+
+  if (navAccountsBtn && navAccountsDropdown) {
+    navAccountsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navAccountsDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (navAccounts && !navAccounts.contains(e.target)) {
+        navAccountsDropdown.classList.add('hidden');
+      }
+    });
+
+    // Close dropdown when clicking a link inside it
+    navAccountsDropdown.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navAccountsDropdown.classList.add('hidden');
+      });
+    });
+  }
 
   // Mobile menu toggle
   const navToggle = document.getElementById('navToggle');
   const mobileMenu = document.getElementById('mobileMenu');
-  if(navToggle && mobileMenu){
+  if (navToggle && mobileMenu) {
     navToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       mobileMenu.classList.toggle('hidden');
@@ -215,7 +449,7 @@
 
     // Close menu when clicking outside
     document.addEventListener('click', () => {
-      if(!mobileMenu.classList.contains('hidden')){
+      if (!mobileMenu.classList.contains('hidden')) {
         mobileMenu.classList.add('hidden');
         navToggle.setAttribute('aria-expanded', 'false');
         mobileMenu.setAttribute('aria-hidden', 'true');
@@ -225,88 +459,75 @@
 </script>
 
 <script>
-  // Ensure clicking the login area goes to /accounts/ (absolute)
   document.addEventListener('includesLoaded', () => {
-    const navLogin = document.getElementById('navLogin');
-    if (!navLogin) return;
-    navLogin.addEventListener('click', (e) => {
-      // Navigate to accounts folder; account page will handle auth/redirects
-      window.location.href = '/accounts/';
+    const input = document.getElementById('siteSearchInput');
+    const resultsEl = document.getElementById('siteSearchResults');
+    if(!input || !resultsEl) return;
+
+    // Build index from navbar links + a few manual entries
+    const anchors = Array.from(document.querySelectorAll('#main-nav a'));
+    const manual = [
+      { title: 'Home', href: '/' , desc: 'Site-89 Home' },
+      { title: 'Archives Hub', href: '/archives/', desc: 'Browse all archives' },
+      { title: 'Personnel Files', href: '/personnel-files/', desc: 'Personnel records and PIDs' },
+      { title: 'Anomalies', href: '/anomalies/', desc: 'Anomalies index' },
+      { title: 'Research Logs', href: '/research-logs/', desc: 'Research entries' },
+      { title: 'Incident Reports', href: '/incident-reports/', desc: 'Incident reporting' },
+      { title: 'Emails', href: '/emails/', desc: 'Site Mail' },
+      { title: 'About', href: '/about/', desc: 'About Site-89' },
+      { title: 'Guides', href: '/guides/', desc: 'Operational guides' },
+      { title: 'Newcomer Guide', href: '/guides/newcomer-guide/', desc: 'Getting started at Site-89' },
+      { title: 'Installation Guide', href: '/guides/installation-guide/', desc: 'Install the Technic Launcher & Site-89 pack' },
+      { title: 'Skins Guide', href: '/guides/skins-guide/', desc: 'Skinning, HD skins, and the /setskin command' },
+      { title: 'Character Guide', href: '/guides/character-guide/', desc: 'Advice on creating and maintaining characters' },
+      { title: 'Roleplay Guide', href: '/guides/roleplay-guide/', desc: 'Rules, syntax, and RP principles' },
+      { title: 'Site Management', href: '/site-management/', desc: 'Site management tools' }
+    ];
+
+    const indexMap = new Map();
+    anchors.forEach(a => {
+      const t = a.textContent.trim(); const h = a.getAttribute('href') || '/';
+      if(t && !indexMap.has(h)) indexMap.set(h, { title: t, href: h, desc: a.title || '' });
     });
-  });
-</script>
+    manual.forEach(m => { if(!indexMap.has(m.href)) indexMap.set(m.href, m); });
+    const index = Array.from(indexMap.values());
 
-<script>
-// Lightweight site search (client-side index) — runs after includes load
-document.addEventListener('includesLoaded', () => {
-  const input = document.getElementById('siteSearchInput');
-  const resultsEl = document.getElementById('siteSearchResults');
-  if(!input || !resultsEl) return;
+    let active = -1;
+    function renderResults(list){
+      resultsEl.innerHTML = '';
+      if(!list || list.length === 0){ resultsEl.innerHTML = '<div class="search-empty">No results</div>'; resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false'); return; }
+      list.slice(0,8).forEach((r, i) => {
+        const el = document.createElement('div');
+        el.className = 'search-result';
+        el.setAttribute('role','option');
+        el.innerHTML = `<div style="flex:1"><div class='title'>${r.title}</div><div class='desc' style='font-size:.85rem;color:var(--text-light);opacity:.8'>${r.desc || r.href}</div></div>`;
+        el.addEventListener('mousedown', (ev)=>{ ev.preventDefault(); window.location.href = r.href; });
+        resultsEl.appendChild(el);
+      });
+      resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false');
+    }
 
-  // Build index from navbar links + a few manual entries
-  const anchors = Array.from(document.querySelectorAll('#main-nav a'));
-  const manual = [
-    { title: 'Home', href: '/' , desc: 'Site-89 Home' },
-    { title: 'Archives Hub', href: '/archives/', desc: 'Browse all archives' },
-    { title: 'Personnel Files', href: '/personnel-files/', desc: 'Personnel records and PIDs' },
-    { title: 'Anomalies', href: '/anomalies/', desc: 'Anomalies index' },
-    { title: 'Research Logs', href: '/research-logs/', desc: 'Research entries' },
-    { title: 'Incident Reports', href: '/incident-reports/', desc: 'Incident reporting' },
-    { title: 'Emails', href: '/emails/', desc: 'Site Mail' },
-    { title: 'About', href: '/about/', desc: 'About Site-89' },
-    { title: 'Guides', href: '/guides/', desc: 'Operational guides' },
-    { title: 'Newcomer Guide', href: '/guides/newcomer-guide/', desc: 'Getting started at Site-89' },
-    { title: 'Installation Guide', href: '/guides/installation-guide/', desc: 'Install the Technic Launcher & Site-89 pack' },
-    { title: 'Skins Guide', href: '/guides/skins-guide/', desc: 'Skinning, HD skins, and the /setskin command' },
-    { title: 'Character Guide', href: '/guides/character-guide/', desc: 'Advice on creating and maintaining characters' },
-    { title: 'Roleplay Guide', href: '/guides/roleplay-guide/', desc: 'Rules, syntax, and RP principles' },
-    { title: 'Site Management', href: '/site-management/', desc: 'Site management tools' }
-  ];
+    function clearResults(){ resultsEl.classList.remove('active'); resultsEl.setAttribute('aria-hidden','true'); resultsEl.innerHTML = ''; active = -1; }
 
-  const indexMap = new Map();
-  anchors.forEach(a => {
-    const t = a.textContent.trim(); const h = a.getAttribute('href') || '/';
-    if(t && !indexMap.has(h)) indexMap.set(h, { title: t, href: h, desc: a.title || '' });
-  });
-  manual.forEach(m => { if(!indexMap.has(m.href)) indexMap.set(m.href, m); });
-  const index = Array.from(indexMap.values());
-
-  let active = -1;
-  function renderResults(list){
-    resultsEl.innerHTML = '';
-    if(!list || list.length === 0){ resultsEl.innerHTML = '<div class="search-empty">No results</div>'; resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false'); return; }
-    list.slice(0,8).forEach((r, i) => {
-      const el = document.createElement('div');
-      el.className = 'search-result';
-      el.setAttribute('role','option');
-      el.innerHTML = `<div style="flex:1"><div class='title'>${r.title}</div><div class='desc' style='font-size:.85rem;color:var(--text-light);opacity:.8'>${r.desc || r.href}</div></div>`;
-      el.addEventListener('mousedown', (ev)=>{ ev.preventDefault(); window.location.href = r.href; });
-      resultsEl.appendChild(el);
+    let debounceTimer = null;
+    input.addEventListener('input', (e)=>{
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(()=>{
+        const q = input.value.trim().toLowerCase();
+        if(!q){ clearResults(); return; }
+        const matches = index.filter(it => (it.title||'').toLowerCase().includes(q) || (it.desc||'').toLowerCase().includes(q) || (it.href||'').toLowerCase().includes(q));
+        renderResults(matches);
+      }, 150);
     });
-    resultsEl.classList.add('active'); resultsEl.setAttribute('aria-hidden','false');
-  }
 
-  function clearResults(){ resultsEl.classList.remove('active'); resultsEl.setAttribute('aria-hidden','true'); resultsEl.innerHTML = ''; active = -1; }
+    input.addEventListener('keydown', (e)=>{
+      const items = Array.from(resultsEl.querySelectorAll('.search-result'));
+      if(e.key === 'ArrowDown'){ e.preventDefault(); if(items.length){ active = Math.min(items.length-1, active+1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[Math.max(active,0)]?.scrollIntoView({block:'nearest'}); }}
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); if(items.length){ active = Math.max(0, active-1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[active]?.scrollIntoView({block:'nearest'}); }}
+      else if(e.key === 'Enter'){ e.preventDefault(); const items = Array.from(resultsEl.querySelectorAll('.search-result')); if(items[active]) items[active].dispatchEvent(new MouseEvent('mousedown')); }
+      else if(e.key === 'Escape'){ input.value=''; clearResults(); }
+    });
 
-  let debounceTimer = null;
-  input.addEventListener('input', (e)=>{
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(()=>{
-      const q = input.value.trim().toLowerCase();
-      if(!q){ clearResults(); return; }
-      const matches = index.filter(it => (it.title||'').toLowerCase().includes(q) || (it.desc||'').toLowerCase().includes(q) || (it.href||'').toLowerCase().includes(q));
-      renderResults(matches);
-    }, 150);
+    document.addEventListener('click', (ev)=>{ if(!document.getElementById('navSearch').contains(ev.target)) clearResults(); });
   });
-
-  input.addEventListener('keydown', (e)=>{
-    const items = Array.from(resultsEl.querySelectorAll('.search-result'));
-    if(e.key === 'ArrowDown'){ e.preventDefault(); if(items.length){ active = Math.min(items.length-1, active+1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[Math.max(active,0)]?.scrollIntoView({block:'nearest'}); }}
-    else if(e.key === 'ArrowUp'){ e.preventDefault(); if(items.length){ active = Math.max(0, active-1); items.forEach((it,i)=> it.classList.toggle('active', i===active)); items[active]?.scrollIntoView({block:'nearest'}); }}
-    else if(e.key === 'Enter'){ e.preventDefault(); const items = Array.from(resultsEl.querySelectorAll('.search-result')); if(items[active]) items[active].dispatchEvent(new MouseEvent('mousedown')); }
-    else if(e.key === 'Escape'){ input.value=''; clearResults(); }
-  });
-
-  document.addEventListener('click', (ev)=>{ if(!document.getElementById('navSearch').contains(ev.target)) clearResults(); });
-});
 </script>

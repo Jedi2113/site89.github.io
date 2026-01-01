@@ -113,7 +113,12 @@ document.addEventListener('includesLoaded', ()=>{
   function openViewModal(d){
     viewModalTitle.textContent = d.title || '(untitled)';
     viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
-    viewModalBody.innerHTML = (d.content || '').replace(/\n/g,'<br>');
+    if(d.docUrl){
+      const safeUrl = String(d.docUrl);
+      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p><p style="margin-top:.6rem;color:var(--text-light);opacity:.9">${safeUrl}</p>`;
+    } else {
+      viewModalBody.innerHTML = '<em>No document link provided.</em>';
+    }
     viewModal.setAttribute('aria-hidden','false');
   }
   function closeViewModal(){ viewModal.setAttribute('aria-hidden','true'); }
@@ -129,14 +134,14 @@ document.addEventListener('includesLoaded', ()=>{
       if(!canCreate()){ feedback.textContent = 'You do not have permission to create research logs.'; return; }
       const title = document.getElementById('logTitle').value.trim();
       const tags = document.getElementById('logTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const content = document.getElementById('logContent').value.trim();
-      if(!title || !content) { feedback.textContent = 'Title and content required.'; return; }
+      const docUrl = document.getElementById('logDocUrl').value.trim();
+      if(!title || !docUrl) { feedback.textContent = 'Title and document link required.'; return; }
       try{
         const ch = getSelectedCharacter();
         const author = ch ? (ch.name || auth.currentUser.email) : auth.currentUser.email;
         const authorPid = ch ? (ch.pid || '') : '';
         await addDoc(collection(db,'researchLogs'), {
-          title, tags, content, author, authorPid, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid
+          title, tags, docUrl, author, authorPid, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid
         });
         feedback.style.color = 'var(--accent-mint)'; feedback.textContent = 'Entry created.';
         createForm.reset();

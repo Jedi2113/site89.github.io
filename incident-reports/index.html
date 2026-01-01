@@ -6,6 +6,11 @@
   <meta name="required-clearance" content="1">
   <title>Incident Reports — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
 </head>
 <body>
   <div data-include="/components/header.html"></div>
@@ -82,7 +87,7 @@
           <form id="createIncidentForm">
             <label>Title <input id="incTitle" placeholder="Title" required></label>
             <label>Tags <input id="incTags" placeholder="Tags (comma separated)"></label>
-            <label>Content <textarea id="incContent" placeholder="Incident details" style="min-height:200px" required></textarea></label>
+            <label>Document Link <input id="incDocUrl" placeholder="Google Doc URL (shareable link)" required></label>
             <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createIncidentBtn" class="btn-primary" type="submit">Create</button><button id="cancelIncidentBtn" class="btn-secondary" type="button">Cancel</button></div>
             <p id="incFeedback" class="feedback"></p>
           </form>

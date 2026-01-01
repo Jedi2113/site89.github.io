@@ -5,7 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Site-89 Mail — Inbox</title>
   <link rel="stylesheet" href="/assets/css/main.css">
-  <script type="module" src="assets/js/auth.js"></script>
+  
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+  
+  <script type="module" src="/assets/js/auth.js"></script>
   <style>
     /* Outlook-like layout */
     html, body { height: 100%; }

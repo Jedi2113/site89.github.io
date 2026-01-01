@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 Manage Characters</title>
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .character-card {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-teal);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    html[data-theme="light"] .character-card {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .character-card:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 16px rgba(78, 250, 170, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .character-card-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--accent-teal), var(--bg-dark));
+      object-fit: cover;
+    }
+
+    html[data-theme="light"] .character-card-image {
+      background: linear-gradient(135deg, var(--accent-teal), #e8f5f3);
+    }
+
+    .character-card-info {
+      padding: 1.2rem;
+    }
+
+    .character-card-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--accent-mint);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .character-card-rank {
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      margin: 0 0 0.3rem 0;
+    }
+
+    .character-card-dept {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .character-badge {
+      display: inline-block;
+      margin-top: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      background: rgba(78, 250, 170, 0.1);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--accent-mint);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .character-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-select {
+      flex: 1;
+      padding: 0.5rem 0.8rem;
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-select:hover {
+      background: var(--accent-teal);
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-light);
+      opacity: 0.7;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    .empty-state p {
+      margin: 0.5rem 0;
+    }
+
+    .empty-state a {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .empty-state a:hover {
+      background: var(--accent-teal);
+    }
+
+    .auth-required {
+      text-align: center;
+      padding: 2rem;
+      color: var(--accent-red);
+    }
+
+    .info-box {
+      background: rgba(78, 250, 170, 0.05);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-left: 4px solid var(--accent-mint);
+      padding: 1rem 1.2rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    html[data-theme="light"] .info-box {
+      background: rgba(0, 163, 137, 0.05);
+      border: 1px solid rgba(0, 163, 137, 0.15);
+    }
+
+    .btn-create {
+      display: inline-block;
+      margin: 2rem 0 1rem 0;
+      padding: 0.8rem 1.5rem;
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-create:hover {
+      background: var(--accent-teal);
+      transform: scale(1.05);
+    }
+
+    .char-creation-form, .char-editor {
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      display: none;
+    }
+
+    .char-creation-form.active, .char-editor.active {
+      display: block;
+    }
+
+    .char-creation-form input, .char-creation-form textarea, .char-editor input, .char-editor textarea {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.6rem 0;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: var(--bg-panel);
+      color: var(--text-light);
+      font-family: var(--font-body);
+    }
+
+    .char-creation-form textarea, .char-editor textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin: 0.6rem 0;
+    }
+
+    .form-row input {
+      flex: 1;
+    }
+
+    .pid-lookup-btn {
+      padding: 0.6rem 1rem;
+      background: var(--accent-teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .pid-lookup-btn:hover {
+      background: var(--accent-mint);
+    }
+
+    .pid-confirm-box {
+      display: none;
+      background: rgba(78, 250, 170, 0.05);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-left: 4px solid var(--accent-mint);
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .pid-confirm-box.active {
+      display: block;
+    }
+
+    .pid-confirm-box button {
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pid-confirm-yes {
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+    }
+
+    .pid-confirm-no {
+      background: var(--accent-teal);
+      color: #fff;
+    }
+
+    .form-feedback {
+      margin-top: 0.8rem;
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-feedback.success {
+      background: rgba(78, 250, 170, 0.1);
+      color: var(--accent-mint);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+    }
+
+    .form-feedback.error {
+      background: rgba(176, 0, 0, 0.1);
+      color: var(--accent-red);
+      border: 1px solid rgba(176, 0, 0, 0.2);
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .form-buttons button {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit {
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-teal);
+    }
+
+    .btn-cancel {
+      background: var(--bg-panel);
+      color: var(--text-light);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-cancel:hover {
+      background: rgba(78, 250, 170, 0.05);
+    }
+
+    .char-editor-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .char-editor-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      border: 2px solid var(--accent-teal);
+      object-fit: cover;
+    }
+
+    html[data-theme="light"] .char-creation-form,
+    html[data-theme="light"] .char-editor {
+      border-color: #D0D0D0;
+    }
+
+    html[data-theme="light"] .char-creation-form input,
+    html[data-theme="light"] .char-creation-form textarea,
+    html[data-theme="light"] .char-editor input,
+    html[data-theme="light"] .char-editor textarea {
+      background: #FFFFFF;
+      border-color: #D0D0D0;
+      color: #1A1A1A;
+    }
+  
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div data-include="/components/header.html"></div>
+
+  <!-- Navbar -->
+  <div data-include="/components/navbar.html"></div>
+
+  <!-- Main Content -->
+  <section class="content">
+    <div class="about-box" style="margin-bottom: 1rem;">
+      <h2>Manage Your Characters</h2>
+      <p>View, select, and manage your characters. You may only see and edit characters that belong to you.</p>
+    </div>
+
+    <div class="info-box">
+      <i class="fa-solid fa-circle-info"></i> Select a character to use it for your activities on Site-89. Your selection is saved and will persist across sessions.
+    </div>
+
+    <div id="characterGrid" class="character-grid">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading your characters...</div>
+    </div>
+
+    <!-- Create New Character Button -->
+    <button id="createCharBtn" class="btn-create">
+      <i class="fas fa-plus"></i> Create New Character
+    </button>
+
+    <!-- Character Creation Form -->
+    <div id="charCreationForm" class="char-creation-form">
+      <h3>Create New Character</h3>
+      <p style="opacity: 0.8; margin-bottom: 1rem;">Enter your Personnel ID to create a character. The name, department, rank, and clearance will be populated from your personnel record.</p>
+      
+      <form id="charFormElement">
+        <div class="form-row">
+          <input type="text" id="charPID" placeholder="Personnel ID (e.g., 89A0B123)" required>
+          <button type="button" id="pidLookupBtn" class="pid-lookup-btn">Lookup</button>
+        </div>
+
+        <div id="pidConfirmBox" class="pid-confirm-box">
+          <div id="pidConfirmText" style="margin-bottom: 1rem;"></div>
+          <button type="button" id="pidConfirmYes" class="pid-confirm-yes">Yes — This is correct</button>
+          <button type="button" id="pidConfirmNo" class="pid-confirm-no">No — Edit</button>
+        </div>
+
+        <input type="text" id="charName" placeholder="Character Name" required>
+        <input type="text" id="charDept" placeholder="Department" required disabled>
+        <input type="text" id="charRank" placeholder="Rank" required disabled>
+        <input type="text" id="charClearance" placeholder="Clearance Level" required disabled>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-submit">Create Character</button>
+          <button type="button" id="cancelCharForm" class="btn-cancel">Cancel</button>
+        </div>
+      </form>
+      <div id="charFormFeedback" class="form-feedback" style="display: none;"></div>
+    </div>
+
+    <!-- Character Profile Editor -->
+    <div id="charEditor" class="char-editor">
+      <h3>Edit Character Profile: <span id="editCharName"></span></h3>
+      
+      <div class="char-editor-header">
+        <img id="charEditorImage" class="char-editor-image" src="https://via.placeholder.com/150" alt="Character photo">
+        <div style="flex: 1;">
+          <input type="text" id="charImgurLink" placeholder="Imgur image URL (e.g., https://i.imgur.com/...)">
+          <button type="button" id="updatePhotoBtn" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: var(--accent-teal); color: #fff; border: none; border-radius: 6px; cursor: pointer;">Update Photo</button>
+        </div>
+      </div>
+
+      <label style="display: block; margin: 1rem 0 0.5rem 0; color: var(--text-light);">Rank:</label>
+      <input type="text" id="charEditorRank" placeholder="e.g., Junior Researcher">
+
+      <label style="display: block; margin: 1rem 0 0.5rem 0; color: var(--text-light);">Bio:</label>
+      <textarea id="charEditorBio" placeholder="Enter character bio..."></textarea>
+
+      <div class="form-buttons">
+        <button id="saveCharProfileBtn" class="btn-submit">Save Profile</button>
+        <button type="button" id="closeCharEditor" class="btn-cancel">Cancel</button>
+      </div>
+      <div id="charEditorFeedback" class="form-feedback" style="display: none;"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where, addDoc, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Load only logged-in user's characters
+    async function loadCharacters(userId) {
+      const characterGrid = document.getElementById("characterGrid");
+      characterGrid.innerHTML = "";
+
+      try {
+        const q = query(collection(db, "characters"), where("uid", "==", userId));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          characterGrid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <i class="fas fa-masks-theater"></i>
+              <p><strong>No characters yet</strong></p>
+              <p>Create your first character to get started.</p>
+              <a href="/accounts/">Create Character</a>
+            </div>
+          `;
+          return;
+        }
+
+        const characters = [];
+        querySnapshot.forEach(docSnap => {
+          characters.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Sort by name
+        characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+        characters.forEach(char => {
+          const card = document.createElement("div");
+          card.className = "character-card";
+
+          const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+          const isSelected = localStorage.getItem("selectedCharacter") ? 
+            JSON.parse(localStorage.getItem("selectedCharacter")).id === char.id : false;
+
+          card.innerHTML = `
+            <img src="${photoUrl}" alt="${char.name}" class="character-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
+            <div class="character-card-info">
+              <h3 class="character-card-name">${char.name || "Unknown"}</h3>
+              <p class="character-card-rank">${char.rank || "Unassigned"}</p>
+              <p class="character-card-dept">${char.department || "Unassigned"}</p>
+              <div class="character-actions">
+                <button class="btn-select" data-char-id="${char.id}" data-char-data='${JSON.stringify(char)}' style="${isSelected ? 'background: rgba(78, 250, 170, 0.2); border: 1px solid var(--accent-mint); color: var(--accent-mint);' : ''}">
+                  <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-arrow-right'}"></i> ${isSelected ? 'Selected' : 'Select'}
+                </button>
+              </div>
+            </div>
+          `;
+
+          characterGrid.appendChild(card);
+        });
+
+        // Attach event listeners to select buttons
+        document.querySelectorAll('.btn-select').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const charId = btn.getAttribute('data-char-id');
+            const charData = JSON.parse(btn.getAttribute('data-char-data'));
+            const isAlreadySelected = localStorage.getItem("selectedCharacter") ? 
+              JSON.parse(localStorage.getItem("selectedCharacter")).id === charId : false;
+            
+            // If already selected, don't reload
+            if (isAlreadySelected) return;
+            
+            // Save to localStorage
+            localStorage.setItem('selectedCharacter', JSON.stringify(charData));
+            
+            // Reload to update UI
+            location.reload();
+          });
+        });
+
+      } catch (err) {
+        console.error("Error loading characters:", err);
+        characterGrid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-exclamation-triangle"></i><p>Error loading characters.</p></div>';
+      }
+    }
+
+    // Check auth state and load characters
+    onAuthStateChanged(auth, (user) => {
+      const characterGrid = document.getElementById("characterGrid");
+      if (!user) {
+        characterGrid.innerHTML = `
+          <div class="empty-state auth-required" style="grid-column: 1 / -1;">
+            <i class="fas fa-lock"></i>
+            <p>You must be logged in to manage characters.</p>
+            <a href="/login/" style="color: var(--accent-mint);">Login or Create Account</a>
+          </div>
+        `;
+        return;
+      }
+      loadCharactersWithEdit(user.uid);
+    });
+
+    // Sticky nav
+    document.addEventListener("scroll", () => {
+      const nav = document.getElementById("main-nav");
+      if (nav) {
+        nav.classList.toggle("is-sticky", window.scrollY > 120);
+      }
+    });
+
+    // CHARACTER CREATION AND EDITING
+    let pidMatchedData = null;
+    let pidConfirmed = false;
+    let currentEditingCharId = null;
+
+    const createCharBtn = document.getElementById("createCharBtn");
+    const charCreationForm = document.getElementById("charCreationForm");
+    const charFormElement = document.getElementById("charFormElement");
+    const cancelCharForm = document.getElementById("cancelCharForm");
+    const charFormFeedback = document.getElementById("charFormFeedback");
+    const pidLookupBtn = document.getElementById("pidLookupBtn");
+    const charPID = document.getElementById("charPID");
+    const pidConfirmBox = document.getElementById("pidConfirmBox");
+    const pidConfirmText = document.getElementById("pidConfirmText");
+    const pidConfirmYes = document.getElementById("pidConfirmYes");
+    const pidConfirmNo = document.getElementById("pidConfirmNo");
+    const charName = document.getElementById("charName");
+    const charDept = document.getElementById("charDept");
+    const charRank = document.getElementById("charRank");
+    const charClearance = document.getElementById("charClearance");
+
+    const charEditor = document.getElementById("charEditor");
+    const charEditorImage = document.getElementById("charEditorImage");
+    const charImgurLink = document.getElementById("charImgurLink");
+    const updatePhotoBtn = document.getElementById("updatePhotoBtn");
+    const charEditorRank = document.getElementById("charEditorRank");
+    const charEditorBio = document.getElementById("charEditorBio");
+    const saveCharProfileBtn = document.getElementById("saveCharProfileBtn");
+    const closeCharEditor = document.getElementById("closeCharEditor");
+    const charEditorFeedback = document.getElementById("charEditorFeedback");
+    const editCharName = document.getElementById("editCharName");
+
+    function showFeedback(element, message, type) {
+      element.textContent = message;
+      element.className = `form-feedback ${type}`;
+      element.style.display = "block";
+    }
+
+    function resetCharForm() {
+      pidMatchedData = null;
+      pidConfirmed = false;
+      pidConfirmBox.classList.remove("active");
+      charPID.value = "";
+      charName.value = "";
+      charDept.value = "";
+      charRank.value = "";
+      charClearance.value = "";
+      charName.disabled = true;
+      charDept.disabled = true;
+      charRank.disabled = true;
+      charClearance.disabled = true;
+      pidLookupBtn.disabled = false;
+      charPID.disabled = false;
+      charFormFeedback.style.display = "none";
+    }
+
+    // Create character button
+    createCharBtn.addEventListener("click", () => {
+      charCreationForm.classList.add("active");
+      createCharBtn.style.display = "none";
+      resetCharForm();
+    });
+
+    // Cancel form
+    cancelCharForm.addEventListener("click", () => {
+      charCreationForm.classList.remove("active");
+      createCharBtn.style.display = "inline-block";
+      resetCharForm();
+    });
+
+    // PID Lookup
+    pidLookupBtn.addEventListener("click", async () => {
+      const pid = (charPID.value || "").trim();
+      pidConfirmed = false;
+      pidMatchedData = null;
+      pidConfirmBox.classList.remove("active");
+      charFormFeedback.style.display = "none";
+
+      if (!pid) {
+        showFeedback(charFormFeedback, "Enter a Personnel ID to lookup.", "error");
+        return;
+      }
+
+      try {
+        const pidRef = doc(db, "personnel", pid);
+        const snap = await getDoc(pidRef);
+        if (!snap.exists()) {
+          showFeedback(charFormFeedback, "PID not found. Contact Internal Operations to add this PID.", "error");
+          return;
+        }
+
+        pidMatchedData = snap.data();
+        charName.value = pidMatchedData.name || "";
+        charDept.value = pidMatchedData.department || "";
+        charRank.value = pidMatchedData.rank || "";
+        charClearance.value = pidMatchedData.clearance || "";
+
+        charName.disabled = false;
+        charDept.disabled = true;
+        charRank.disabled = true;
+        charClearance.disabled = true;
+
+        pidConfirmText.textContent = `Found personnel: ${pidMatchedData.name} — does this look right?`;
+        pidConfirmBox.classList.add("active");
+      } catch (err) {
+        console.error("PID lookup error:", err);
+        showFeedback(charFormFeedback, "Lookup failed. Check console.", "error");
+      }
+    });
+
+    // Confirm PID
+    pidConfirmYes.addEventListener("click", () => {
+      pidConfirmed = true;
+      pidConfirmBox.classList.remove("active");
+      showFeedback(charFormFeedback, "Personnel confirmed — you may now create the character.", "success");
+      charPID.disabled = true;
+      pidLookupBtn.disabled = true;
+    });
+
+    pidConfirmNo.addEventListener("click", () => {
+      pidConfirmed = false;
+      pidConfirmBox.classList.remove("active");
+      charFormFeedback.style.display = "none";
+      charName.disabled = false;
+      charName.focus();
+    });
+
+    // Submit character form
+    charFormElement.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return alert("You must be logged in!");
+
+      const pid = (charPID.value || "").trim();
+      const name = charName.value.trim();
+
+      if (!pid || !pidMatchedData || !pidConfirmed) {
+        showFeedback(charFormFeedback, "You must lookup and confirm a valid Personnel ID.", "error");
+        return;
+      }
+
+      try {
+        const payload = {
+          uid: user.uid,
+          pid: pid,
+          name: name || pidMatchedData.name || "",
+          department: pidMatchedData.department || "",
+          rank: pidMatchedData.rank || "",
+          clearance: Number(pidMatchedData.clearance) || 0,
+          bio: "",
+          profileImage: ""
+        };
+
+        await addDoc(collection(db, "characters"), payload);
+        showFeedback(charFormFeedback, "Character created successfully!", "success");
+        charFormElement.reset();
+        resetCharForm();
+        setTimeout(() => location.reload(), 1000);
+      } catch (err) {
+        showFeedback(charFormFeedback, "Error creating character: " + err.message, "error");
+      }
+    });
+
+    // Character editing
+    closeCharEditor.addEventListener("click", () => {
+      charEditor.classList.remove("active");
+      charEditorFeedback.style.display = "none";
+    });
+
+    updatePhotoBtn.addEventListener("click", () => {
+      const url = charImgurLink.value.trim();
+      if (!url) {
+        showFeedback(charEditorFeedback, "Please enter an Imgur URL", "error");
+        return;
+      }
+
+      if (!url.includes("imgur")) {
+        showFeedback(charEditorFeedback, "Please enter a valid Imgur URL", "error");
+        return;
+      }
+
+      charEditorImage.src = url;
+      showFeedback(charEditorFeedback, "Photo updated (will save when you click Save Profile)", "success");
+    });
+
+    saveCharProfileBtn.addEventListener("click", async () => {
+      if (!currentEditingCharId) return;
+
+      saveCharProfileBtn.disabled = true;
+      saveCharProfileBtn.textContent = "Saving...";
+
+      try {
+        const charRef = doc(db, "characters", currentEditingCharId);
+        await updateDoc(charRef, {
+          rank: charEditorRank.value,
+          bio: charEditorBio.value,
+          profileImage: charEditorImage.src
+        });
+
+        showFeedback(charEditorFeedback, "Profile saved successfully!", "success");
+        saveCharProfileBtn.disabled = false;
+        saveCharProfileBtn.textContent = "Save Profile";
+        setTimeout(() => location.reload(), 1000);
+      } catch (err) {
+        showFeedback(charEditorFeedback, "Error saving profile: " + err.message, "error");
+        saveCharProfileBtn.disabled = false;
+        saveCharProfileBtn.textContent = "Save Profile";
+      }
+    });
+
+    // Add edit button to character cards
+    function addEditButtons() {
+      document.querySelectorAll(".character-card").forEach((card) => {
+        const charId = card.querySelector(".btn-select")?.getAttribute("data-char-id");
+        const charData = card.querySelector(".btn-select")?.getAttribute("data-char-data");
+        
+        if (!charId || card.querySelector(".btn-edit")) return; // Already has edit button
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "btn-select";
+        editBtn.style.background = "var(--accent-teal)";
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        editBtn.type = "button";
+
+        editBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const char = JSON.parse(charData);
+          currentEditingCharId = charId;
+          editCharName.textContent = char.name;
+          charEditorRank.value = char.rank || "";
+          charEditorBio.value = char.bio || "";
+          charImgurLink.value = char.profileImage || "";
+          charEditorImage.src = char.profileImage || "https://via.placeholder.com/150";
+          charEditor.classList.add("active");
+          charEditorFeedback.style.display = "none";
+        });
+
+        card.querySelector(".character-actions").appendChild(editBtn);
+        editBtn.classList.add("btn-edit");
+      });
+    }
+
+    // Load characters with edit buttons
+    const originalLoadCharacters = loadCharacters;
+    async function loadCharactersWithEdit(userId) {
+      await originalLoadCharacters(userId);
+      addEditButtons();
+    }
+  </script>
+
+</body>
+</html>

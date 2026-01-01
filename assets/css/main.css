@@ -1,11 +1,13 @@
-/* ─────────── Branding Variables ─────────── */
+/* ─────────── Branding Variables & Theme System ─────────── */
 :root {
-  /* Core colors */
+  /* Dark Mode (Default) */
   --bg-dark: #0b0d0e;
   --bg-soft: #0e1113;
   --bg-card: #111315;
   --text-light: #E6EFE9;
+  --text-dark: #333;
   --muted: #9fb6ad;
+  --muted-light: #6b7280;
 
   --accent-mint: #3EE1A3;
   --accent-teal: #00A389;
@@ -25,12 +27,28 @@
   --transition: 0.18s ease;
 }
 
+/* Light Mode Theme */
+html[data-theme="light"] {
+  --bg-dark: #F5F5F5;
+  --bg-soft: #FAFAFA;
+  --bg-card: #FFFFFF;
+  --text-light: #1A1A1A;
+  --muted: #666666;
+  --muted-light: #999999;
+  --card-border: rgba(0, 163, 137, 0.12);
+  --shadow-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* ─────────── Base Styling ─────────── */
+html {
+  scroll-behavior: smooth;
+}
+
 html, body { height: 100%; }
 
 body {
   font-family: var(--font-body);
-  background: linear-gradient(180deg, var(--bg-dark), #070808 100%);
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-soft) 100%);
   color: var(--text-light);
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -39,6 +57,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
@@ -63,6 +82,66 @@ a:hover { color: var(--accent-teal); text-decoration: underline; }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
   }
 }
 
@@ -555,4 +634,355 @@ footer p { margin:0; }
 
 .roadmap-phase.visible .phase-date {
   opacity: 1;
+}
+/* ─────────── Light Mode Enhancements ─────────── */
+html[data-theme="light"] {
+  /* Update inputs and form elements */
+  --input-bg: #FFFFFF;
+  --input-border: #D0D0D0;
+  --input-text: #1A1A1A;
+}
+
+html[data-theme="light"] .auth-box input,
+html[data-theme="light"] input[type="text"],
+html[data-theme="light"] input[type="email"],
+html[data-theme="light"] input[type="password"],
+html[data-theme="light"] textarea {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] .auth-box input:focus,
+html[data-theme="light"] input:focus,
+html[data-theme="light"] textarea:focus {
+  border-color: var(--accent-teal);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 163, 137, 0.1);
+}
+
+html[data-theme="light"] .auth-box {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .modal-content {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .nav-search input {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] .nav-search input:focus {
+  box-shadow: 0 2px 8px rgba(0, 163, 137, 0.15);
+}
+
+html[data-theme="light"] .search-results {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .search-result:hover {
+  background: rgba(0, 163, 137, 0.08);
+}
+
+html[data-theme="light"] .nav-accounts-btn {
+  border-color: #D0D0D0;
+  background: #F9F9F9;
+}
+
+html[data-theme="light"] .nav-accounts-btn:hover {
+  background: rgba(0, 163, 137, 0.08);
+  border-color: var(--accent-teal);
+}
+
+html[data-theme="light"] .nav-dropdown-content {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .accounts-dropdown-item:hover {
+  background-color: rgba(0, 163, 137, 0.08);
+}
+
+html[data-theme="light"] .accounts-dropdown-divider {
+  background: #E5E5E5;
+}
+
+html[data-theme="light"] .message-item {
+  border-bottom-color: #E5E5E5;
+}
+
+html[data-theme="light"] .message-item:hover {
+  background: rgba(0, 163, 137, 0.05);
+}
+
+html[data-theme="light"] .message-item.unread {
+  background: rgba(0, 163, 137, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(0, 163, 137, 0.12);
+}
+
+html[data-theme="light"] .card,
+html[data-theme="light"] .about-box,
+html[data-theme="light"] .eotm-card,
+html[data-theme="light"] .ad-card,
+html[data-theme="light"] .info-card,
+html[data-theme="light"] .guide-card,
+html[data-theme="light"] .doc-card,
+html[data-theme="light"] .archive-card,
+html[data-theme="light"] .ad-resource {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .archive-card {
+  border-color: #D0D0D0;
+}
+
+html[data-theme="light"] .archive-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Light mode button styling */
+html[data-theme="light"] .btn-primary {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .btn-primary:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme="light"] .btn-secondary {
+  border-color: #D0D0D0;
+}
+
+html[data-theme="light"] .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Light mode navbar */
+html[data-theme="light"] #main-nav {
+  background: rgba(245, 245, 245, 0.9);
+  border-bottom-color: #D0D0D0;
+}
+
+html[data-theme="light"] #main-nav.is-sticky {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] #main-nav a {
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] #main-nav a:hover {
+  color: var(--accent-mint);
+}
+
+/* Light mode dropdowns */
+html[data-theme="light"] .nav-dropdown-parent:hover .nav-dropdown-content {
+  background: linear-gradient(180deg, #FAFAFA, #FFFFFF);
+  border-color: #D0D0D0;
+}
+
+/* Light mode modals */
+html[data-theme="light"] .modal {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="light"] .modal-header {
+  border-bottom-color: rgba(0, 163, 137, 0.15);
+}
+
+html[data-theme="light"] .modal-photo {
+  border-color: rgba(0, 163, 137, 0.2);
+}
+
+html[data-theme="light"] .modal-bio {
+  background: rgba(0, 163, 137, 0.08);
+  border-left-color: var(--accent-teal);
+}
+
+/* Ensure text contrast in light mode */
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4 {
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] p,
+html[data-theme="light"] li {
+  color: #666666;
+}
+
+html[data-theme="light"] a {
+  color: var(--accent-teal);
+}
+
+html[data-theme="light"] a:hover {
+  color: #008875;
+}
+
+/* Light mode logo inversion */
+html[data-theme="light"] .site-logo,
+html[data-theme="light"] .site-header img {
+  filter: brightness(0.2) contrast(1.1);
+}
+
+html[data-theme="light"] .brand-text {
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] .brand-identifier {
+  color: var(--accent-teal);
+}
+
+html[data-theme="light"] .brand-title {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-mint));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html[data-theme="light"] .site-header {
+  border-bottom-color: #D0D0D0;
+}
+
+html[data-theme="light"] .status-pill {
+  background: rgba(0, 163, 137, 0.08);
+  border-color: rgba(0, 163, 137, 0.15);
+  color: var(--accent-teal);
+}
+
+/* Light mode buttons */
+html[data-theme="light"] .btn-primary {
+  box-shadow: 0 2px 8px rgba(0, 163, 137, 0.2);
+}
+
+html[data-theme="light"] .btn-primary:hover {
+  box-shadow: 0 6px 16px rgba(0, 163, 137, 0.3);
+}
+
+html[data-theme="light"] .btn-secondary {
+  border-color: #D0D0D0;
+  color: #1A1A1A;
+}
+
+html[data-theme="light"] .btn-secondary:hover {
+  background: rgba(0, 163, 137, 0.05);
+  border-color: var(--accent-teal);
+}
+
+html[data-theme="light"] .auth-box button {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-mint));
+  box-shadow: 0 2px 8px rgba(0, 163, 137, 0.2);
+}
+
+html[data-theme="light"] .auth-box button:hover {
+  box-shadow: 0 6px 16px rgba(0, 163, 137, 0.3);
+}
+
+/* Light mode compose modal */
+html[data-theme="light"] .compose-modal {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme="light"] .compose-modal input,
+html[data-theme="light"] .compose-modal textarea {
+  background: #F9F9F9;
+  border-color: #D0D0D0;
+  color: #1A1A1A;
+}
+
+/* Light mode footer */
+html[data-theme="light"] footer {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+  border-top-color: #D0D0D0;
+  color: #666666;
+}
+
+/* Light mode content blocks */
+html[data-theme="light"] .content {
+  background: transparent;
+}
+
+html[data-theme="light"] .about-box {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Light mode code blocks and pre */
+html[data-theme="light"] code,
+html[data-theme="light"] pre {
+  background: #F5F5F5;
+  border-color: #D0D0D0;
+  color: #333333;
+}
+
+/* Light mode scrollbar */
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #F5F5F5;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* Light mode icons */
+html[data-theme="light"] .fa-solid,
+html[data-theme="light"] .fas,
+html[data-theme="light"] .far,
+html[data-theme="light"] .fab {
+  color: inherit;
+}
+
+/* Light mode tables and lists */
+html[data-theme="light"] table {
+  color: #1A1A1A;
+  border-color: #D0D0D0;
+}
+
+html[data-theme="light"] th {
+  background: #F5F5F5;
+  border-color: #D0D0D0;
+}
+
+html[data-theme="light"] tr:hover {
+  background: rgba(0, 163, 137, 0.03);
+}
+
+/* Light mode form labels */
+html[data-theme="light"] label {
+  color: #1A1A1A;
+}
+
+/* Light mode select elements */
+html[data-theme="light"] select {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  color: #1A1A1A;
+}
+
+/* Smooth transitions for theme changes */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+*:not(svg):not(svg *) {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Prevent animation flicker on theme toggle */
+html.theme-changing,
+html.theme-changing * {
+  transition: none !important;
 }

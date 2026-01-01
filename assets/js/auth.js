@@ -20,8 +20,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 document.addEventListener("includesLoaded", () => {
-  const navLogin = document.getElementById("navLogin");
-  const navLoginText = document.getElementById("navLoginText");
+  const navAccountsBtn = document.getElementById("navAccountsBtn");
+  const navAccountsText = document.querySelector("#navAccountsBtn span");
 
   function formatCharacterName(fullName) {
     const parts = fullName.split(" ");
@@ -49,17 +49,17 @@ document.addEventListener("includesLoaded", () => {
       }
     }
 
-    navLoginText.textContent = displayName;
+    if (navAccountsText) {
+      navAccountsText.textContent = displayName;
+    }
   });
 
-  // Navbar button behavior
-  if (navLogin) {
-    navLogin.addEventListener("click", () => {
-      if (auth.currentUser) {
-        window.location.href = "/accounts/";
-      } else {
-        window.location.href = "/login/";
-      }
+  // Navbar accounts button behavior
+  if (navAccountsBtn) {
+    navAccountsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Just toggle the dropdown; links will handle navigation
     });
   }
 
@@ -67,9 +67,11 @@ document.addEventListener("includesLoaded", () => {
   const logoutButtons = Array.from(document.querySelectorAll('#logoutBtn'));
   logoutButtons.forEach(btn => btn.addEventListener('click', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
     signOut(auth).then(() => window.location.href = '/login/').catch(() => window.location.href = '/login/');
   }));
+
 
   // LOGIN FORM (if exists)
   const loginForm = document.getElementById("loginForm");

@@ -6,6 +6,11 @@
   <meta name="required-clearance" content="1">
   <title>Research Logs — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
 </head>
 <body>
   <div data-include="/components/header.html"></div>
@@ -54,7 +59,7 @@
         </div>
 
         <div class="ms-toolbar">
-          <input id="logSearch" class="ms-search" placeholder="Search logs by title, tags, or content…">
+          <input id="logSearch" class="ms-search" placeholder="Search logs by title or tags…">
           <button id="newLogBtn" class="ms-btn-new" style="display:none">+ New</button>
         </div>
       </div>
@@ -70,7 +75,7 @@
           <form id="createLogForm">
             <label>Title <input id="logTitle" placeholder="Title" required></label>
             <label>Tags <input id="logTags" placeholder="Tags (comma separated)"></label>
-            <label>Content <textarea id="logContent" placeholder="Entry content" style="min-height:200px" required></textarea></label>
+            <label>Document Link <input id="logDocUrl" placeholder="Google Doc URL (shareable link)" required></label>
             <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createLogBtn" class="btn-primary" type="submit">Create</button><button id="cancelLogBtn" class="btn-secondary" type="button">Cancel</button></div>
             <p id="logFeedback" class="feedback"></p>
           </form>
