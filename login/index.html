@@ -85,6 +85,85 @@
       color: var(--accent-mint);
       text-decoration: underline;
     }
+
+    /* Welcome Modal Styles */
+    .welcome-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .welcome-modal-overlay.active {
+      display: flex;
+    }
+
+    .welcome-modal {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-mint);
+      border-radius: 12px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .welcome-modal h1 {
+      color: var(--accent-mint);
+      font-family: var(--font-head);
+      font-size: 2.5rem;
+      margin: 0 0 1rem 0;
+    }
+
+    .welcome-modal p {
+      color: var(--text-light);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+
+    .welcome-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .welcome-btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .welcome-btn-skip {
+      background: var(--accent-teal);
+      color: #06100e;
+    }
+
+    .welcome-btn-skip:hover {
+      background: var(--accent-mint);
+    }
+
+    .welcome-btn-orient {
+      background: var(--accent-mint);
+      color: #06100e;
+    }
+
+    .welcome-btn-orient:hover {
+      background: var(--accent-teal);
+    }
   </style>
 </head>
 
@@ -94,6 +173,18 @@
   <div data-include="/components/header.html"></div> 
 
 <div data-include="/components/navbar.html"></div>
+
+<!-- Welcome Modal -->
+<div id="welcomeModal" class="welcome-modal-overlay">
+  <div class="welcome-modal">
+    <h1>Welcome to Site-89!</h1>
+    <p>Is this your first time here?</p>
+    <div class="welcome-buttons">
+      <button class="welcome-btn welcome-btn-skip" id="skipOrientBtn">I know what I'm doing</button>
+      <button class="welcome-btn welcome-btn-orient" id="startOrientBtn">Show me around</button>
+    </div>
+  </div>
+</div>
 
 <section class="content center-content">
   <div class="auth-box fade-in" id="authBox">
@@ -107,6 +198,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -120,8 +212,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const authBox = document.getElementById("authBox");
+const welcomeModal = document.getElementById("welcomeModal");
+const skipOrientBtn = document.getElementById("skipOrientBtn");
+const startOrientBtn = document.getElementById("startOrientBtn");
 
 const templates = {
   login: `
@@ -182,7 +278,6 @@ function attachHandlers(templateName) {
     const password = document.getElementById("password").value;
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to the main page instead of alert
       window.location.href = "/";
     } catch (err) {
       document.getElementById("errorMessage").textContent = err.message;
@@ -198,9 +293,17 @@ function attachHandlers(templateName) {
       const email = document.getElementById("regEmail").value;
       const password = document.getElementById("regPassword").value;
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Account created! You can now log in.");
-        showTemplate("login");
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Create user document with orientation flag
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          email: email,
+          needsOrientation: true,
+          createdAt: new Date()
+        });
+
+        // Show welcome modal
+        welcomeModal.classList.add("active");
       } catch (err) {
         document.getElementById("registerFeedback").textContent = err.message;
       }
@@ -222,6 +325,23 @@ function attachHandlers(templateName) {
     document.getElementById("goLogin").addEventListener("click", () => showTemplate("login"));
   }
 }
+
+// Welcome Modal Handlers
+skipOrientBtn.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (user) {
+    await setDoc(doc(db, "users", user.uid), { needsOrientation: false }, { merge: true });
+  }
+  window.location.href = "/character-select/";
+});
+
+startOrientBtn.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (user) {
+    // Keep needsOrientation as true
+    window.location.href = "/orientation/";
+  }
+});
 
 // Initial load
 showTemplate("login");

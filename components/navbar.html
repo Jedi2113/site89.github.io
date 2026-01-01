@@ -67,6 +67,10 @@
           <i class="fa-solid fa-masks-theater"></i>
           <span>Manage Characters</span>
         </a>
+        <a href="/orientation/" class="accounts-dropdown-item" id="orientationLink" style="display:none;">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Orientation</span>
+        </a>
         <div class="accounts-dropdown-divider"></div>
         <button id="themeToggleBtn" class="accounts-dropdown-item theme-toggle">
           <i class="fa-solid fa-sun" id="themeIcon"></i>
@@ -493,6 +497,40 @@
       }
     });
   }
+</script>
+
+<script type="module">
+  // Check if user needs orientation and show button
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+    authDomain: "site-89-2d768.firebaseapp.com",
+    projectId: "site-89-2d768",
+    storageBucket: "site-89-2d768.firebasestorage.app",
+    messagingSenderId: "851485754416",
+    appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    const orientationLink = document.getElementById("orientationLink");
+    if (user && orientationLink) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().needsOrientation === true) {
+          orientationLink.style.display = "block";
+        }
+      } catch (err) {
+        console.error("Error checking orientation status:", err);
+      }
+    }
+  });
 </script>
 
 <script>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 New User Orientation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .terminal-container {
+      background: #0a0e27;
+      border: 2px solid var(--accent-mint);
+      border-radius: 8px;
+      padding: 2rem;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--accent-mint);
+      max-width: 900px;
+      margin: 2rem auto;
+      min-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.1);
+    }
+
+    .terminal-line {
+      margin: 0.3rem 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .terminal-prompt {
+      color: var(--accent-teal);
+    }
+
+    .terminal-input {
+      color: var(--accent-mint);
+      font-weight: bold;
+    }
+
+    .terminal-output {
+      color: var(--text-light);
+    }
+
+    .terminal-success {
+      color: #4efa8a;
+      font-weight: bold;
+    }
+
+    .terminal-error {
+      color: #ff6b6b;
+    }
+
+    .cursor {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .orientation-content {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+
+    .orientation-section {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.1);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .orientation-section h2 {
+      color: var(--accent-mint);
+      margin-top: 0;
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 0.5rem;
+    }
+
+    .orientation-section p, .orientation-section li {
+      color: var(--text-light);
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .orientation-section ul {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+
+    .next-btn {
+      display: block;
+      margin: 2rem auto;
+      padding: 1rem 2rem;
+      background: var(--accent-mint);
+      color: #06100e;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .next-btn:hover {
+      background: var(--accent-teal);
+      transform: translateY(-2px);
+    }
+
+    .orientation-hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <!-- Terminal Phase -->
+  <section class="content" id="terminalPhase">
+    <div class="terminal-container" id="terminal">
+      <div class="terminal-line"><span class="terminal-prompt">site89% </span><span class="terminal-input">useradd -m -s /bin/bash <span id="emailDisplay"></span></span></div>
+      <div class="terminal-line"><span class="terminal-output">Creating home directory...</span></div>
+      <div class="terminal-line"><span class="terminal-success" id="successMessage"></span><span class="cursor">▮</span></div>
+    </div>
+    <button class="next-btn" id="continueBtn" style="display:none;">Continue to Orientation</button>
+  </section>
+
+  <!-- Orientation Content Phase -->
+  <section class="orientation-content orientation-hidden" id="orientationContent">
+    <h1 style="text-align:center;color:var(--accent-mint);font-family:var(--font-head);font-size:2.5rem;margin-bottom:2rem;">Welcome to Site-89</h1>
+
+    <div class="orientation-section">
+      <h2>What is Site-89?</h2>
+      <p>Site-89 is an interactive roleplay experience set in the SCP Foundation universe. It's a collaborative storytelling platform where you embody fictional characters working within the Foundation — a secret organization dedicated to containing and studying anomalous entities and phenomena that defy conventional scientific explanation.</p>
+      <p>You are part of a community of players creating narratives, developing characters, and exploring the mysterious world of the Foundation.</p>
+    </div>
+
+    <div class="orientation-section">
+      <h2>What is the SCP Foundation?</h2>
+      <p>The SCP Foundation is a collaborative fiction project featuring thousands of creative works (called "SCPs") describing anomalous objects and creatures. These range from benign to utterly dangerous. The Foundation's job is to find, contain, and secure these anomalies to protect humanity.</p>
+      <p>Our roleplay is set in this universe, and you'll be working with these concepts. Don't worry if you're unfamiliar — you'll learn as you play!</p>
+    </div>
+
+    <div class="orientation-section">
+      <h2>What Are You?</h2>
+      <p><strong>Right now? Nothing.</strong> You are just a person who has created an account. You have no character, no role, no position in the Foundation.</p>
+      <p>This is intentional. You need to create a character to begin roleplaying. Your character will be a Foundation employee — perhaps a Researcher, Security Officer, Administrator, or other staff member. Your character has a background, a position, and a role to play in the story.</p>
+    </div>
+
+    <div class="orientation-section">
+      <h2>How to Create a Character</h2>
+      <p>To create a character, you need a <strong>Personnel ID (PID)</strong>. PIDs are assigned to Foundation staff and represent real people in the world.</p>
+      <p><strong>Important:</strong> PIDs are managed by the Internal Operations department. If you don't have a PID, you must contact someone in leadership or check the personnel files to request one.</p>
+      <ul>
+        <li>Navigate to your Character Select page</li>
+        <li>Click "Create New Character"</li>
+        <li>Enter a valid Personnel ID</li>
+        <li>The system will load your personnel record from the Foundation database</li>
+        <li>Confirm your identity and create your character</li>
+        <li>Edit your character's profile with a bio, appearance, and other details</li>
+      </ul>
+    </div>
+
+    <div class="orientation-section">
+      <h2>Your First Steps</h2>
+      <ol>
+        <li><strong>Get a Personnel ID:</strong> Contact leadership or join the Discord to request a PID assignment</li>
+        <li><strong>Create Your Character:</strong> Go to Character Select and use your PID to create your character</li>
+        <li><strong>Customize Your Profile:</strong> Add a biography, photo, and details about your character</li>
+        <li><strong>Explore the Foundation:</strong> Visit department pages, archives, and personnel files to learn about the world</li>
+        <li><strong>Engage with the Community:</strong> Participate in events, research, and department activities</li>
+      </ol>
+    </div>
+
+    <div class="orientation-section">
+      <h2>Important Notes</h2>
+      <ul>
+        <li><strong>One Character Per Account:</strong> Each account can have one active character. This prevents abuse and keeps the roleplay authentic</li>
+        <li><strong>Character Sharing is Prohibited:</strong> Your character is YOUR character. Don't share accounts or PIDs</li>
+        <li><strong>Have Fun:</strong> This is a creative community. Be respectful, collaborate, and enjoy the storytelling experience</li>
+        <li><strong>Ask Questions:</strong> If you're confused about anything, ask in the Discord or contact leadership</li>
+      </ul>
+    </div>
+
+    <button class="next-btn" id="finishBtn">Go to Character Select</button>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const terminal = document.getElementById("terminal");
+    const emailDisplay = document.getElementById("emailDisplay");
+    const successMessage = document.getElementById("successMessage");
+    const continueBtn = document.getElementById("continueBtn");
+    const finishBtn = document.getElementById("finishBtn");
+    const terminalPhase = document.getElementById("terminalPhase");
+    const orientationContent = document.getElementById("orientationContent");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/login/";
+        return;
+      }
+
+      // Display email in terminal
+      emailDisplay.textContent = user.email;
+
+      // Animate terminal sequence
+      await delay(500);
+      addTerminalLine('<span class="terminal-output">Setting up new user account...</span>');
+      
+      await delay(1000);
+      addTerminalLine('<span class="terminal-output">Initializing Foundation database connection...</span>');
+      
+      await delay(1200);
+      addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
+      
+      await delay(1000);
+      addTerminalLine('<span class="terminal-output">Synchronizing personnel records...</span>');
+      
+      await delay(1500);
+      successMessage.textContent = `✓ User ${user.email} created successfully`;
+      
+      await delay(2000);
+      addTerminalLine('');
+      addTerminalLine('<span class="terminal-prompt">site89% </span><span class="terminal-input">welcome</span>');
+      
+      await delay(800);
+      addTerminalLine('<span class="terminal-success">Welcome to Site-89, " + user.email + "!</span>');
+      addTerminalLine('');
+      
+      // Mark orientation as seen and show continue button
+      await delay(1000);
+      continueBtn.style.display = "block";
+    });
+
+    function addTerminalLine(content) {
+      const line = document.createElement("div");
+      line.className = "terminal-line";
+      line.innerHTML = content;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    continueBtn.addEventListener("click", () => {
+      terminalPhase.style.display = "none";
+      orientationContent.classList.remove("orientation-hidden");
+      window.scrollTo(0, 0);
+    });
+
+    finishBtn.addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          // Mark orientation as complete
+          await updateDoc(doc(db, "users", user.uid), {
+            needsOrientation: false
+          });
+          window.location.href = "/character-select/";
+        } catch (err) {
+          console.error("Error updating orientation status:", err);
+          window.location.href = "/character-select/";
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
