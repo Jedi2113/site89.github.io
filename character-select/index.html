@@ -656,6 +656,7 @@
     // PID Lookup
     pidLookupBtn.addEventListener("click", async () => {
       const pid = (charPID.value || "").trim();
+      const user = auth.currentUser;
       pidConfirmed = false;
       pidMatchedData = null;
       pidConfirmBox.classList.remove("active");
@@ -666,7 +667,29 @@
         return;
       }
 
+      if (!user) {
+        showFeedback(charFormFeedback, "You must be logged in to lookup a Personnel ID.", "error");
+        return;
+      }
+
       try {
+        // Check if a character with this PID already exists
+        const existingCharQuery = query(collection(db, "characters"), where("pid", "==", pid));
+        const existingCharSnap = await getDocs(existingCharQuery);
+        
+        if (!existingCharSnap.empty) {
+          const existingChar = existingCharSnap.docs[0].data();
+          
+          // Check if the existing character belongs to the current user
+          if (existingChar.linkedUID !== user.uid) {
+            showFeedback(charFormFeedback, "This Personnel ID is already assigned to another account. You cannot share or duplicate characters.", "error");
+            return;
+          } else {
+            showFeedback(charFormFeedback, "You already have a character with this Personnel ID. Create a new character or edit your existing one.", "error");
+            return;
+          }
+        }
+
         const pidRef = doc(db, "personnel", pid);
         const snap = await getDoc(pidRef);
         if (!snap.exists()) {
