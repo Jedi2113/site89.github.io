@@ -152,6 +152,7 @@
   .nav-accounts {
     position: relative;
     cursor: pointer;
+    overflow: visible;
   }
 
   .nav-accounts-btn {
@@ -177,10 +178,11 @@
   /* Accounts dropdown specific styling */
   .nav-dropdown-accounts {
     display: none !important;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    min-width: 220px;
+    position: fixed;
+    top: auto;
+    left: auto;
+    min-width: 280px;
+    max-width: calc(100vw - 20px);
     padding: 0.5rem 0;
     background: var(--bg-card);
     border: 1px solid var(--card-border);
@@ -409,6 +411,30 @@
     updateThemeUI();
   });
 
+  // Position dropdown to avoid going off-screen
+  function positionDropdown() {
+    if (!navAccountsBtn || !navAccountsDropdown) return;
+    
+    const btnRect = navAccountsBtn.getBoundingClientRect();
+    const dropdownWidth = Math.min(280, window.innerWidth - 20);
+    
+    // Position dropdown below button
+    let left = btnRect.left + btnRect.width - dropdownWidth;
+    
+    // Ensure it doesn't go off the left edge
+    if (left < 10) {
+      left = 10;
+    }
+    
+    // Ensure it doesn't go off the right edge
+    if (left + dropdownWidth > window.innerWidth - 10) {
+      left = window.innerWidth - dropdownWidth - 10;
+    }
+    
+    navAccountsDropdown.style.left = left + 'px';
+    navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
+  }
+
   // Accounts dropdown toggle
   const navAccounts = document.getElementById('navAccounts');
   const navAccountsBtn = document.getElementById('navAccountsBtn');
@@ -418,6 +444,9 @@
     navAccountsBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       navAccountsDropdown.classList.toggle('hidden');
+      if (!navAccountsDropdown.classList.contains('hidden')) {
+        positionDropdown();
+      }
     });
 
     // Close dropdown when clicking outside
@@ -432,6 +461,13 @@
       link.addEventListener('click', () => {
         navAccountsDropdown.classList.add('hidden');
       });
+    });
+    
+    // Reposition on window resize
+    window.addEventListener('resize', () => {
+      if (!navAccountsDropdown.classList.contains('hidden')) {
+        positionDropdown();
+      }
     });
   }
 
