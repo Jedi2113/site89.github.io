@@ -38,6 +38,11 @@
     .dept-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-mint); text-decoration: none; }
     .dept-description { font-size: 1rem; line-height: 1.6; color: var(--text-light); opacity: 0.9; }
 
+    /* Invert department logos in dark mode */
+    html[data-theme="dark"] .dept-image {
+      filter: invert(1) brightness(1.1);
+    }
+
     @media (max-width: 840px) {
       .department-panel { flex-direction: column; }
       .dept-image { width: 100%; height: 220px; }
