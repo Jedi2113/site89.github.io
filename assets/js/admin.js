@@ -1,5 +1,5 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 const ADMIN_EMAIL = 'jedi21132@gmail.com';
 
@@ -26,6 +26,8 @@ document.addEventListener('includesLoaded', () => {
     const pidFeedback = document.getElementById('pidFeedback');
     const personnelList = document.getElementById('personnelList');
     const accountsList = document.getElementById('accountsList');
+    const charactersList = document.getElementById('charactersList');
+    const charSearchInput = document.getElementById('charSearchInput');
 
     async function loadPersonnel() {
       const snaps = await getDocs(collection(db,'personnel'));
@@ -105,8 +107,103 @@ document.addEventListener('includesLoaded', () => {
       });
     }
 
+    // Load and display all characters with their account links
+    async function loadCharacters() {
+      try {
+        const snaps = await getDocs(collection(db, 'characters'));
+        const characters = [];
+        snaps.forEach(s => {
+          characters.push({ id: s.id, ...s.data() });
+        });
+        
+        // Sort by name
+        characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+        
+        displayCharacters(characters);
+      } catch (err) {
+        console.error("Error loading characters:", err);
+        charactersList.innerHTML = `<div style="color:var(--accent-red)">Error loading characters</div>`;
+      }
+    }
+
+    function displayCharacters(characters) {
+      charactersList.innerHTML = '';
+      if (characters.length === 0) {
+        charactersList.innerHTML = '<div>No characters found.</div>';
+        return;
+      }
+
+      characters.forEach(char => {
+        const el = document.createElement('div');
+        el.style.cssText = 'padding:0.8rem;border-bottom:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center;gap:1rem;';
+        
+        const linkedUID = char.linkedUID || 'Not linked';
+        const displayUID = linkedUID === 'Not linked' ? linkedUID : linkedUID.substring(0, 12) + '...';
+        
+        el.innerHTML = `
+          <div style="flex:1;">
+            <strong>${char.name || 'Unknown'}</strong> 
+            <small style="opacity:0.8;display:block;margin-top:0.2rem;">
+              ID: ${char.id.substring(0, 8)}... | Linked: ${displayUID} | Dept: ${char.department || 'N/A'}
+            </small>
+          </div>
+          <button class="char-unlink-btn" data-char-id="${char.id}" data-char-name="${char.name || 'Unknown'}" style="padding:0.4rem 0.8rem;background:var(--accent-red);border:none;border-radius:4px;color:white;cursor:pointer;font-size:0.85rem;">Unlink</button>
+        `;
+        charactersList.appendChild(el);
+      });
+
+      // Wire up unlink buttons
+      document.querySelectorAll('.char-unlink-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const charId = btn.dataset.charId;
+          const charName = btn.dataset.charName;
+          
+          if (!confirm(`Unlink character "${charName}" from its account? This will allow it to be linked to another account.`)) {
+            return;
+          }
+
+          try {
+            await updateDoc(doc(db, 'characters', charId), {
+              linkedUID: null
+            });
+            alert(`Character "${charName}" has been unlinked.`);
+            loadCharacters();
+          } catch (err) {
+            alert(`Error unlinking character: ${err.message}`);
+          }
+        });
+      });
+    }
+
+    // Search/filter characters
+    charSearchInput?.addEventListener('input', async () => {
+      const searchTerm = charSearchInput.value.toLowerCase().trim();
+      
+      try {
+        const snaps = await getDocs(collection(db, 'characters'));
+        let characters = [];
+        snaps.forEach(s => {
+          characters.push({ id: s.id, ...s.data() });
+        });
+
+        if (searchTerm) {
+          characters = characters.filter(char => 
+            (char.name || '').toLowerCase().includes(searchTerm) ||
+            (char.linkedUID || '').toLowerCase().includes(searchTerm)
+          );
+        }
+
+        // Sort by name
+        characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+        displayCharacters(characters);
+      } catch (err) {
+        console.error("Error searching characters:", err);
+      }
+    });
+
     // initial load
     loadPersonnel();
     loadAccounts();
+    loadCharacters();
   });
 });

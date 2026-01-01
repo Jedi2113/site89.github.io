@@ -475,13 +475,17 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Load only logged-in user's characters
+    // Load only logged-in user's characters (linked to their account)
     async function loadCharacters(userId) {
       const characterGrid = document.getElementById("characterGrid");
       characterGrid.innerHTML = "";
 
       try {
-        const q = query(collection(db, "characters"), where("uid", "==", userId));
+        // Query characters linked to this user's account
+        const q = query(
+          collection(db, "characters"), 
+          where("linkedUID", "==", userId)
+        );
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
@@ -723,6 +727,7 @@
       try {
         const payload = {
           uid: user.uid,
+          linkedUID: user.uid,
           pid: pid,
           name: name || pidMatchedData.name || "",
           department: pidMatchedData.department || "",
