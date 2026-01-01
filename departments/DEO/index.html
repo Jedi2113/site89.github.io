@@ -35,6 +35,26 @@
   </section>
 
   <section class="content" style="padding-top:1.25rem;">
+    <!-- Bulletin Section -->
+    <div id="bulletinSection" class="dept-grid" style="margin-bottom:2rem;">
+      <div style="grid-column: 1 / -1;">
+        <div class="dept-card" style="background:linear-gradient(135deg, rgba(78,250,170,0.08), transparent); border-color: rgba(78,250,170,0.15);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;">
+            <h2 style="margin:0;">Active Bulletin</h2>
+            <button id="editBulletinBtn" style="display:none;padding:0.6rem 1rem;background:var(--accent-mint);color:#06100e;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.9rem;">Edit Bulletin</button>
+          </div>
+          <div id="bulletinContent" style="font-size:1.05rem;line-height:1.7;color:var(--text-light);min-height:80px;">
+            <p style="opacity:0.8;font-style:italic;">No active bulletin at this time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Portals -->
+    <div class="dept-grid" style="margin-bottom:2rem;grid-column:1/-1;">
+      <div style="grid-column:1/-1;"><h2 style="color:var(--accent-mint);margin:0 0 1rem 0;">Department Portals</h2></div>
+    </div>
+
     <div class="dept-grid">
       <div>
         <div class="dept-card">
@@ -61,6 +81,16 @@
             <li>Good for: Analysts, planners, calm under pressure</li>
           </ul>
         </div>
+
+        <div class="dept-card" style="margin-top:0.8rem;">
+          <a href="/departments/DEO/ia-portal/" class="btn-primary" style="display:block;width:100%;text-align:center;text-decoration:none;">IA Portal</a>
+          <div style="font-size:0.85rem;color:var(--text-light);opacity:0.75;margin-top:0.5rem;text-align:center;">Internal Affairs Only</div>
+        </div>
+
+        <div class="dept-card" style="margin-top:0.6rem;">
+          <a href="/departments/DEO/mtf-portal/" class="btn-primary" style="display:block;width:100%;text-align:center;text-decoration:none;">MTF Portal</a>
+          <div style="font-size:0.85rem;color:var(--text-light);opacity:0.75;margin-top:0.5rem;text-align:center;">Mobile Task Force & IA</div>
+        </div>
       </aside>
     </div>
   </section>
@@ -69,6 +99,83 @@
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const bulletinContent = document.getElementById('bulletinContent');
+    const editBulletinBtn = document.getElementById('editBulletinBtn');
+
+    // Load bulletin
+    async function loadBulletin() {
+      try {
+        const bulletinSnap = await getDoc(doc(db, 'site-data', 'deo-bulletin'));
+        if (bulletinSnap.exists()) {
+          const text = bulletinSnap.data().text || '';
+          bulletinContent.innerHTML = text ? `<p>${text.replace(/\n/g, '<br>')}</p>` : '<p style="opacity:0.8;font-style:italic;">No active bulletin at this time.</p>';
+        }
+      } catch (err) {
+        console.error('Error loading bulletin:', err);
+      }
+    }
+
+    // Check if user has L5 clearance
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      try {
+        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
+        const charSnap = await getDocs(q);
+
+        charSnap.forEach(doc => {
+          const char = doc.data();
+          if ((char.clearance || 0) >= 5) {
+            editBulletinBtn.style.display = 'block';
+            editBulletinBtn.addEventListener('click', () => openBulletinEditor());
+          }
+        });
+      } catch (err) {
+        console.error('Clearance check error:', err);
+      }
+    });
+
+    window.openBulletinEditor = function() {
+      const newText = prompt('Enter new bulletin message:');
+      if (newText === null) return;
+
+      editBulletinBtn.disabled = true;
+      editBulletinBtn.textContent = 'Saving...';
+
+      setDoc(doc(db, 'site-data', 'deo-bulletin'), { text: newText })
+        .then(() => {
+          loadBulletin();
+          editBulletinBtn.disabled = false;
+          editBulletinBtn.textContent = 'Edit Bulletin';
+        })
+        .catch(err => {
+          alert('Error saving bulletin: ' + err.message);
+          editBulletinBtn.disabled = false;
+          editBulletinBtn.textContent = 'Edit Bulletin';
+        });
+    };
+
+    loadBulletin();
+  </script>
   <script>
     document.addEventListener("scroll", () => { const nav = document.getElementById("main-nav"); nav.classList.toggle("is-sticky", window.scrollY > 120); });
   </script>

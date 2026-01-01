@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTF Portal — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom: 2px solid rgba(78,250,170,0.1); flex-wrap:wrap; }
+    .tab-btn { padding:0.8rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-light); cursor:pointer; font-weight:600; transition:all 0.2s ease; }
+    .tab-btn.active { border-bottom-color: var(--accent-mint); color: var(--accent-mint); }
+    .tab-btn:hover { color: var(--accent-mint); }
+
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    .roster-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .roster-table th, .roster-table td { padding:0.8rem; text-align:left; border-bottom:1px solid rgba(78,250,170,0.1); color:var(--text-light); }
+    .roster-table th { background: rgba(78,250,170,0.05); font-weight:600; color:var(--accent-mint); }
+    .roster-table tr:hover { background: rgba(78,250,170,0.03); }
+    .edit-btn { padding:0.4rem 0.8rem; background:var(--accent-teal); color:#06100e; border:none; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+    .edit-btn:hover { background:var(--accent-mint); }
+
+    .op-card { background:var(--bg-card); border:2px solid rgba(78,250,170,0.15); border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; }
+    .op-card.active { border-color: var(--accent-mint); box-shadow: 0 0 20px rgba(78,250,170,0.2); }
+    .op-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+    .op-title { font-size:1.3rem; font-weight:700; color:var(--accent-mint); }
+    .op-status { padding:0.4rem 0.8rem; background:rgba(78,250,170,0.1); border-radius:4px; font-size:0.85rem; color:var(--accent-mint); font-weight:600; }
+    .op-details { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem; }
+    .op-detail { }
+    .op-detail-label { font-weight:600; color:var(--accent-teal); font-size:0.85rem; }
+    .op-detail-value { color:var(--text-light); margin-top:0.3rem; }
+
+    .loadout-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .loadout-table th, .loadout-table td { padding:0.8rem; text-align:left; border-bottom:1px solid rgba(78,250,170,0.1); color:var(--text-light); }
+    .loadout-table th { background: rgba(78,250,170,0.05); font-weight:600; color:var(--accent-mint); }
+
+    .access-denied { text-align:center; padding:3rem; color:var(--text-light); }
+    .access-denied i { font-size:3rem; opacity:0.5; margin-bottom:1rem; display:block; }
+
+    .add-btn { padding:0.6rem 1.2rem; background:var(--accent-mint); color:#06100e; border:none; border-radius:6px; cursor:pointer; font-weight:600; margin-bottom:1rem; }
+    .add-btn:hover { background:var(--accent-teal); }
+
+    .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:var(--bg-card); padding:2rem; border-radius:8px; border:2px solid var(--accent-mint); max-width:500px; width:90%; }
+    .modal-box h3 { margin-top:0; color:var(--accent-mint); }
+    .modal-box input, .modal-box textarea { width:100%; padding:0.6rem; margin:0.8rem 0; background:var(--bg-soft); border:1px solid rgba(78,250,170,0.2); border-radius:4px; color:var(--text-light); font-family:var(--font-body); box-sizing:border-box; }
+    .modal-box input:focus, .modal-box textarea:focus { outline:none; border-color:var(--accent-mint); }
+    .modal-buttons { display:flex; gap:0.8rem; margin-top:1.5rem; }
+    .modal-buttons button { flex:1; padding:0.6rem; border:none; border-radius:4px; cursor:pointer; font-weight:600; }
+    .btn-save { background:var(--accent-mint); color:#06100e; }
+    .btn-cancel { background:rgba(78,250,170,0.1); border:1px solid var(--accent-mint); color:var(--accent-mint); }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Mobile Task Force Portal</div>
+    <div class="hero-sub">Operational management, rosters, and tactical briefings</div>
+  </section>
+
+  <section class="content">
+    <div id="accessDenied" class="access-denied" style="display:none;">
+      <i class="fas fa-lock"></i>
+      <h2>Access Denied</h2>
+      <p>This portal is restricted to MTF and IA personnel only.</p>
+    </div>
+
+    <div id="portalContent" style="display:none;">
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'active-ops')">Active Operations</button>
+        <button class="tab-btn" onclick="switchTab(event, 'previous-ops')">Previous Operations</button>
+        <button class="tab-btn" onclick="switchTab(event, 'roster')">Roster</button>
+        <button class="tab-btn" onclick="switchTab(event, 'loadouts')">Loadouts</button>
+      </div>
+
+      <!-- Active Operations Tab -->
+      <div id="active-ops" class="tab-content active">
+        <div style="margin-bottom:1.5rem;">
+          <h2 style="color:var(--accent-mint);margin-top:0;">Active Operations</h2>
+          <button id="addOpBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Add Operation</button>
+        </div>
+        <div id="activeOpsContainer">
+          <p style="opacity:0.8;">Loading operations...</p>
+        </div>
+      </div>
+
+      <!-- Previous Operations Tab -->
+      <div id="previous-ops" class="tab-content">
+        <h2 style="color:var(--accent-mint);margin-top:0;">Previous Operations</h2>
+        <div id="previousOpsContainer">
+          <p style="opacity:0.8;">Loading operations...</p>
+        </div>
+      </div>
+
+      <!-- Roster Tab -->
+      <div id="roster" class="tab-content">
+        <h2 style="color:var(--accent-mint);margin-top:0;">MTF Roster</h2>
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Rank</th>
+              <th>Clearance</th>
+              <th>Status</th>
+              <th id="rosterActionHeader" style="display:none;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rosterBody">
+            <tr><td colspan="5" style="text-align:center;padding:2rem;opacity:0.8;">Loading roster...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Loadouts Tab -->
+      <div id="loadouts" class="tab-content">
+        <h2 style="color:var(--accent-mint);margin-top:0;">Equipment Loadouts</h2>
+        <table class="loadout-table">
+          <thead>
+            <tr>
+              <th>Personnel</th>
+              <th>Equipment</th>
+              <th>Status</th>
+              <th>Issue Date</th>
+            </tr>
+          </thead>
+          <tbody id="loadoutBody">
+            <tr><td colspan="4" style="text-align:center;padding:2rem;opacity:0.8;">Loading loadouts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Operation Modal -->
+  <div id="operationModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Add Operation</h3>
+      <input id="opName" placeholder="Operation Name" maxlength="100">
+      <textarea id="opDesc" placeholder="Operation Description" rows="4" maxlength="500"></textarea>
+      <input id="opStartDate" type="date">
+      <div class="modal-buttons">
+        <button class="btn-save" onclick="saveOperation()">Save</button>
+        <button class="btn-cancel" onclick="closeOperationModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const accessDenied = document.getElementById('accessDenied');
+    const portalContent = document.getElementById('portalContent');
+    const addOpBtn = document.getElementById('addOpBtn');
+    let userClearance = 0;
+
+    // Tab switching
+    window.switchTab = function(event, tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    };
+
+    // Check access and load data
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        accessDenied.style.display = 'block';
+        return;
+      }
+
+      try {
+        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
+        const charSnap = await getDocs(q);
+
+        let hasAccess = false;
+        charSnap.forEach(doc => {
+          const char = doc.data();
+          const dept = (char.department || '').toUpperCase();
+          userClearance = char.clearance || 0;
+          if (dept.includes('MTF') || dept.includes('IA')) {
+            hasAccess = true;
+          }
+        });
+
+        if (!hasAccess) {
+          accessDenied.style.display = 'block';
+          return;
+        }
+
+        portalContent.style.display = 'block';
+        
+        // Show add operation button for L5+
+        if (userClearance >= 5) {
+          addOpBtn.style.display = 'inline-block';
+        }
+        
+        loadOperations();
+        loadRoster();
+        loadLoadouts();
+      } catch (err) {
+        console.error('Access check error:', err);
+        accessDenied.style.display = 'block';
+      }
+    });
+
+    // Load operations
+    async function loadOperations() {
+      try {
+        const active = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', true), orderBy('startDate', 'desc')));
+        const previous = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', false), orderBy('endDate', 'desc')));
+
+        const activeContainer = document.getElementById('activeOpsContainer');
+        const previousContainer = document.getElementById('previousOpsContainer');
+
+        if (active.empty) activeContainer.innerHTML = '<p style="opacity:0.8;">No active operations.</p>';
+        else {
+          activeContainer.innerHTML = '';
+          active.forEach(doc => {
+            const op = doc.data();
+            activeContainer.innerHTML += `<div class="op-card active">
+              <div class="op-header">
+                <div class="op-title">${op.name}</div>
+                <div class="op-status">ACTIVE</div>
+              </div>
+              <div class="op-details">
+                <div class="op-detail"><div class="op-detail-label">Start Date</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
+                <div class="op-detail"><div class="op-detail-label">Personnel</div><div class="op-detail-value">${op.personnel || 'Classified'}</div></div>
+              </div>
+              <div style="color:var(--text-light);line-height:1.6;">${op.description || ''}</div>
+            </div>`;
+          });
+        }
+
+        if (previous.empty) previousContainer.innerHTML = '<p style="opacity:0.8;">No previous operations.</p>';
+        else {
+          previousContainer.innerHTML = '';
+          previous.forEach(doc => {
+            const op = doc.data();
+            previousContainer.innerHTML += `<div class="op-card">
+              <div class="op-header">
+                <div class="op-title">${op.name}</div>
+                <div style="padding:0.4rem 0.8rem;background:rgba(176,0,0,0.1);border-radius:4px;font-size:0.85rem;color:#ff6b6b;font-weight:600;">${op.success ? 'SUCCESS' : 'FAILED'}</div>
+              </div>
+              <div class="op-details">
+                <div class="op-detail"><div class="op-detail-label">Started</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
+                <div class="op-detail"><div class="op-detail-label">Ended</div><div class="op-detail-value">${op.endDate || 'N/A'}</div></div>
+              </div>
+              <div style="color:var(--text-light);line-height:1.6;">${op.description || ''}</div>
+              ${op.summary ? `<div style="margin-top:1rem;padding:1rem;background:rgba(78,250,170,0.05);border-left:3px solid var(--accent-mint);border-radius:4px;"><strong>Summary:</strong><p>${op.summary}</p></div>` : ''}
+            </div>`;
+          });
+        }
+      } catch (err) {
+        console.error('Error loading operations:', err);
+      }
+    }
+
+    // Load roster
+    async function loadRoster() {
+      try {
+        const chars = await getDocs(query(collection(db, 'characters'), where('department', '==', 'MTF')));
+        const tbody = document.getElementById('rosterBody');
+
+        if (chars.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel found.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        chars.forEach(doc => {
+          const char = doc.data();
+          tbody.innerHTML += `<tr>
+            <td>${char.name}</td>
+            <td>${char.rank || 'Unassigned'}</td>
+            <td>Level ${char.clearance || 0}</td>
+            <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">Active</span></td>
+            ${userClearance >= 3 ? `<td><button class="edit-btn" onclick="alert('Roster edit feature coming soon')">Edit</button></td>` : '<td></td>'}
+          </tr>`;
+        });
+
+        // Show action header only for L3+
+        if (userClearance >= 3) {
+          document.getElementById('rosterActionHeader').style.display = 'table-cell';
+        }
+      } catch (err) {
+        console.error('Error loading roster:', err);
+      }
+    }
+
+    // Load loadouts
+    async function loadLoadouts() {
+      try {
+        const loadouts = await getDocs(collection(db, 'mtf-loadouts'));
+        const tbody = document.getElementById('loadoutBody');
+
+        if (loadouts.empty) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;opacity:0.8;">No loadouts on record.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        loadouts.forEach(doc => {
+          const lo = doc.data();
+          tbody.innerHTML += `<tr>
+            <td>${lo.personnel || 'Unknown'}</td>
+            <td>${lo.equipment || 'Unknown'}</td>
+            <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">Issued</span></td>
+            <td>${lo.issueDate || 'N/A'}</td>
+          </tr>`;
+        });
+      } catch (err) {
+        console.error('Error loading loadouts:', err);
+      }
+    }
+
+    // Operation modal
+    window.openOperationModal = function() {
+      document.getElementById('operationModal').classList.add('active');
+    };
+
+    window.closeOperationModal = function() {
+      document.getElementById('operationModal').classList.remove('active');
+      document.getElementById('opName').value = '';
+      document.getElementById('opDesc').value = '';
+      document.getElementById('opStartDate').value = '';
+    };
+
+    window.saveOperation = async function() {
+      const name = document.getElementById('opName').value.trim();
+      const desc = document.getElementById('opDesc').value.trim();
+      const startDate = document.getElementById('opStartDate').value;
+
+      if (!name || !startDate) {
+        alert('Please fill in operation name and start date');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'mtf-operations'), {
+          name: name,
+          description: desc,
+          startDate: startDate,
+          isActive: true,
+          createdAt: new Date(),
+          personnel: '',
+          success: null,
+          endDate: null,
+          summary: ''
+        });
+        closeOperationModal();
+        loadOperations();
+      } catch (err) {
+        alert('Error saving operation: ' + err.message);
+      }
+    };
+
+    // Wire up add operation button
+    addOpBtn.addEventListener('click', openOperationModal);
+  </script>
+
+</body>
+</html>
