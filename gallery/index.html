@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Foundation Gallery — Site-89</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+  <meta name="description" content="Foundation Gallery: Community-contributed imagery and documentation photos from Site-89 operations.">
+  <style>
+    .page-hero { padding: 3rem 1rem; text-align: center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero h1 { font-family: var(--font-head); font-size: 2.2rem; color: var(--accent-mint); margin-bottom: 0.5rem; }
+    .page-hero p { color: var(--text-light); opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .gallery-item { position: relative; background: var(--bg-card); border: 1px solid rgba(78,250,170,0.1); border-radius: 8px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(78,250,170,0.15); }
+    .gallery-item img { width: 100%; height: 280px; object-fit: cover; display: block; }
+    .gallery-caption { padding: 1rem; color: var(--text-light); font-size: 0.95rem; line-height: 1.5; }
+    .gallery-meta { padding: 0 1rem 0.8rem; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; }
+    .gallery-delete { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,0,0,0.85); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; opacity: 0; transition: opacity 0.2s ease; }
+    .gallery-item:hover .gallery-delete { opacity: 1; }
+
+    .upload-section { background: var(--bg-card); border: 2px dashed rgba(78,250,170,0.3); border-radius: 8px; padding: 2.5rem; text-align: center; margin-bottom: 3rem; transition: all 0.2s ease; }
+    .upload-section:hover { border-color: var(--accent-mint); background: rgba(78,250,170,0.02); }
+    .upload-section i { font-size: 3rem; color: var(--accent-mint); margin-bottom: 1rem; display: block; }
+    .upload-section h3 { margin: 0 0 0.5rem 0; color: var(--accent-mint); }
+    .upload-section p { margin: 0; color: var(--text-light); opacity: 0.85; }
+
+    .upload-btn { padding: 0.8rem 2rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 1rem; margin-top: 1.5rem; }
+    .upload-btn:hover { background: var(--accent-teal); }
+
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: var(--bg-card); padding: 2rem; border-radius: 8px; border: 2px solid var(--accent-mint); max-width: 500px; width: 90%; }
+    .modal-box h3 { margin-top: 0; color: var(--accent-mint); }
+    .modal-box input, .modal-box textarea { width: 100%; padding: 0.6rem; margin: 0.8rem 0; background: var(--bg-soft); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
+    .modal-box input:focus, .modal-box textarea:focus { outline: none; border-color: var(--accent-mint); }
+    .modal-buttons { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+    .modal-buttons button { flex: 1; padding: 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .btn-submit { background: var(--accent-mint); color: #06100e; }
+    .btn-cancel { background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); }
+
+    .loading-text { color: var(--text-light); opacity: 0.7; text-align: center; padding: 3rem; }
+    .auth-required { text-align: center; padding: 3rem; color: var(--text-light); }
+    .auth-required i { font-size: 3rem; opacity: 0.5; margin-bottom: 1rem; display: block; }
+
+    .empty-gallery { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-light); opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <h1>Foundation Gallery</h1>
+    <p>Community-contributed imagery and documentation photos from Site-89 operations. Anyone with an account can contribute their photos with captions.</p>
+  </section>
+
+  <main class="content">
+    <div id="authRequired" class="auth-required" style="display:none;">
+      <i class="fas fa-lock"></i>
+      <h2>Authentication Required</h2>
+      <p>You must be logged in to upload photos. <a href="/accounts/" style="color:var(--accent-mint);">Create or sign in to your account</a>.</p>
+    </div>
+
+    <div id="galleryContent" style="display:none;">
+      <div class="upload-section">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <h3>Contribute to the Gallery</h3>
+        <p>Share your photos and documentation with captions</p>
+        <button class="upload-btn" onclick="document.getElementById('uploadModal').classList.add('active')">
+          <i class="fas fa-plus" style="margin-right:0.5rem;"></i>Upload Image
+        </button>
+      </div>
+
+      <div id="galleryGrid" class="gallery-grid">
+        <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Loading gallery...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Upload Modal -->
+  <div id="uploadModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Upload to Gallery</h3>
+      <input id="imageUrl" type="text" placeholder="Image URL (imgur, etc.)" maxlength="500">
+      <textarea id="imageCaption" placeholder="Image caption or description" rows="4" maxlength="300"></textarea>
+      <div style="font-size:0.85rem;color:var(--text-light);opacity:0.8;margin:0.5rem 0;">
+        <strong>Tip:</strong> Upload your image to <a href="https://imgur.com" target="_blank" style="color:var(--accent-mint);">Imgur.com</a> and paste the image URL here.
+      </div>
+      <div class="modal-buttons">
+        <button class="btn-submit" onclick="submitGalleryImage()">Submit</button>
+        <button class="btn-cancel" onclick="closeUploadModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, getDocs, addDoc, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+      authDomain: "site-89-2d768.firebaseapp.com",
+      projectId: "site-89-2d768",
+      storageBucket: "site-89-2d768.firebasestorage.app",
+      messagingSenderId: "851485754416",
+      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+      measurementId: "G-EDX3DLNV52"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const authRequired = document.getElementById('authRequired');
+    const galleryContent = document.getElementById('galleryContent');
+    const galleryGrid = document.getElementById('galleryGrid');
+    let currentUser = null;
+
+    // Check authentication status
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        galleryContent.style.display = 'block';
+        authRequired.style.display = 'none';
+        loadGallery();
+      } else {
+        authRequired.style.display = 'block';
+        galleryContent.style.display = 'none';
+      }
+    });
+
+    // Load gallery images
+    async function loadGallery() {
+      try {
+        const q = query(collection(db, 'gallery'), orderBy('timestamp', 'desc'));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          galleryGrid.innerHTML = '<div class="empty-gallery">No images yet. Be the first to contribute!</div>';
+          return;
+        }
+
+        galleryGrid.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const uploadDate = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Unknown';
+          
+          galleryGrid.innerHTML += `
+            <div class="gallery-item">
+              <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy">
+              <div class="gallery-caption">${data.caption || 'Untitled'}</div>
+              <div class="gallery-meta">By ${data.uploaderName || 'Anonymous'} • ${uploadDate}</div>
+              ${currentUser && currentUser.uid === data.uploaderId ? `<button class="gallery-delete" onclick="deleteImage('${doc.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error('Error loading gallery:', err);
+        galleryGrid.innerHTML = '<div class="empty-gallery" style="color:red;">Error loading gallery</div>';
+      }
+    }
+
+    // Submit gallery image
+    window.submitGalleryImage = async function() {
+      const imageUrl = document.getElementById('imageUrl').value.trim();
+      const imageCaption = document.getElementById('imageCaption').value.trim();
+
+      if (!imageUrl) {
+        alert('Please enter an image URL');
+        return;
+      }
+
+      if (!currentUser) {
+        alert('You must be logged in to upload');
+        return;
+      }
+
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Uploading...';
+
+      try {
+        // Get uploader name from character
+        let uploaderName = currentUser.email;
+        const charQuery = query(collection(db, 'characters'), where('linkedUID', '==', currentUser.uid));
+        const charSnap = await getDocs(charQuery);
+        if (!charSnap.empty) {
+          uploaderName = charSnap.docs[0].data().name || currentUser.email;
+        }
+
+        await addDoc(collection(db, 'gallery'), {
+          imageUrl: imageUrl,
+          caption: imageCaption,
+          uploaderId: currentUser.uid,
+          uploaderName: uploaderName,
+          timestamp: new Date()
+        });
+
+        closeUploadModal();
+        loadGallery();
+      } catch (err) {
+        alert('Error uploading image: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Submit';
+      }
+    };
+
+    // Delete image
+    window.deleteImage = async function(docId) {
+      if (!confirm('Delete this image?')) return;
+
+      try {
+        await deleteDoc(doc(db, 'gallery', docId));
+        loadGallery();
+      } catch (err) {
+        alert('Error deleting image: ' + err.message);
+      }
+    };
+
+    // Modal controls
+    window.closeUploadModal = function() {
+      document.getElementById('uploadModal').classList.remove('active');
+      document.getElementById('imageUrl').value = '';
+      document.getElementById('imageCaption').value = '';
+      const submitBtn = document.querySelector('.btn-submit');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+    };
+
+    // Close modal on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeUploadModal();
+    });
+  </script>
+
+</body>
+</html>
