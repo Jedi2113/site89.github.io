@@ -62,7 +62,15 @@ document.addEventListener('includesLoaded', () => {
   composeBtn.addEventListener('click', ()=> { composeModal.style.display = 'block'; composeTo.focus(); });
   composeClose.addEventListener('click', ()=> { composeModal.style.display = 'none'; clearCompose(); });
 
-  function clearCompose(){ composeTo.value=''; composeSubject.value=''; composeBody.value=''; }
+  function clearCompose(){ 
+    composeTo.value=''; 
+    composeSubject.value=''; 
+    if (tinymce.get('composeBody')) {
+      tinymce.get('composeBody').setContent('');
+    } else {
+      composeBody.value='';
+    }
+  }
 
   async function sendMessage(status='sent'){
     const toRaw = (composeTo.value||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -74,11 +82,19 @@ document.addEventListener('includesLoaded', () => {
     // disable buttons while sending
     sendBtn.disabled = true; saveDraftBtn.disabled = true;
 
+    // Get body content from TinyMCE or textarea
+    let bodyContent = '';
+    if (tinymce.get('composeBody')) {
+      bodyContent = tinymce.get('composeBody').getContent();
+    } else {
+      bodyContent = composeBody.value || '';
+    }
+
     const payload = {
       sender: myAddress,
       recipients: toRaw,
       subject: composeSubject.value || '(no subject)',
-      body: composeBody.value || '',
+      body: bodyContent,
       status: status, // 'sent' or 'draft'
       folder: status === 'draft' ? 'drafts' : '',
       ts: serverTimestamp()
@@ -117,7 +133,12 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote: ---\n${currentMessage.body}`;
+    const replyBody = `\n\n--- On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote: ---\n${currentMessage.body}`;
+    if (tinymce.get('composeBody')) {
+      tinymce.get('composeBody').setContent(replyBody);
+    } else {
+      composeBody.value = replyBody;
+    }
   });
 
   btnForward.addEventListener('click', ()=>{
@@ -125,7 +146,12 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- Forwarded message ---\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\n\n${currentMessage.body}`;
+    const forwardBody = `\n\n--- Forwarded message ---\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\n\n${currentMessage.body}`;
+    if (tinymce.get('composeBody')) {
+      tinymce.get('composeBody').setContent(forwardBody);
+    } else {
+      composeBody.value = forwardBody;
+    }
   });
 
   // Render list depending on folder
@@ -163,7 +189,7 @@ document.addEventListener('includesLoaded', () => {
   async function openMessage(m){
     currentMessage = m;
     mailSubject.textContent = m.subject;
-    mailContent.textContent = m.body;
+    mailContent.innerHTML = m.body;  // Use innerHTML to render formatted content
     mailSender.textContent = `${m.sender} → ${ (m.recipients||[]).join(', ') }`;
     mailMeta.textContent = fmtDate(m.ts);
     const md = document.getElementById('mailDate'); if(md) md.textContent = fmtDate(m.ts);

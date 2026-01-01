@@ -6,6 +6,9 @@
   <title>Site-89 Mail — Inbox</title>
   <link rel="stylesheet" href="/assets/css/main.css">
   
+  <!-- TinyMCE Rich Text Editor -->
+  <script src="https://cdn.tiny.cloud/1/wgqechbx2jopsbvntv872129bj4qw3wbxsvy35z27edgkqz4/tinymce/7/tinymce.min.js"></script>
+  
   <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
@@ -106,7 +109,7 @@
     <div class="body">
       <input id="composeTo" placeholder="To (comma-separated addresses)">
       <input id="composeSubject" placeholder="Subject">
-      <textarea id="composeBody" rows="8" placeholder="Message body..."></textarea>
+      <textarea id="composeBody" placeholder="Message body..."></textarea>
       <div style="display:flex;gap:.5rem;justify-content:flex-end">
         <button id="saveDraftBtn" class="btn-secondary">Save Draft</button>
         <button id="sendBtn" class="btn-primary">Send</button>
@@ -115,6 +118,21 @@
   </div>
 
   <script src="/assets/js/include.js"></script>
+  
+  <!-- TinyMCE Initialization -->
+  <script>
+    tinymce.init({
+      selector: '#composeBody',
+      plugins: 'lists link image code textcolor',
+      toolbar: 'bold italic underline | bullist numlist | link image | forecolor | code',
+      height: 300,
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      menubar: false,
+      statusbar: true
+    });
+  </script>
+  
   <script type="module" src="/assets/js/emails.js"></script>
 </body>
 </html>
