@@ -505,40 +505,104 @@
           const isSelected = localStorage.getItem("selectedCharacter") ? 
             JSON.parse(localStorage.getItem("selectedCharacter")).id === char.id : false;
 
-          card.innerHTML = `
-            <img src="${photoUrl}" alt="${char.name}" class="character-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
-            <div class="character-card-info">
-              <h3 class="character-card-name">${char.name || "Unknown"}</h3>
-              <p class="character-card-rank">${char.rank || "Unassigned"}</p>
-              <p class="character-card-dept">${char.department || "Unassigned"}</p>
-              <div class="character-actions">
-                <button class="btn-select" data-char-id="${char.id}" data-char-data='${JSON.stringify(char)}' style="${isSelected ? 'background: rgba(78, 250, 170, 0.2); border: 1px solid var(--accent-mint); color: var(--accent-mint);' : ''}">
-                  <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-arrow-right'}"></i> ${isSelected ? 'Selected' : 'Select'}
-                </button>
-              </div>
-            </div>
-          `;
+          // Use safe DOM methods instead of innerHTML to prevent XSS
+          const img = document.createElement("img");
+          img.src = photoUrl;
+          img.alt = char.name || "Character";
+          img.className = "character-card-image";
+          img.onerror = function() { this.src = 'https://i.imgur.com/1xP4NEN.png'; };
 
+          const info = document.createElement("div");
+          info.className = "character-card-info";
+
+          const nameEl = document.createElement("h3");
+          nameEl.className = "character-card-name";
+          nameEl.textContent = char.name || "Unknown";
+
+          const rankEl = document.createElement("p");
+          rankEl.className = "character-card-rank";
+          rankEl.textContent = char.rank || "Unassigned";
+
+          const deptEl = document.createElement("p");
+          deptEl.className = "character-card-dept";
+          deptEl.textContent = char.department || "Unassigned";
+
+          const actions = document.createElement("div");
+          actions.className = "character-actions";
+
+          const selectBtn = document.createElement("button");
+          selectBtn.className = "btn-select";
+          selectBtn.setAttribute("data-char-id", char.id);
+          // Store only the ID securely, not the full data object with innerHTML
+          selectBtn.setAttribute("data-char-id-only", char.id);
+          
+          if (isSelected) {
+            selectBtn.style.background = "rgba(78, 250, 170, 0.2)";
+            selectBtn.style.border = "1px solid var(--accent-mint)";
+            selectBtn.style.color = "var(--accent-mint)";
+            selectBtn.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
+          } else {
+            selectBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> Select';
+          }
+
+          actions.appendChild(selectBtn);
+          info.appendChild(nameEl);
+          info.appendChild(rankEl);
+          info.appendChild(deptEl);
+          info.appendChild(actions);
+          card.appendChild(img);
+          card.appendChild(info);
           characterGrid.appendChild(card);
         });
 
         // Attach event listeners to select buttons
         document.querySelectorAll('.btn-select').forEach(btn => {
-          btn.addEventListener('click', (e) => {
+          btn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            const charId = btn.getAttribute('data-char-id');
-            const charData = JSON.parse(btn.getAttribute('data-char-data'));
+            const charId = btn.getAttribute('data-char-id-only');
             const isAlreadySelected = localStorage.getItem("selectedCharacter") ? 
               JSON.parse(localStorage.getItem("selectedCharacter")).id === charId : false;
             
             // If already selected, don't reload
             if (isAlreadySelected) return;
             
-            // Save to localStorage
-            localStorage.setItem('selectedCharacter', JSON.stringify(charData));
-            
-            // Reload to update UI
-            location.reload();
+            // SECURITY: Fetch the character data fresh from Firebase to prevent tampering
+            // Never trust the data attribute or any DOM-stored version
+            try {
+              const charRef = doc(db, "characters", charId);
+              const charSnap = await getDoc(charRef);
+              
+              if (!charSnap.exists()) {
+                console.error("Character not found in database");
+                return;
+              }
+
+              const charData = charSnap.data();
+              
+              // Verify the character belongs to the current user
+              if (charData.linkedUID !== user.uid) {
+                console.error("Character linked to different user");
+                alert("This character does not belong to you.");
+                return;
+              }
+
+              // Now safe to save to localStorage
+              localStorage.setItem('selectedCharacter', JSON.stringify({
+                id: charSnap.id,
+                name: charData.name,
+                department: charData.department,
+                rank: charData.rank,
+                clearance: charData.clearance,
+                profileImage: charData.profileImage,
+                linkedUID: charData.linkedUID
+              }));
+              
+              // Reload to update UI
+              location.reload();
+            } catch (err) {
+              console.error("Error selecting character:", err);
+              alert("Error selecting character. Please try again.");
+            }
           });
         });
 
@@ -817,67 +881,87 @@
     // Add edit button to character cards
     function addEditButtons() {
       document.querySelectorAll(".character-card").forEach((card) => {
-        const charId = card.querySelector(".btn-select")?.getAttribute("data-char-id");
-        const charData = card.querySelector(".btn-select")?.getAttribute("data-char-data");
+        const charId = card.querySelector(".btn-select")?.getAttribute("data-char-id-only");
         
         if (!charId || card.querySelector(".btn-edit")) return; // Already has edit button
 
         const editBtn = document.createElement("button");
-        editBtn.className = "btn-select";
+        editBtn.className = "btn-select btn-edit";
         editBtn.style.background = "var(--accent-teal)";
         editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
         editBtn.type = "button";
 
-        editBtn.addEventListener("click", (e) => {
+        editBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
-          const char = JSON.parse(charData);
-          currentEditingCharId = charId;
-          editCharName.textContent = char.name;
-          charEditorRank.value = char.rank || "";
-          charImgurLink.value = char.profileImage || "";
-          charEditorImage.src = char.profileImage || "https://via.placeholder.com/150";
           
-          // Initialize TinyMCE if not already done
-          if (!tinymce.get('charEditorBio')) {
-            tinymce.init({
-              selector: '#charEditorBio',
-              plugins: 'lists link image code textcolor',
-              toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
-              menubar: 'file edit view insert format tools',
-              height: 300,
-              skin: 'oxide-dark',
-              content_css: 'dark',
-              setup: function(editor) {
-                editor.on('change', function() {
-                  tinymce.get('charEditorBio').save();
-                });
-              }
-            });
-            // Wait a moment for TinyMCE to initialize, then load content
-            setTimeout(() => {
+          try {
+            // SECURITY: Fetch fresh character data from Firebase
+            const charRef = doc(db, "characters", charId);
+            const charSnap = await getDoc(charRef);
+            
+            if (!charSnap.exists()) {
+              alert("Character not found.");
+              return;
+            }
+
+            const char = charSnap.data();
+            
+            // Verify ownership
+            if (char.linkedUID !== auth.currentUser?.uid) {
+              alert("This character does not belong to you.");
+              return;
+            }
+
+            currentEditingCharId = charId;
+            editCharName.textContent = char.name || "Unknown";
+            charEditorRank.value = char.rank || "";
+            charImgurLink.value = char.profileImage || "";
+            charEditorImage.src = char.profileImage || "https://via.placeholder.com/150";
+            
+            // Initialize TinyMCE if not already done
+            if (!tinymce.get('charEditorBio')) {
+              tinymce.init({
+                selector: '#charEditorBio',
+                plugins: 'lists link image code textcolor',
+                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
+                menubar: 'file edit view insert format tools',
+                height: 300,
+                skin: 'oxide-dark',
+                content_css: 'dark',
+                setup: function(editor) {
+                  editor.on('change', function() {
+                    tinymce.get('charEditorBio').save();
+                  });
+                }
+              });
+              // Wait a moment for TinyMCE to initialize, then load content
+              setTimeout(() => {
+                const editor = tinymce.get('charEditorBio');
+                if (editor) {
+                  editor.setContent(char.bio || "");
+                } else {
+                  charEditorBio.value = char.bio || "";
+                }
+              }, 100);
+            } else {
+              // TinyMCE already initialized, just load content
               const editor = tinymce.get('charEditorBio');
               if (editor) {
                 editor.setContent(char.bio || "");
               } else {
                 charEditorBio.value = char.bio || "";
               }
-            }, 100);
-          } else {
-            // TinyMCE already initialized, just load content
-            const editor = tinymce.get('charEditorBio');
-            if (editor) {
-              editor.setContent(char.bio || "");
-            } else {
-              charEditorBio.value = char.bio || "";
             }
+            
+            charEditor.classList.add("active");
+            charEditorFeedback.style.display = "none";
+          } catch (err) {
+            console.error("Error opening editor:", err);
+            alert("Error opening character editor.");
           }
-          
-          charEditor.classList.add("active");
-          charEditorFeedback.style.display = "none";
         });
 
         card.querySelector(".character-actions").appendChild(editBtn);
-        editBtn.classList.add("btn-edit");
       });
     }
 

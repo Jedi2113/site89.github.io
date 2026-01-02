@@ -3,6 +3,16 @@ import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc, upda
 
 const ADMIN_EMAIL = 'jedi21132@gmail.com';
 
+/**
+ * Helper: Escape HTML to prevent XSS
+ */
+function escapeHtml(str) {
+  if (typeof str !== 'string') return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 document.addEventListener('includesLoaded', () => {
   const auth = getAuth();
   const db = getFirestore();
@@ -10,6 +20,21 @@ document.addEventListener('includesLoaded', () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user || user.email !== ADMIN_EMAIL) {
       // redirect non-admins
+      window.location.replace('/403/');
+      return;
+    }
+    
+    // SECURITY: Verify admin status in database (don't trust client-side email check alone)
+    try {
+      const adminRef = doc(db, 'admins', user.uid);
+      const adminSnap = await getDoc(adminRef);
+      if (!adminSnap.exists()) {
+        // Not in admin database - deny access
+        window.location.replace('/403/');
+        return;
+      }
+    } catch (err) {
+      console.error('Admin verification failed', err);
       window.location.replace('/403/');
       return;
     }
@@ -39,7 +64,29 @@ document.addEventListener('includesLoaded', () => {
         const el = document.createElement('div');
         el.style.padding = '.6rem';
         el.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
-        el.innerHTML = `<strong>${p.id}</strong> — ${p.name} &nbsp; <small style="opacity:.8">clear:${p.clearance} dept:${p.department} rank:${p.rank}</small> <button data-pid="${p.id}" class="pid-edit" style="margin-left:.6rem">Edit</button>`;
+        
+        // Use textContent and safe DOM methods instead of innerHTML
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = p.id;
+        
+        const textNode = document.createTextNode(` — ${p.name} `);
+        
+        const smallEl = document.createElement('small');
+        smallEl.style.opacity = '.8';
+        smallEl.textContent = `clear:${p.clearance} dept:${p.department} rank:${p.rank}`;
+        
+        const btn = document.createElement('button');
+        btn.className = 'pid-edit';
+        btn.dataset.pid = p.id;
+        btn.style.marginLeft = '.6rem';
+        btn.textContent = 'Edit';
+        
+        el.appendChild(strongEl);
+        el.appendChild(textNode);
+        el.appendChild(smallEl);
+        const spacer = document.createTextNode(' ');
+        el.appendChild(spacer);
+        el.appendChild(btn);
         personnelList.appendChild(el);
       });
 
@@ -102,7 +149,19 @@ document.addEventListener('includesLoaded', () => {
         const data = s.data();
         const el = document.createElement('div');
         el.style.padding = '.5rem';
-        el.innerHTML = `<strong>${s.id}</strong> &nbsp; ${data.email || ''}`;
+        
+        // Use textContent instead of innerHTML
+        const idStrong = document.createElement('strong');
+        idStrong.textContent = s.id;
+        el.appendChild(idStrong);
+        
+        const spacer = document.createTextNode(' \u00a0 ');
+        el.appendChild(spacer);
+        
+        const emailSpan = document.createElement('span');
+        emailSpan.textContent = data.email || '';
+        el.appendChild(emailSpan);
+        
         accountsList.appendChild(el);
       });
     }
@@ -140,15 +199,29 @@ document.addEventListener('includesLoaded', () => {
         const linkedUID = char.linkedUID || 'Not linked';
         const displayUID = linkedUID === 'Not linked' ? linkedUID : linkedUID.substring(0, 12) + '...';
         
-        el.innerHTML = `
-          <div style="flex:1;">
-            <strong>${char.name || 'Unknown'}</strong> 
-            <small style="opacity:0.8;display:block;margin-top:0.2rem;">
-              ID: ${char.id.substring(0, 8)}... | Linked: ${displayUID} | Dept: ${char.department || 'N/A'}
-            </small>
-          </div>
-          <button class="char-unlink-btn" data-char-id="${char.id}" data-char-name="${char.name || 'Unknown'}" style="padding:0.4rem 0.8rem;background:var(--accent-red);border:none;border-radius:4px;color:white;cursor:pointer;font-size:0.85rem;">Unlink</button>
-        `;
+        // Create left container with safe text
+        const leftDiv = document.createElement('div');
+        leftDiv.style.flex = '1';
+        
+        const nameStrong = document.createElement('strong');
+        nameStrong.textContent = char.name || 'Unknown';
+        leftDiv.appendChild(nameStrong);
+        
+        const smallEl = document.createElement('small');
+        smallEl.style.cssText = 'opacity:0.8;display:block;margin-top:0.2rem;';
+        smallEl.textContent = `ID: ${char.id.substring(0, 8)}... | Linked: ${displayUID} | Dept: ${char.department || 'N/A'}`;
+        leftDiv.appendChild(smallEl);
+        
+        // Create unlink button
+        const btn = document.createElement('button');
+        btn.className = 'char-unlink-btn';
+        btn.dataset.charId = char.id;
+        btn.dataset.charName = char.name || 'Unknown';
+        btn.style.cssText = 'padding:0.4rem 0.8rem;background:var(--accent-red);border:none;border-radius:4px;color:white;cursor:pointer;font-size:0.85rem;';
+        btn.textContent = 'Unlink';
+        
+        el.appendChild(leftDiv);
+        el.appendChild(btn);
         charactersList.appendChild(el);
       });
 
