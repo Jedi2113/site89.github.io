@@ -189,47 +189,40 @@
       event.target.classList.add('active');
     };
 
-    // Check access and load data
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        location.href = '/departments/DEO/mtf-portal/403/';
-        return;
-      }
-
-      try {
-        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
-        const charSnap = await getDocs(q);
-
-        let hasAccess = false;
-        charSnap.forEach(doc => {
-          const char = doc.data();
-          const dept = (char.department || '').toUpperCase();
-          userClearance = char.clearance || 0;
-          if (dept.includes('MTF') || dept.includes('IA')) {
-            hasAccess = true;
-          }
-        });
-
-        if (!hasAccess) {
-          location.href = '/departments/DEO/mtf-portal/403/';
+    // Access control: only allow when selectedCharacter.department contains 'DEO/MTF'
+    function checkAccess(){
+      const accessDenied = document.getElementById('accessDenied');
+      const portalContent = document.getElementById('portalContent');
+      try{
+        const raw = localStorage.getItem('selectedCharacter');
+        if(!raw){
+          accessDenied.style.display = 'block';
+          window.setTimeout(() => { window.location.replace('/departments/DEO/mtf-portal/403/'); }, 1400);
           return;
         }
-
-        portalContent.style.display = 'block';
-        
-        // Show add operation button for L5+
-        if (userClearance >= 5) {
-          addOpBtn.style.display = 'inline-block';
+        const ch = JSON.parse(raw);
+        const dept = ch && ch.department ? String(ch.department) : '';
+        if(dept.indexOf('DEO/MTF') === -1){
+          accessDenied.style.display = 'block';
+          window.setTimeout(() => { window.location.replace('/departments/DEO/mtf-portal/403/'); }, 1400);
+          return;
         }
+        // allowed
+        accessDenied.style.display = 'none';
+        portalContent.style.display = 'block';
         
         loadOperations();
         loadRoster();
         loadLoadouts();
-      } catch (err) {
-        console.error('Access check error:', err);
-        location.href = '/departments/DEO/mtf-portal/403/';
+      }catch(err){
+        accessDenied.style.display = 'block';
+        console.error('portal access error', err);
       }
-    });
+    }
+
+    document.addEventListener('includesLoaded', checkAccess);
+    document.addEventListener('DOMContentLoaded', checkAccess);
+    checkAccess();
 
     // Load operations
     async function loadOperations() {

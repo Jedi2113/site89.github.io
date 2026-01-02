@@ -81,46 +81,40 @@
 
   <script type="module" src="/assets/js/auth.js"></script>
 
-  <script type="module">
-    import { app, auth } from "/assets/js/auth.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-    const db = getFirestore(app);
-
-    const accessDenied = document.getElementById('accessDenied');
-    const portalContent = document.getElementById('portalContent');
-
-    // Check if user is IA
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        location.href = '/departments/DEO/ia-portal/403/';
-        return;
-      }
-
-      try {
-        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
-        const charSnap = await getDocs(q);
-
-        let hasAccess = false;
-        charSnap.forEach(doc => {
-          const char = doc.data();
-          const dept = (char.department || '').toUpperCase();
-          if (dept.includes('IA') || dept.includes('INTERNAL AFFAIRS')) {
-            hasAccess = true;
-          }
-        });
-
-        if (!hasAccess) {
-          location.href = '/departments/DEO/ia-portal/403/';
+  <script>
+    // Access control: only allow when selectedCharacter.department contains 'DEO/IA'
+    function checkAccess(){
+      const accessDenied = document.getElementById('accessDenied');
+      const portalContent = document.getElementById('portalContent');
+      try{
+        const raw = localStorage.getItem('selectedCharacter');
+        if(!raw){
+          accessDenied.textContent = 'Access denied: no selected character. You must select a DEO/IA character to view this portal.';
+          accessDenied.style.display = 'block';
+          window.setTimeout(() => { window.location.replace('/departments/DEO/ia-portal/403/'); }, 1400);
           return;
         }
-
+        const ch = JSON.parse(raw);
+        const dept = ch && ch.department ? String(ch.department) : '';
+        if(dept.indexOf('DEO/IA') === -1){
+          accessDenied.textContent = 'Access denied: this portal is restricted to Internal Affairs members.';
+          accessDenied.style.display = 'block';
+          window.setTimeout(() => { window.location.replace('/departments/DEO/ia-portal/403/'); }, 1400);
+          return;
+        }
+        // allowed
+        accessDenied.style.display = 'none';
         portalContent.style.display = 'block';
-      } catch (err) {
-        console.error('Access check error:', err);
-        location.href = '/departments/DEO/ia-portal/403/';
+      }catch(err){
+        accessDenied.textContent = 'Access check error — please contact an administrator.';
+        accessDenied.style.display = 'block';
+        console.error('portal access error', err);
       }
-    });
+    }
+
+    document.addEventListener('includesLoaded', checkAccess);
+    document.addEventListener('DOMContentLoaded', checkAccess);
+    checkAccess();
   </script>
 
 </body>
