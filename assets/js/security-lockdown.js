@@ -1,1 +1,30 @@
-!function(){"use strict";const e="https://youtu.be/B4tJmlW6wWg";let t=!1;const o=()=>{t||(t=!0,window.location.href=e)};const n={apply(){return o(),void 0}};console.log=new Proxy(console.log,n),console.error=new Proxy(console.error,n),console.warn=new Proxy(console.warn,n),console.debug=new Proxy(console.debug,n),console.table=new Proxy(console.table,n),console.trace=new Proxy(console.trace,n),console.time=new Proxy(console.time,n),console.timeEnd=new Proxy(console.timeEnd,n),console.group=new Proxy(console.group,n),console.clear=new Proxy(console.clear,n);let r=window.innerWidth,l=window.innerHeight;window.addEventListener("resize",()=>{const t=window.innerWidth,n=window.innerHeight;Math.abs(t-r)>160||Math.abs(n-l)>160&&o(),r=t,l=n}),setInterval(()=>{const t=performance.now();debugger;performance.now()-t>50&&o()},500),document.addEventListener("keydown",t=>{if("F12"===t.key||t.ctrlKey&&t.shiftKey&&"I"===t.key||t.ctrlKey&&t.shiftKey&&"C"===t.key||t.ctrlKey&&t.shiftKey&&"J"===t.key||t.ctrlKey&&"U"===t.key)return t.preventDefault(),t.stopImmediatePropagation(),o(),!1},!0),document.addEventListener("contextmenu",t=>{t.preventDefault(),t.stopImmediatePropagation(),o()},!0),window!==window.top&&(window.top.location=window.self.location),setInterval(()=>{debugger},100)}();
+(function() {
+  'use strict';
+
+  // Block F12 and DevTools shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) ||
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  }, true);
+
+  // Block right-click
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    return false;
+  }, true);
+
+  // Prevent iframe
+  if (window !== window.top) {
+    window.top.location = window.self.location;
+  }
+
+})();
+
