@@ -43,6 +43,7 @@ document.addEventListener('includesLoaded', () => {
 
   let currentFolder = 'inbox';
   let myAddress = '';
+  let currentUser = null; // Store current user for emails
   let currentMessage = null;
   let allMessages = [];
   let emailsUnsubscribe = null; // for real-time listener
@@ -76,6 +77,7 @@ document.addEventListener('includesLoaded', () => {
 
     const payload = {
       sender: myAddress,
+      senderEmail: currentUser ? currentUser.email : '',
       recipients: toRaw,
       subject: composeSubject.value || '(no subject)',
       body: composeBody.value || '',
@@ -197,6 +199,7 @@ document.addEventListener('includesLoaded', () => {
 
   // Auth and address detection
   onAuthStateChanged(auth, async (user) => {
+    currentUser = user; // Store current user for UID in emails
     // Use selectedCharacter if present, otherwise fallback to user email
     let selected = null;
     try { selected = JSON.parse(localStorage.getItem('selectedCharacter')); } catch(e){ selected = null; }

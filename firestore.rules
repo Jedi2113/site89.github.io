@@ -23,14 +23,16 @@ service cloud.firestore {
 
     // Emails collection
     match /emails/{emailId} {
-      // Allow reads only for authenticated users who are either the sender or one of the recipients
+      // Allow reads only for authenticated users who are involved in the email
+      // Check if their auth email matches the sender's auth email OR they are in the recipients list
       allow read: if request.auth != null && (
-        request.auth.token.email == resource.data.sender ||
+        resource.data.senderEmail == request.auth.token.email ||
         request.auth.token.email in resource.data.recipients
       );
 
-      // Allow create for authenticated users sending from either their auth email or a character email
+      // Allow create for authenticated users sending from their character or auth email
       allow create: if request.auth != null
+        && request.resource.data.senderEmail == request.auth.token.email
         && (request.resource.data.sender == request.auth.token.email || request.resource.data.sender.matches('.*@site89\\.org$'))
         && request.resource.data.recipients is list
         && request.resource.data.subject is string
@@ -38,11 +40,11 @@ service cloud.firestore {
 
       // Allow updates if user is involved (sender or recipient). Limit updatable keys to a safe set.
       allow update: if request.auth != null && (
-        resource.data.sender == request.auth.token.email || request.auth.token.email in resource.data.recipients
-      ) && (request.resource.data.keys().hasOnly(['sender','recipients','subject','body','status','folder','ts','read']) );
+        resource.data.senderEmail == request.auth.token.email || request.auth.token.email in resource.data.recipients
+      ) && (request.resource.data.keys().hasOnly(['sender','senderEmail','recipients','subject','body','status','folder','ts','read']) );
 
-      // Allow delete only by the sender (or restrict as needed)
-      allow delete: if request.auth != null && resource.data.sender == request.auth.token.email;
+      // Allow delete only by the sender
+      allow delete: if request.auth != null && resource.data.senderEmail == request.auth.token.email;
     }
 
     // Gallery collection
