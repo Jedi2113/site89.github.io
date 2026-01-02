@@ -19,6 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// Export for use in other modules
+export { app, auth };
+
 document.addEventListener("includesLoaded", () => {
   const navAccountsBtn = document.getElementById("navAccountsBtn");
   const navAccountsText = document.querySelector("#navAccountsBtn span");

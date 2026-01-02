@@ -79,23 +79,12 @@
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
 
+  <script type="module" src="/assets/js/auth.js"></script>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { app, auth } from "/assets/js/auth.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
-      authDomain: "site-89-2d768.firebaseapp.com",
-      projectId: "site-89-2d768",
-      storageBucket: "site-89-2d768.firebasestorage.app",
-      messagingSenderId: "851485754416",
-      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
-      measurementId: "G-EDX3DLNV52"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
 
     const accessDenied = document.getElementById('accessDenied');

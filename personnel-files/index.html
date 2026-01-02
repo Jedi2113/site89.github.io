@@ -280,21 +280,9 @@
   <script type="module" src="/assets/js/auth.js"></script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { app } from "/assets/js/auth.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
-      authDomain: "site-89-2d768.firebaseapp.com",
-      projectId: "site-89-2d768",
-      storageBucket: "site-89-2d768.firebasestorage.app",
-      messagingSenderId: "851485754416",
-      appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
-      measurementId: "G-EDX3DLNV52"
-    };
-
-    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     // Mask a PID by replacing all but the last 3 characters with █
