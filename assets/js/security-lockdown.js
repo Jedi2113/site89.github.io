@@ -1,217 +1,217 @@
 /**
- * SITE-89 Security Lockdown Module
- * Comprehensive protection against code inspection and unauthorized access
- * 
- * This script implements multiple layers of security:
- * 1. DevTools detection and blocking
- * 2. Keyboard shortcut prevention
- * 3. Console method overrides
- * 4. Right-click context menu disabling
- * 5. Debugger injection
- * 6. DOM protection
- * 7. Network request interception
+ * SITE-89 AGGRESSIVE SECURITY LOCKDOWN
+ * Client-side code protection system
+ * Prevents DevTools access and code inspection
  */
 
 (function() {
   'use strict';
 
-  // Constants for security
-  const SECURITY_MESSAGE = '%c🔒 SECURITY NOTICE';
-  const SECURITY_STYLE = 'color: red; font-size: 14px; font-weight: bold;';
-  const WARNING_STYLE = 'color: red; font-size: 12px;';
-
-  // ===== 1. DevTools Detection and Warning =====
+  // ===== DETECTION & IMMEDIATE RESPONSE =====
   const isDevToolsOpen = () => {
-    const threshold = 160;
-    const widthThreshold = 160;
-    const heightThreshold = 160;
-    
-    // Check if dev tools are likely open based on window dimensions
-    return (window.outerWidth - window.innerWidth > widthThreshold || 
-            window.outerHeight - window.innerHeight > heightThreshold);
+    const start = performance.now();
+    debugger;
+    const end = performance.now();
+    // If debugger was executed, DevTools is open (>100ms difference)
+    return (end - start) > 100;
   };
 
-  let devToolsWarned = false;
-  const devToolsCheckInterval = setInterval(() => {
-    if (isDevToolsOpen() && !devToolsWarned) {
-      devToolsWarned = true;
-      try {
-        console.log(SECURITY_MESSAGE, SECURITY_STYLE);
-        console.log('%cInspecting this site is prohibited.', WARNING_STYLE);
-        console.log('%cThe use of developer tools violates our Terms of Service.', WARNING_STYLE);
-        console.log('%cAccess to source code and sensitive data is restricted.', WARNING_STYLE);
-      } catch (e) {
-        // Silently fail if console access is already blocked
+  // Check DevTools every 100ms - aggressive monitoring
+  let devToolsDetected = false;
+  setInterval(() => {
+    if (isDevToolsOpen()) {
+      if (!devToolsDetected) {
+        devToolsDetected = true;
+        // DevTools opened - execute countermeasures
+        lockdownPage();
       }
+    } else {
+      devToolsDetected = false;
     }
-  }, 500);
+  }, 100);
 
-  // ===== 2. Disable Right-Click Context Menu =====
-  document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }, true);
+  function lockdownPage() {
+    // Disable all interactions
+    document.documentElement.style.pointerEvents = 'none';
+    document.body.style.pointerEvents = 'none';
+    document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#f00;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:20px;z-index:999999;">⚠️ DEVELOPER TOOLS DETECTED ⚠️<br/>Access Denied</div>';
+    
+    // Disable all events
+    document.addEventListener('click', (e) => e.preventDefault(), true);
+    document.addEventListener('keydown', (e) => e.preventDefault(), true);
+    document.addEventListener('keyup', (e) => e.preventDefault(), true);
+    document.addEventListener('mousedown', (e) => e.preventDefault(), true);
+  }
 
-  // Also disable on all child elements
-  document.addEventListener('mousedown', (e) => {
-    if (e.button === 2) { // Right-click
+  // ===== KEYBOARD SHORTCUT BLOCKING =====
+  document.addEventListener('keydown', (e) => {
+    // Block F12
+    if (e.key === 'F12') {
       e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    // Block Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    // Block Ctrl+Shift+C
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    // Block Ctrl+Shift+J
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    // Block Ctrl+U
+    if (e.ctrlKey && e.key === 'U') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       return false;
     }
   }, true);
 
-  // ===== 3. Block DevTools Keyboard Shortcuts =====
-  const BLOCKED_KEY_COMBOS = [
-    { key: 'F12' },
-    { key: 'I', ctrl: true, shift: true }, // Ctrl+Shift+I
-    { key: 'C', ctrl: true, shift: true }, // Ctrl+Shift+C (Inspect element)
-    { key: 'J', ctrl: true, shift: true }, // Ctrl+Shift+J (Console)
-    { key: 'U', ctrl: true },               // Ctrl+U (View source)
-    { key: 'K', ctrl: true, shift: true }, // Ctrl+Shift+K (Firefox console)
-    { key: 'S', ctrl: true, shift: true }, // Ctrl+Shift+S (Firefox dev tools)
-    { key: 'Q', ctrl: true, shift: true }, // Ctrl+Shift+Q (Firefox)
-  ];
+  // ===== RIGHT-CLICK BLOCKING =====
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    return false;
+  }, true);
 
-  document.addEventListener('keydown', (e) => {
-    for (const combo of BLOCKED_KEY_COMBOS) {
-      const keyMatch = e.key === combo.key || (combo.key === 'F12' && e.key === 'F12');
-      const ctrlMatch = combo.ctrl ? e.ctrlKey : true;
-      const shiftMatch = combo.shift ? e.shiftKey : true;
-
-      if (keyMatch && ctrlMatch && shiftMatch) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
-      }
+  document.addEventListener('mousedown', (e) => {
+    if (e.button === 2) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
     }
   }, true);
 
-  // ===== 4. Console Method Override =====
-  const noop = () => {};
-  
-  // Store original console methods
-  const originalConsole = {
-    log: console.log,
-    warn: console.warn,
-    error: console.error,
-    debug: console.debug,
-    info: console.info,
-    trace: console.trace,
-    time: console.time,
-    timeEnd: console.timeEnd,
-    group: console.group,
-    groupEnd: console.groupEnd,
-    table: console.table,
-    clear: console.clear,
-  };
+  // ===== CONSOLE OVERRIDE =====
+  const originalLog = console.log;
+  const originalWarn = console.warn;
+  const originalError = console.error;
 
-  // Override console methods to limit access
-  console.log = function(...args) {
-    // Only allow security-related messages
-    if (args[0]?.toString?.().includes?.('SECURITY NOTICE')) {
-      originalConsole.log.apply(console, args);
-    }
-  };
+  // Override ALL console methods
+  Object.defineProperty(console, 'log', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
 
-  console.warn = noop;
-  console.error = noop;
-  console.debug = noop;
-  console.info = noop;
-  console.trace = noop;
-  console.time = noop;
-  console.timeEnd = noop;
-  console.group = noop;
-  console.groupEnd = noop;
-  console.table = noop;
-  console.clear = noop;
+  Object.defineProperty(console, 'warn', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
 
-  // ===== 5. Continuous Debugger Injection =====
-  // This will pause execution if DevTools are open
+  Object.defineProperty(console, 'error', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'debug', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'info', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'trace', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'table', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'clear', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'time', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'timeEnd', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'group', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(console, 'groupEnd', {
+    value: () => {},
+    writable: false,
+    configurable: false
+  });
+
+  // ===== CONTINUOUS DEBUGGER =====
   setInterval(() => {
-    if (isDevToolsOpen()) {
-      debugger; // This will only pause if DevTools are actually open
-    }
-  }, 100);
+    debugger;
+  }, 50);
 
-  // ===== 6. IFrame Breakout Protection =====
-  // Prevent this page from being iframed
+  // ===== SOURCE MAP BLOCKING =====
+  Object.defineProperty(window, 'sourceMapSupport', {
+    value: undefined,
+    writable: false,
+    configurable: false
+  });
+
+  // ===== PREVENT IFRAME =====
   if (window !== window.top) {
-    try {
-      window.top.location = window.self.location;
-    } catch (e) {
-      // If we can't access top location, display warning
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:black;color:red;font-family:monospace;font-size:18px;">ACCESS DENIED: Unauthorized iframe access detected</div>';
-    }
+    window.top.location = window.self.location;
   }
 
-  // ===== 7. DOM Property Protection =====
-  // Prevent easy DOM inspection
+  // ===== FETCH INTERCEPTOR =====
+  const originalFetch = window.fetch;
+  window.fetch = function() {
+    return originalFetch.apply(this, arguments);
+  };
+
+  // ===== BLOCK DEVELOPER TOOLS DETECTION =====
+  Object.defineProperty(navigator, 'webdriver', {
+    get: () => false,
+  });
+
+  // ===== WINDOW PROPERTIES PROTECTION =====
   try {
-    Object.defineProperty(HTMLElement.prototype, 'outerHTML', {
+    Object.defineProperty(window, 'devtools', {
       get: function() {
-        return 'RESTRICTED';
-      },
-      set: function(val) {
-        // Prevent modification
+        throw new Error('Access Denied');
       },
       configurable: false
     });
-  } catch (e) {
-    // Silently fail if already defined
-  }
+  } catch (e) {}
 
-  // ===== 8. XHR/Fetch Interception =====
-  // Monitor and log suspicious requests
-  const originalFetch = window.fetch;
-  window.fetch = function(...args) {
-    // Monitor but don't block legitimate requests
-    return originalFetch.apply(this, args);
-  };
+  // ===== PROTECT PROTOTYPE METHODS =====
+  Object.freeze(Object.prototype);
+  Object.freeze(Function.prototype);
+  Object.freeze(Array.prototype);
+  Object.freeze(String.prototype);
 
-  // ===== 9. Source Map Blocking =====
-  // Disable source maps if present
-  if (window.sourceMapSupport) {
-    try {
-      window.sourceMapSupport = undefined;
-    } catch (e) {}
-  }
-
-  // ===== 10. Startup Message =====
-  // Display in StyleSheet format to make it harder to spot in console
-  const styles = [
-    'background: linear-gradient(45deg, #ff0000, #ff7700)',
-    'border: 3px solid #ff0000',
-    'color: white',
-    'font-size: 16px',
-    'font-weight: bold',
-    'padding: 20px',
-    'text-shadow: 2px 2px 4px rgba(0,0,0,0.5)'
-  ].join(';');
-
-  try {
-    originalConsole.log('%c🔒 SITE-89 SECURITY LOCKDOWN ACTIVATED', styles);
-    originalConsole.log('%cDeveloper tools access is restricted and monitored.', WARNING_STYLE);
-  } catch (e) {
-    // Silently fail
-  }
-
-  // ===== 11. Periodic Security Check =====
-  // Re-check security measures periodically
-  setInterval(() => {
-    // Re-apply console overrides in case they were modified
-    if (console.log !== arguments.callee) {
-      console.log = function(...args) {
-        if (args[0]?.toString?.().includes?.('SECURITY')) {
-          originalConsole.log.apply(console, args);
-        }
-      };
-    }
-  }, 5000);
-
-  // Clean up if this is a reload to prevent multiple timers
-  window.addEventListener('beforeunload', () => {
-    clearInterval(devToolsCheckInterval);
-  });
 })();

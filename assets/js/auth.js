@@ -4,11 +4,8 @@ import {
   createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// Firebase config - Public IDs only, API key restricted to domain
-// SECURITY: API key has domain restrictions in Firebase Console
-// All sensitive operations use backend authentication
 const firebaseConfig = {
-  apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg", // Restricted to site89.github.io only
+  apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
   authDomain: "site-89-2d768.firebaseapp.com",
   projectId: "site-89-2d768",
   storageBucket: "site-89-2d768.firebasestorage.app",
@@ -17,11 +14,8 @@ const firebaseConfig = {
   measurementId: "G-EDX3DLNV52"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-// Export for use in other modules
 export { app, auth, onAuthStateChanged };
 
 document.addEventListener("includesLoaded", () => {
@@ -36,7 +30,6 @@ document.addEventListener("includesLoaded", () => {
     return fullName;
   }
 
-  // Auth state
   onAuthStateChanged(auth, (user) => {
     let displayName = "Login";
 
@@ -59,26 +52,21 @@ document.addEventListener("includesLoaded", () => {
     }
   });
 
-  // Navbar accounts button behavior
   if (navAccountsBtn) {
     navAccountsBtn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      // Just toggle the dropdown; links will handle navigation
     });
   }
 
-  // Global logout handling: clear selectedCharacter and sign out
   const logoutButtons = Array.from(document.querySelectorAll('#logoutBtn'));
   logoutButtons.forEach(btn => btn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
+    try { localStorage.removeItem('selectedCharacter'); } catch (err) { }
     signOut(auth).then(() => window.location.href = '/login/').catch(() => window.location.href = '/login/');
   }));
 
-
-  // LOGIN FORM (if exists)
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
@@ -95,7 +83,6 @@ document.addEventListener("includesLoaded", () => {
     });
   }
 
-  // REGISTER FORM (if exists)
   const registerForm = document.getElementById("registerForm");
   if (registerForm) {
     registerForm.addEventListener("submit", (e) => {
