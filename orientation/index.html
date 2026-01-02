@@ -416,15 +416,66 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
+    .orientation-progress-banner {
+      background: linear-gradient(90deg, rgba(78, 250, 170, 0.15), rgba(0, 124, 107, 0.15));
+      border-bottom: 2px solid var(--accent-mint);
+      padding: 1rem 2rem;
+      text-align: center;
+      color: var(--text-light);
+      font-weight: 500;
+      display: none;
+    }
+
+    .orientation-progress-banner.active {
+      display: block;
+    }
+
+    .orientation-progress-banner-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .orientation-progress-banner-text {
+      color: var(--accent-mint);
+      font-weight: 600;
+    }
+
+    .orientation-progress-banner-bar {
+      background: rgba(78, 250, 170, 0.1);
+      border: 1px solid var(--accent-mint);
+      border-radius: 10px;
+      height: 8px;
+      width: 200px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .orientation-progress-banner-fill {
+      background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal));
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
   </style>
 </head>
 <body>
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
-  <!-- Orientation Status Badge -->
-  <div id="orientationStatusBadge" style="text-align: center; padding-top: 1rem; display: none;">
-    <div class="orientation-badge">📋 Orientation In Progress</div>
+  <!-- Orientation Progress Banner -->
+  <div id="orientationProgressBanner" class="orientation-progress-banner">
+    <div class="orientation-progress-banner-content">
+      <div class="orientation-progress-banner-text">📋 Orientation: <span id="bannerStepText">Step 1/9</span></div>
+      <div class="orientation-progress-banner-bar">
+        <div class="orientation-progress-banner-fill" id="bannerProgressFill"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Terminal Phase -->
@@ -962,7 +1013,26 @@
     const finishBtn = document.getElementById("finishBtn");
     const terminalPhase = document.getElementById("terminalPhase");
     const orientationContent = document.getElementById("orientationContent");
-    const statusBadge = document.getElementById("orientationStatusBadge");
+    const progressBanner = document.getElementById("orientationProgressBanner");
+
+    // Cookie utility functions
+    function setCookie(name, value, days = 365) {
+      const date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.indexOf(nameEQ) === 0) {
+          return cookie.substring(nameEQ.length);
+        }
+      }
+      return null;
+    }
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -979,25 +1049,69 @@
           // User has already completed orientation, skip to content
           terminalPhase.style.display = "none";
           orientationContent.classList.remove("orientation-hidden");
-          statusBadge.style.display = "none";
+          progressBanner.classList.remove("active");
           initializeWizard();
           return;
         }
 
-        // Show orientation in progress badge
-        statusBadge.style.display = "block";
+        // Check if terminal has already been shown for this user
+        const terminalShown = getCookie(`orientation_terminal_shown_${user.uid}`);
+        
+        // Show progress banner
+        progressBanner.classList.add("active");
 
-        // Display email in terminal
+        if (!terminalShown) {
+          // Show terminal only on first visit
+          // Display email in terminal
+          emailDisplay.textContent = user.email;
+
+          // Animate terminal sequence
+          await delay(500);
+          addTerminalLine('<span class="terminal-output">Setting up new user account...</span>');
+          
+          await delay(1000);
+          addTerminalLine('<span class="terminal-output">Initializing Foundation database connection...</span>');
+          
+          await delay(1200);
+          addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
+          
+          await delay(1000);
+          addTerminalLine('<span class="terminal-output">Synchronizing personnel records...</span>');
+          
+          await delay(1500);
+          successMessage.textContent = `✓ User ${user.email} created successfully`;
+          
+          await delay(2000);
+          addTerminalLine('');
+          addTerminalLine('<span class="terminal-prompt">site89% </span><span class="terminal-input">welcome</span>');
+          
+          await delay(800);
+          addTerminalLine(`<span class="terminal-success">Welcome to Site-89, ${user.email}!</span>`);
+          addTerminalLine('');
+          
+          // Mark orientation as seen and show continue button
+          await delay(1000);
+          continueBtn.style.display = "block";
+
+          // Set cookie so terminal never shows again for this user
+          setCookie(`orientation_terminal_shown_${user.uid}`, "true");
+        } else {
+          // Terminal already shown, go straight to wizard
+          terminalPhase.style.display = "none";
+          orientationContent.classList.remove("orientation-hidden");
+          initializeWizard();
+        }
+      } catch (err) {
+        console.error("Error checking orientation status:", err);
+        // If there's an error, assume they need orientation and show the process
+        progressBanner.classList.add("active");
         emailDisplay.textContent = user.email;
-
-        // Animate terminal sequence
-        await delay(500);
-        addTerminalLine('<span class="terminal-output">Setting up new user account...</span>');
-        
-        await delay(1000);
-        addTerminalLine('<span class="terminal-output">Initializing Foundation database connection...</span>');
-        
-        await delay(1200);
+        // Still show the wizard
+        terminalPhase.style.display = "none";
+        orientationContent.classList.remove("orientation-hidden");
+        initializeWizard();
+      }
+    });        await delay(1200);
         addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
         
         await delay(1000);
@@ -1069,8 +1183,18 @@
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const currentStepDisplay = document.getElementById("currentStep");
+      const bannerStepText = document.getElementById("bannerStepText");
+      const bannerProgressFill = document.getElementById("bannerProgressFill");
       
-      let currentStep = 1;
+      // Load saved step from cookie
+      const savedStep = getCookie("orientationStep");
+      let currentStep = savedStep ? parseInt(savedStep) : 1;
+
+      function updateBanner(step) {
+        const percentage = (step / 9) * 100;
+        bannerStepText.textContent = `Step ${step}/9`;
+        bannerProgressFill.style.width = percentage + "%";
+      }
 
       function showStep(step) {
         stepPages.forEach(page => page.classList.remove("active"));
@@ -1083,6 +1207,12 @@
         currentStepDisplay.textContent = step;
         prevBtn.disabled = step === 1;
         nextBtn.disabled = step === stepPages.length;
+
+        // Save step to cookie
+        setCookie("orientationStep", step);
+
+        // Update banner
+        updateBanner(step);
 
         if (step === stepPages.length) {
           nextBtn.textContent = "Finish";
@@ -1110,7 +1240,7 @@
         }
       });
 
-      showStep(1);
+      showStep(currentStep);
     }
 
     async function finishOrientationAndRedirect() {
