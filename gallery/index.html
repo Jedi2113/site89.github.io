@@ -137,31 +137,41 @@
     // Load gallery images
     async function loadGallery() {
       try {
-        const q = query(collection(db, 'gallery'), orderBy('timestamp', 'desc'));
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(collection(db, 'gallery'));
 
         if (snapshot.empty) {
           galleryGrid.innerHTML = '<div class="empty-gallery">No images yet. Be the first to contribute!</div>';
           return;
         }
 
-        galleryGrid.innerHTML = '';
+        const items = [];
         snapshot.forEach(doc => {
-          const data = doc.data();
-          const uploadDate = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Unknown';
+          items.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort by timestamp descending (most recent first)
+        items.sort((a, b) => {
+          const timeA = a.timestamp ? (a.timestamp.toDate ? a.timestamp.toDate().getTime() : a.timestamp) : 0;
+          const timeB = b.timestamp ? (b.timestamp.toDate ? b.timestamp.toDate().getTime() : b.timestamp) : 0;
+          return timeB - timeA;
+        });
+
+        galleryGrid.innerHTML = '';
+        items.forEach(data => {
+          const uploadDate = data.timestamp ? new Date(data.timestamp.toDate ? data.timestamp.toDate() : data.timestamp).toLocaleDateString() : 'Unknown';
           
           galleryGrid.innerHTML += `
             <div class="gallery-item">
               <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy">
               <div class="gallery-caption">${data.caption || 'Untitled'}</div>
               <div class="gallery-meta">By ${data.uploaderName || 'Anonymous'} • ${uploadDate}</div>
-              ${currentUser && currentUser.uid === data.uploaderId ? `<button class="gallery-delete" onclick="deleteImage('${doc.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
+              ${currentUser && currentUser.uid === data.uploaderId ? `<button class="gallery-delete" onclick="deleteImage('${data.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
             </div>
           `;
         });
       } catch (err) {
         console.error('Error loading gallery:', err);
-        galleryGrid.innerHTML = '<div class="empty-gallery" style="color:red;">Error loading gallery</div>';
+        galleryGrid.innerHTML = '<div class="empty-gallery" style="color:red;">Error loading gallery: ' + err.message + '</div>';
       }
     }
 

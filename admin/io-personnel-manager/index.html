@@ -393,7 +393,7 @@
   <script type="module" src="/assets/js/auth.js"></script>
 
   <script type="module">
-    import { app, auth } from "/assets/js/auth.js";
+    import { app, auth, onAuthStateChanged } from "/assets/js/auth.js";
     import { getFirestore, collection, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const db = getFirestore(app);
