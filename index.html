@@ -535,10 +535,134 @@
     .boot-screen { animation: crtFlicker 3.8s linear infinite; }
 
     @media (max-width: 600px) { .boot-screen { width: 96%; } .boot-access { font-size: 1.25rem; } }
+
+    /* First-time visitor modal */
+    .first-time-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .first-time-modal-overlay.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .first-time-modal-content {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-mint);
+      border-radius: 12px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .first-time-modal-content h1 {
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .first-time-modal-content p {
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .first-time-modal-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .first-time-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .first-time-btn {
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+    }
+
+    .first-time-btn-primary {
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #000;
+    }
+
+    .first-time-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(78, 250, 170, 0.4);
+    }
+
+    .first-time-btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent-teal);
+      color: var(--accent-mint);
+    }
+
+    .first-time-btn-secondary:hover {
+      background: rgba(78, 250, 170, 0.1);
+      border-color: var(--accent-mint);
+    }
   </style>
 
   <!-- Navbar only (no header) -->
   <div data-include="/components/navbar.html"></div>
+
+  <!-- First-time visitor modal -->
+  <div id="firstTimeModal" class="first-time-modal-overlay">
+    <div class="first-time-modal-content">
+      <div class="first-time-modal-icon">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <h1>Welcome to SITE-89</h1>
+      <p>Create an account to access the Foundation's secure portal and begin your onboarding orientation.</p>
+      <div class="first-time-buttons">
+        <button class="first-time-btn first-time-btn-primary" onclick="window.location.href = '/login/'">
+          Create Account & Start
+        </button>
+        <button class="first-time-btn first-time-btn-secondary" onclick="closeFirstTimeModal()">
+          Continue Browsing
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Hero Section -->
   <section class="hero-section">
@@ -715,6 +839,9 @@
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Close modal if user logs in
+        closeFirstTimeModal();
+        
         const selectedChar = localStorage.getItem("selectedCharacter");
         if (selectedChar) {
           try {
@@ -898,8 +1025,41 @@
             setTimeout(()=>playBoot(true), 80);
           });
         }
+
+        // First-time visitor detection
+        checkFirstTimeVisitor();
       });
     })();
+
+    // First-time visitor modal logic
+    function checkFirstTimeVisitor() {
+      const firstTimeModalOverlay = document.getElementById('firstTimeModal');
+      const hasVisited = localStorage.getItem('site89_visited');
+      
+      // Check if user is NOT logged in
+      const selectedChar = localStorage.getItem('selectedCharacter');
+      const hasAuth = selectedChar !== null;
+
+      // Show modal only for non-logged-in first-time visitors
+      if (!hasVisited && !hasAuth) {
+        // Mark as visited
+        localStorage.setItem('site89_visited', 'true');
+        
+        // Show modal after a short delay (after boot animation if it plays)
+        setTimeout(() => {
+          if (firstTimeModalOverlay) {
+            firstTimeModalOverlay.classList.add('show');
+          }
+        }, 1000);
+      }
+    }
+
+    function closeFirstTimeModal() {
+      const firstTimeModalOverlay = document.getElementById('firstTimeModal');
+      if (firstTimeModalOverlay) {
+        firstTimeModalOverlay.classList.remove('show');
+      }
+    }
   </script>
 
 </body>
