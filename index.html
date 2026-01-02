@@ -705,6 +705,7 @@
   <script type="module">
     import { app, auth } from "/assets/js/auth.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
     const db = getFirestore(app);
 

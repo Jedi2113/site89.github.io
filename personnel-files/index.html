@@ -345,7 +345,7 @@
 
       const bioSection = document.getElementById("modalBioSection");
       if (char.bio && char.bio.trim()) {
-        document.getElementById("modalBio").textContent = char.bio;
+        document.getElementById("modalBio").innerHTML = char.bio;
         bioSection.style.display = "block";
       } else {
         bioSection.style.display = "none";
