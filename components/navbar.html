@@ -503,19 +503,12 @@
   }
 
   // Accounts dropdown toggle
+  // Note: The actual click handler is in auth.js to check login status
   const navAccounts = document.getElementById('navAccounts');
   const navAccountsBtn = document.getElementById('navAccountsBtn');
   const navAccountsDropdown = document.getElementById('navAccountsDropdown');
 
-  if (navAccountsBtn && navAccountsDropdown) {
-    navAccountsBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      navAccountsDropdown.classList.toggle('hidden');
-      if (!navAccountsDropdown.classList.contains('hidden')) {
-        positionDropdown();
-      }
-    });
-
+  if (navAccountsDropdown) {
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (navAccounts && !navAccounts.contains(e.target)) {
@@ -529,14 +522,25 @@
         navAccountsDropdown.classList.add('hidden');
       });
     });
-    
-    // Reposition on window resize
-    window.addEventListener('resize', () => {
-      if (!navAccountsDropdown.classList.contains('hidden')) {
-        positionDropdown();
-      }
-    });
   }
+  
+  // Watch for dropdown toggle from auth.js and position it
+  const observer = new MutationObserver(() => {
+    if (navAccountsDropdown && !navAccountsDropdown.classList.contains('hidden')) {
+      positionDropdown();
+    }
+  });
+  
+  if (navAccountsDropdown) {
+    observer.observe(navAccountsDropdown, { attributes: true, attributeFilter: ['class'] });
+  }
+  
+  // Reposition on window resize
+  window.addEventListener('resize', () => {
+    if (navAccountsDropdown && !navAccountsDropdown.classList.contains('hidden')) {
+      positionDropdown();
+    }
+  });
 
   // Mobile menu toggle
   const navToggle = document.getElementById('navToggle');

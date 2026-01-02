@@ -20,10 +20,14 @@ export { app, auth, onAuthStateChanged };
 document.addEventListener("includesLoaded", () => {
   const navAccountsBtn = document.getElementById("navAccountsBtn");
   const navAccountsText = document.querySelector("#navAccountsBtn span");
+  const navAccountsDropdown = document.getElementById("navAccountsDropdown");
 
   onAuthStateChanged(auth, (user) => {
     let displayName = "Login";
+    let isLoggedIn = false;
+    
     if (user) {
+      isLoggedIn = true;
       const selectedChar = localStorage.getItem("selectedCharacter");
       if (selectedChar) {
         try {
@@ -38,14 +42,29 @@ document.addEventListener("includesLoaded", () => {
       }
     }
     if (navAccountsText) navAccountsText.textContent = displayName;
+    
+    // Update button behavior based on login status
+    if (navAccountsBtn) {
+      // Remove previous click handlers by cloning the element
+      const newBtn = navAccountsBtn.cloneNode(true);
+      navAccountsBtn.parentNode.replaceChild(newBtn, navAccountsBtn);
+      
+      newBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (isLoggedIn) {
+          // Show dropdown for logged-in users
+          if (navAccountsDropdown) {
+            navAccountsDropdown.classList.toggle('hidden');
+          }
+        } else {
+          // Navigate to login for non-logged-in users
+          window.location.href = '/login/';
+        }
+      });
+    }
   });
-
-  if (navAccountsBtn) {
-    navAccountsBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
-  }
 
   Array.from(document.querySelectorAll('#logoutBtn')).forEach(btn => {
     btn.addEventListener('click', (e) => {
