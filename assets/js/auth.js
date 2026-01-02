@@ -1,8 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
-  createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
@@ -22,23 +19,15 @@ document.addEventListener("includesLoaded", () => {
   const navAccountsBtn = document.getElementById("navAccountsBtn");
   const navAccountsText = document.querySelector("#navAccountsBtn span");
 
-  function formatCharacterName(fullName) {
-    const parts = fullName.split(" ");
-    if (parts.length >= 2) {
-      return `${parts[0][0]}. ${parts[parts.length - 1]}`;
-    }
-    return fullName;
-  }
-
   onAuthStateChanged(auth, (user) => {
     let displayName = "Login";
-
     if (user) {
       const selectedChar = localStorage.getItem("selectedCharacter");
       if (selectedChar) {
         try {
           const charObj = JSON.parse(selectedChar);
-          displayName = formatCharacterName(charObj.name);
+          const parts = charObj.name.split(" ");
+          displayName = parts.length >= 2 ? `${parts[0][0]}. ${parts[parts.length - 1]}` : charObj.name;
         } catch {
           displayName = user.email;
         }
@@ -46,10 +35,7 @@ document.addEventListener("includesLoaded", () => {
         displayName = user.email;
       }
     }
-
-    if (navAccountsText) {
-      navAccountsText.textContent = displayName;
-    }
+    if (navAccountsText) navAccountsText.textContent = displayName;
   });
 
   if (navAccountsBtn) {
@@ -59,13 +45,14 @@ document.addEventListener("includesLoaded", () => {
     });
   }
 
-  const logoutButtons = Array.from(document.querySelectorAll('#logoutBtn'));
-  logoutButtons.forEach(btn => btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try { localStorage.removeItem('selectedCharacter'); } catch (err) { }
-    signOut(auth).then(() => window.location.href = '/login/').catch(() => window.location.href = '/login/');
-  }));
+  Array.from(document.querySelectorAll('#logoutBtn')).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { localStorage.removeItem('selectedCharacter'); } catch (err) { }
+      signOut(auth).then(() => window.location.href = '/login/').catch(() => window.location.href = '/login/');
+    });
+  });
 
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
@@ -73,7 +60,6 @@ document.addEventListener("includesLoaded", () => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
       signInWithEmailAndPassword(auth, email, password)
         .then(() => window.location.href = "/")
         .catch(err => {
@@ -89,7 +75,6 @@ document.addEventListener("includesLoaded", () => {
       e.preventDefault();
       const email = document.getElementById("regEmail").value;
       const password = document.getElementById("regPassword").value;
-
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => window.location.href = "/")
         .catch(err => {
