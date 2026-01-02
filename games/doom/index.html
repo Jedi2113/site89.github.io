@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOOM — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { 
+      padding: 2.5rem 1rem; 
+      text-align:center; 
+      background: linear-gradient(90deg, rgba(176,0,0,0.1), transparent); 
+      border-bottom: 1px solid rgba(176,0,0,0.2); 
+    }
+    .page-hero .hero-title { 
+      font-family: var(--font-head); 
+      font-size: 2.5rem; 
+      color: #ff6b6b; 
+      margin-bottom: 0.35rem;
+      text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+    .page-hero .hero-sub { 
+      color: var(--text-light); 
+      opacity: 0.9; 
+    }
+
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 2rem 1rem;
+    }
+
+    .dosbox-container { 
+      width: 100%; 
+      max-width: 960px; 
+      height: 600px;
+      border: 3px solid #ff6b6b;
+      border-radius: 8px;
+      background: #000;
+      box-shadow: 0 0 30px rgba(255, 107, 107, 0.4);
+      position: relative;
+    }
+    
+    .dosbox-container > .dosbox-overlay { 
+      background: url(https://js-dos.com/cdn/DOOM.png);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .game-btn {
+      padding: 0.8rem 1.5rem;
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+    }
+
+    .game-btn:hover {
+      background: #ff5252;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    }
+
+    .game-info {
+      text-align: center;
+      color: var(--text-light);
+      max-width: 800px;
+      line-height: 1.6;
+      background: var(--bg-card);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+
+    .game-info h3 {
+      color: #ff6b6b;
+      margin-top: 0;
+    }
+
+    .warning-box {
+      background: rgba(176, 0, 0, 0.1);
+      border: 2px solid #ff6b6b;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      color: var(--text-light);
+    }
+
+    .warning-box strong {
+      color: #ff6b6b;
+    }
+
+    .controls-list {
+      text-align: left;
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+
+    .controls-list dt {
+      color: #ff6b6b;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .controls-list dd {
+      margin-left: 1.5rem;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .dosbox-container {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title"><i class="fa-solid fa-skull-crossbones" style="margin-right:0.5rem;"></i>DOOM</div>
+    <div class="hero-sub">Rip and tear through hell. For research purposes only.</div>
+  </section>
+
+  <section class="content">
+    <div class="game-container">
+      
+      <div class="warning-box">
+        <strong><i class="fa-solid fa-triangle-exclamation"></i> NOTICE:</strong> This is a high-performance simulation requiring significant computational resources. Click inside the game area to capture mouse control. Press ESC to release.
+      </div>
+
+      <div id="dosbox" class="dosbox-container"></div>
+      
+      <button onclick="dosbox.requestFullScreen();" class="game-btn">
+        <i class="fa-solid fa-expand" style="margin-right:0.5rem;"></i>Fullscreen Mode
+      </button>
+
+      <div class="game-info">
+        <h3>About DOOM</h3>
+        <p>The classic 1993 first-person shooter. Fight your way through hordes of demons from hell across multiple episodes. This is the original shareware version running in your browser via DOSBox emulation.</p>
+        
+        <div class="controls-list">
+          <h4 style="color:#ff6b6b;margin-bottom:0.5rem;">Controls:</h4>
+          <dl>
+            <dt>Arrow Keys</dt>
+            <dd>Move forward/backward, turn left/right</dd>
+            
+            <dt>Ctrl</dt>
+            <dd>Fire weapon</dd>
+            
+            <dt>Space</dt>
+            <dd>Use/Open doors</dd>
+            
+            <dt>Alt</dt>
+            <dd>Strafe (side-step)</dd>
+            
+            <dt>Shift</dt>
+            <dd>Run</dd>
+            
+            <dt>1-7</dt>
+            <dd>Select weapon</dd>
+            
+            <dt>Tab</dt>
+            <dd>Map</dd>
+            
+            <dt>ESC</dt>
+            <dd>Menu / Release mouse</dd>
+          </dl>
+        </div>
+
+        <p style="opacity:0.8;font-size:0.9rem;margin-top:1rem;">
+          <strong>Note:</strong> The game may take a moment to load. Click inside the game window to start playing. Use fullscreen mode for the best experience.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+  
+  <script type="text/javascript" src="https://js-dos.com/cdn/js-dos-api.js"></script>
+  <script type="text/javascript">
+    var dosbox = new Dosbox({
+      id: "dosbox",
+      onload: function (dosbox) {
+        dosbox.run("https://js-dos.com/cdn/upload/DOOM-@evilution.zip", "./doom");
+      },
+      onrun: function (dosbox, app) {
+        console.log("App '" + app + "' is running");
+      }
+    });
+  </script>
+
+</body>
+</html>

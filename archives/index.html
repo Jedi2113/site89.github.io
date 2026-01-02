@@ -12,10 +12,55 @@
     ThemeManager.init();
   </script>
   <meta name="description" content="Central hub for the Foundation Archives: Personnel Files, GOI / POI, Anomalies, Research Logs, Incident Reports.">
+  <style>
+    .snake-easter-egg {
+      position: fixed;
+      right: -45px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-15deg);
+      font-size: 3rem;
+      color: var(--accent-mint);
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.3s ease;
+      animation: peek 3s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(78, 250, 170, 0.5);
+    }
+
+    .snake-easter-egg:hover {
+      right: 0;
+      transform: translateY(-50%) rotate(0deg) scale(1.2);
+      animation: none;
+    }
+
+    @keyframes peek {
+      0%, 100% { right: -45px; }
+      50% { right: -35px; }
+    }
+
+    @media (max-width: 768px) {
+      .snake-easter-egg {
+        font-size: 2rem;
+        right: -30px;
+      }
+      .snake-easter-egg:hover {
+        right: 5px;
+      }
+      @keyframes peek {
+        0%, 100% { right: -30px; }
+        50% { right: -20px; }
+      }
+    }
+  </style>
 </head>
 <body>
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
+
+  <!-- Hidden Snake Easter Egg -->
+  <a href="/games/snake/" class="snake-easter-egg" title="Ssssomething hidden...">
+    <i class="fa-solid fa-worm"></i>
+  </a>
 
   <main class="content">
     <section class="about-box">

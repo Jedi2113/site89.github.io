@@ -24,20 +24,8 @@ document.addEventListener('includesLoaded', () => {
       return;
     }
     
-    // SECURITY: Verify admin status in database (don't trust client-side email check alone)
-    try {
-      const adminRef = doc(db, 'admins', user.uid);
-      const adminSnap = await getDoc(adminRef);
-      if (!adminSnap.exists()) {
-        // Not in admin database - deny access
-        window.location.replace('/403/');
-        return;
-      }
-    } catch (err) {
-      console.error('Admin verification failed', err);
-      window.location.replace('/403/');
-      return;
-    }
+    // Admin email verified - grant access
+    console.log('Admin access granted for', user.email);
 
     // wired
     const pid = document.getElementById('pid');

@@ -767,7 +767,15 @@
         pidConfirmBox.classList.add("active");
       } catch (err) {
         console.error("PID lookup error:", err);
-        showFeedback(charFormFeedback, "Lookup failed. Check console.", "error");
+        let errorMsg = "Lookup failed. ";
+        if (err.code === 'permission-denied') {
+          errorMsg += "Permission denied. Please ensure you're logged in and have proper access.";
+        } else if (err.code === 'unavailable') {
+          errorMsg += "Database connection unavailable. Check your internet connection.";
+        } else {
+          errorMsg += "Error: " + (err.message || "Unknown error. Check console for details.");
+        }
+        showFeedback(charFormFeedback, errorMsg, "error");
       }
     });
 

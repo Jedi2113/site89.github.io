@@ -18,6 +18,46 @@
   </script>
 
   <style>
+    .doom-easter-egg {
+      position: fixed;
+      left: -45px;
+      top: 15%;
+      transform: rotate(15deg);
+      font-size: 3rem;
+      color: #ff6b6b;
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.3s ease;
+      animation: demonPeek 4s ease-in-out infinite;
+      text-shadow: 0 0 15px rgba(255, 107, 107, 0.8), 0 0 30px rgba(176, 0, 0, 0.5);
+      filter: drop-shadow(0 0 10px #ff6b6b);
+    }
+
+    .doom-easter-egg:hover {
+      left: 0;
+      transform: rotate(0deg) scale(1.3);
+      animation: none;
+    }
+
+    @keyframes demonPeek {
+      0%, 100% { left: -45px; }
+      50% { left: -30px; }
+    }
+
+    @media (max-width: 768px) {
+      .doom-easter-egg {
+        font-size: 2rem;
+        left: -30px;
+      }
+      .doom-easter-egg:hover {
+        left: 5px;
+      }
+      @keyframes demonPeek {
+        0%, 100% { left: -30px; }
+        50% { left: -20px; }
+      }
+    }
+
     .tab-buttons {
       display: flex;
       gap: 15px;
@@ -70,6 +110,11 @@
   <!-- Header & Navbar -->
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
+
+  <!-- Hidden DOOM Easter Egg -->
+  <a href="/games/doom/" class="doom-easter-egg" title="RIP AND TEAR">
+    <i class="fa-solid fa-skull-crossbones"></i>
+  </a>
 
   <section class="content ms-anomalies">
     <style>

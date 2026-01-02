@@ -22,12 +22,66 @@
     .guide-card h3 { margin: 0 0 0.6rem 0; color: var(--accent-mint); }
     .guide-card p { margin: 0; color: var(--text-light); opacity: 0.9; }
     .guide-card a { display: inline-block; margin-top: 0.8rem; color: var(--accent-teal); font-weight:600; }
+
+    .paddle-easter-egg {
+      position: fixed;
+      left: 50%;
+      bottom: -40px;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 20px;
+      background: linear-gradient(to bottom, var(--accent-mint), var(--accent-teal));
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.3s ease;
+      animation: paddleSlide 4s ease-in-out infinite;
+      box-shadow: 0 -4px 15px rgba(78, 250, 170, 0.4);
+    }
+
+    .paddle-easter-egg:hover {
+      bottom: 0;
+      animation: none;
+      box-shadow: 0 -8px 25px rgba(78, 250, 170, 0.6);
+    }
+
+    .paddle-easter-egg::before {
+      content: '?';
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      color: var(--accent-mint);
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .paddle-easter-egg:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes paddleSlide {
+      0%, 100% { bottom: -40px; }
+      50% { bottom: -20px; }
+    }
+
+    @media (max-width: 768px) {
+      .paddle-easter-egg {
+        width: 80px;
+        height: 15px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
+
+  <!-- Hidden Paddle Easter Egg -->
+  <a href="/games/pong/" class="paddle-easter-egg" title="Ready to play?"></a>
 
   <section class="page-hero">
     <div class="hero-title">Guides</div>

@@ -40,7 +40,6 @@
     .op-title { font-size:1.3rem; font-weight:700; color:var(--accent-mint); }
     .op-status { padding:0.4rem 0.8rem; background:rgba(78,250,170,0.1); border-radius:4px; font-size:0.85rem; color:var(--accent-mint); font-weight:600; }
     .op-details { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem; }
-    .op-detail { }
     .op-detail-label { font-weight:600; color:var(--accent-teal); font-size:0.85rem; }
     .op-detail-value { color:var(--text-light); margin-top:0.3rem; }
 
@@ -232,8 +231,8 @@
           window.location.replace('/departments/DEO/mtf-portal/403/');
           return;
         }
-        const ch = JSON.parse(raw);
-        const dept = ch && ch.department ? String(ch.department) : '';
+        const charData = JSON.parse(raw);
+        const dept = charData && charData.department ? String(charData.department) : '';
         if(dept.indexOf('DEO/MTF') === -1){
           window.location.replace('/departments/DEO/mtf-portal/403/');
           return;
@@ -248,8 +247,8 @@
         loadMedals();
         
         // Get user clearance level
-        const ch = JSON.parse(localStorage.getItem('selectedCharacter'));
-        userClearance = ch.clearance || 0;
+        const character = JSON.parse(localStorage.getItem('selectedCharacter'));
+        userClearance = character.clearance || 0;
         
         // Show add buttons for L3+
         if(userClearance >= 3){
