@@ -463,6 +463,7 @@
     import { getFirestore, collection, getDocs, query, where, addDoc, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const db = getFirestore(app);
+    let currentUser = null;  // Store current user for use in event listeners
 
     // Load only logged-in user's characters (linked to their account)
     async function loadCharacters(userId) {
@@ -580,8 +581,8 @@
               const charData = charSnap.data();
               
               // Verify the character belongs to the current user
-              if (charData.linkedUID !== user.uid) {
-                console.error("Character linked to different user");
+              if (!currentUser || charData.linkedUID !== currentUser.uid) {
+                console.error("Character linked to different user or currentUser not set");
                 alert("This character does not belong to you.");
                 return;
               }
@@ -616,6 +617,7 @@
     onAuthStateChanged(auth, (user) => {
       const characterGrid = document.getElementById("characterGrid");
       if (!user) {
+        currentUser = null;
         characterGrid.innerHTML = `
           <div class="empty-state auth-required" style="grid-column: 1 / -1;">
             <i class="fas fa-lock"></i>
@@ -625,6 +627,7 @@
         `;
         return;
       }
+      currentUser = user;  // Store user in module-level variable
       loadCharactersWithEdit(user.uid);
     });
 
