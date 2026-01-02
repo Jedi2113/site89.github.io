@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Export for use in other modules
-export { app, auth };
+export { app, auth, onAuthStateChanged };
 
 document.addEventListener("includesLoaded", () => {
   const navAccountsBtn = document.getElementById("navAccountsBtn");
