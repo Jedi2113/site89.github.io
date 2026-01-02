@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebas
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 const firebaseConfig = {
+  // If you're reading this you are very naughty, please go back to your own project :)
+  //Seriously, get out of here, this is not your code to see.
   apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
   authDomain: "site-89-2d768.firebaseapp.com",
   projectId: "site-89-2d768",
