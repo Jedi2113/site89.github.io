@@ -122,6 +122,119 @@
     .orientation-hidden {
       display: none;
     }
+
+    .progress-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .progress-bar {
+      background: rgba(78, 250, 170, 0.1);
+      border: 1px solid var(--accent-mint);
+      border-radius: 20px;
+      height: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal));
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      color: var(--accent-mint);
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .checklist {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .checklist-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 4px solid rgba(78, 250, 170, 0.3);
+    }
+
+    .checklist-item:hover {
+      border-color: var(--accent-mint);
+      background: rgba(78, 250, 170, 0.05);
+    }
+
+    .checklist-item.completed {
+      border-left-color: #4efa8a;
+      opacity: 0.7;
+    }
+
+    .checklist-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .checklist-checkbox {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--accent-mint);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .checklist-item.completed .checklist-checkbox {
+      background: #4efa8a;
+      border-color: #4efa8a;
+      color: #06100e;
+    }
+
+    .checklist-item.completed .checklist-checkbox::after {
+      content: "✓";
+      font-weight: bold;
+    }
+
+    .checklist-title {
+      color: var(--accent-mint);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .checklist-number {
+      color: var(--accent-teal);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .checklist-description {
+      color: var(--text-light);
+      margin: 0.5rem 0 0 3.5rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .checklist-item.active {
+      background: rgba(78, 250, 170, 0.1);
+      border-color: var(--accent-mint);
+      border-left-width: 4px;
+      border-left-color: var(--accent-mint);
+    }
   </style>
 </head>
 <body>
@@ -140,62 +253,91 @@
 
   <!-- Orientation Content Phase -->
   <section class="orientation-content orientation-hidden" id="orientationContent">
-    <h1 style="text-align:center;color:var(--accent-mint);font-family:var(--font-head);font-size:2.5rem;margin-bottom:2rem;">Welcome to Site-89</h1>
+    <h1 style="text-align:center;color:var(--accent-mint);font-family:var(--font-head);font-size:2.5rem;margin-bottom:0.5rem;">Welcome to Site-89</h1>
+    <p style="text-align:center;color:var(--text-light);font-size:1.1rem;margin-bottom:3rem;">Follow these steps to get started on your Foundation journey</p>
 
-    <div class="orientation-section">
-      <h2>What is Site-89?</h2>
-      <p>Site-89 is an interactive roleplay experience set in the SCP Foundation universe. It's a collaborative storytelling platform where you embody fictional characters working within the Foundation — a secret organization dedicated to containing and studying anomalous entities and phenomena that defy conventional scientific explanation.</p>
-      <p>You are part of a community of players creating narratives, developing characters, and exploring the mysterious world of the Foundation.</p>
+    <div class="progress-container">
+      <div class="progress-text"><span id="progressPercent">0</span>% Complete</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
     </div>
 
-    <div class="orientation-section">
-      <h2>What is the SCP Foundation?</h2>
-      <p>The SCP Foundation is a collaborative fiction project featuring thousands of creative works (called "SCPs") describing anomalous objects and creatures. These range from benign to utterly dangerous. The Foundation's job is to find, contain, and secure these anomalies to protect humanity.</p>
-      <p>Our roleplay is set in this universe, and you'll be working with these concepts. Don't worry if you're unfamiliar — you'll learn as you play!</p>
+    <div class="checklist">
+      <div class="checklist-item" data-step="1">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Create Character Application</h3>
+        </div>
+        <p class="checklist-description">Submit your character application. This is your introduction to the community and helps leadership get to know you.</p>
+      </div>
+
+      <div class="checklist-item" data-step="2">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Join Discord Server</h3>
+        </div>
+        <p class="checklist-description">Join our Discord to connect with the community, ask questions, and receive updates about your application status.</p>
+      </div>
+
+      <div class="checklist-item" data-step="3">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Download Techniclauncher & Modpack</h3>
+        </div>
+        <p class="checklist-description">Download the Techniclauncher and install the modpack for Minecraft. This is required to join the server.</p>
+      </div>
+
+      <div class="checklist-item" data-step="4">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Wait for Application Approval</h3>
+        </div>
+        <p class="checklist-description">Your application is under review. Typically, this takes 3 hours or less. During holidays, it may take up to 48 hours. You'll be notified in Discord when approved.</p>
+      </div>
+
+      <div class="checklist-item" data-step="5">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Join the Server & Create Character</h3>
+        </div>
+        <p class="checklist-description">Once approved, join the Minecraft server and create your character using this website's character creation system.</p>
+      </div>
+
+      <div class="checklist-item" data-step="6">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Request IO Agent Assistance</h3>
+        </div>
+        <p class="checklist-description">Contact Internal Operations (request in chat or wait for one to join during roleplay). An IO Agent will assist you through the onboarding process.</p>
+      </div>
+
+      <div class="checklist-item" data-step="7">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Receive ID & Keycard</h3>
+        </div>
+        <p class="checklist-description">Follow your IO Agent's directions to receive your Personnel ID and Keycard. They'll guide you through the onboarding process.</p>
+      </div>
+
+      <div class="checklist-item" data-step="8">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Register Character & Add Bio</h3>
+        </div>
+        <p class="checklist-description">Use your Personnel ID in the "Add Character" menu on this website to fully register your character and create your bio.</p>
+      </div>
+
+      <div class="checklist-item" data-step="9">
+        <div class="checklist-header">
+          <div class="checklist-checkbox"></div>
+          <h3 class="checklist-title">Explore Your New Role</h3>
+        </div>
+        <p class="checklist-description">Congratulations! You're now an Intern with Level 1 clearance. Explore the Foundation, check out the department pages to find where you'd like to focus, and start your adventure!</p>
+      </div>
     </div>
 
-    <div class="orientation-section">
-      <h2>What Are You?</h2>
-      <p><strong>Right now? Nothing.</strong> You are just a person who has created an account. You have no character, no role, no position in the Foundation.</p>
-      <p>This is intentional. You need to create a character to begin roleplaying. Your character will be a Foundation employee — perhaps a Researcher, Security Officer, Administrator, or other staff member. Your character has a background, a position, and a role to play in the story.</p>
-    </div>
-
-    <div class="orientation-section">
-      <h2>How to Create a Character</h2>
-      <p>To create a character, you need a <strong>Personnel ID (PID)</strong>. PIDs are assigned to Foundation staff and represent real people in the world.</p>
-      <p><strong>Important:</strong> PIDs are managed by the Internal Operations department. If you don't have a PID, you must contact someone in leadership or check the personnel files to request one.</p>
-      <ul>
-        <li>Navigate to your Character Select page</li>
-        <li>Click "Create New Character"</li>
-        <li>Enter a valid Personnel ID</li>
-        <li>The system will load your personnel record from the Foundation database</li>
-        <li>Confirm your identity and create your character</li>
-        <li>Edit your character's profile with a bio, appearance, and other details</li>
-      </ul>
-    </div>
-
-    <div class="orientation-section">
-      <h2>Your First Steps</h2>
-      <ol>
-        <li><strong>Get a Personnel ID:</strong> Contact leadership or join the Discord to request a PID assignment</li>
-        <li><strong>Create Your Character:</strong> Go to Character Select and use your PID to create your character</li>
-        <li><strong>Customize Your Profile:</strong> Add a biography, photo, and details about your character</li>
-        <li><strong>Explore the Foundation:</strong> Visit department pages, archives, and personnel files to learn about the world</li>
-        <li><strong>Engage with the Community:</strong> Participate in events, research, and department activities</li>
-      </ol>
-    </div>
-
-    <div class="orientation-section">
-      <h2>Important Notes</h2>
-      <ul>
-        <li><strong>One Character Per Account:</strong> Each account can have one active character. This prevents abuse and keeps the roleplay authentic</li>
-        <li><strong>Character Sharing is Prohibited:</strong> Your character is YOUR character. Don't share accounts or PIDs</li>
-        <li><strong>Have Fun:</strong> This is a creative community. Be respectful, collaborate, and enjoy the storytelling experience</li>
-        <li><strong>Ask Questions:</strong> If you're confused about anything, ask in the Discord or contact leadership</li>
-      </ul>
-    </div>
-
-    <button class="next-btn" id="finishBtn">Go to Character Select</button>
+    <button class="next-btn" id="finishBtn" style="margin-top:3rem;">Got It - Take Me to Character Select</button>
   </section>
 
   <div data-include="/components/footer.html"></div>
@@ -272,6 +414,7 @@
       terminalPhase.style.display = "none";
       orientationContent.classList.remove("orientation-hidden");
       window.scrollTo(0, 0);
+      initializeChecklist();
     });
 
     finishBtn.addEventListener("click", async () => {
@@ -289,6 +432,45 @@
         }
       }
     });
+
+    function initializeChecklist() {
+      const checklistItems = document.querySelectorAll(".checklist-item");
+      const progressFill = document.getElementById("progressFill");
+      const progressPercent = document.getElementById("progressPercent");
+
+      // Load saved progress from localStorage
+      const savedProgress = localStorage.getItem("orientationProgress") || "0";
+      let completedSteps = parseInt(savedProgress);
+
+      // Update UI based on saved progress
+      checklistItems.forEach((item, index) => {
+        if (index < completedSteps) {
+          item.classList.add("completed");
+        }
+      });
+      updateProgressBar();
+
+      checklistItems.forEach((item, index) => {
+        item.addEventListener("click", () => {
+          const step = index + 1;
+          item.classList.toggle("completed");
+          
+          // Count completed items
+          const completed = document.querySelectorAll(".checklist-item.completed").length;
+          localStorage.setItem("orientationProgress", completed);
+          updateProgressBar();
+        });
+      });
+
+      function updateProgressBar() {
+        const completed = document.querySelectorAll(".checklist-item.completed").length;
+        const total = checklistItems.length;
+        const percentage = Math.round((completed / total) * 100);
+        
+        progressFill.style.width = percentage + "%";
+        progressPercent.textContent = percentage;
+      }
+    }
   </script>
 
 </body>
