@@ -72,8 +72,10 @@
   <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
-  <script type="module" src="/assets/js/auth.js"></script>
-  <script>
+  <script type="module">
+    import { auth } from "/assets/js/auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
     // Access control: only allow when selectedCharacter.department contains 'AD/'
     function checkAccess(){
       const notice = document.getElementById('accessNotice');
@@ -81,29 +83,32 @@
       try{
         const raw = localStorage.getItem('selectedCharacter');
         if(!raw){
-          notice.textContent = 'Access denied: no selected character. You must select an AD character to view this portal.';
-          window.setTimeout(() => { window.location.replace('/403/'); }, 1400);
+          window.location.replace('/403/');
           return;
         }
         const ch = JSON.parse(raw);
         const dept = ch && ch.department ? String(ch.department) : '';
         if(dept.indexOf('AD/') === -1){
-          notice.textContent = 'Access denied: this portal is restricted to Administrative Department members.';
-          window.setTimeout(() => { window.location.replace('/403/'); }, 1400);
+          window.location.replace('/403/');
           return;
         }
         // allowed
         notice.style.display = 'none';
         grid.style.display = '';
       }catch(err){
-        notice.textContent = 'Access check error — please contact an administrator.';
+        window.location.replace('/403/');
         console.error('portal access error', err);
       }
     }
 
-    document.addEventListener('includesLoaded', checkAccess);
-    document.addEventListener('DOMContentLoaded', checkAccess);
-    checkAccess();
+    // Check if user is logged in first
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace('/403/');
+        return;
+      }
+      checkAccess();
+    });
   </script>
 </body>
 </html>

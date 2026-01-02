@@ -77,11 +77,10 @@
   <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
-  <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module">
+    import { auth } from "/assets/js/auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-  <script type="module" src="/assets/js/auth.js"></script>
-
-  <script>
     // Access control: only allow when selectedCharacter.department contains 'DEO/IA'
     function checkAccess(){
       const accessDenied = document.getElementById('accessDenied');
@@ -89,32 +88,32 @@
       try{
         const raw = localStorage.getItem('selectedCharacter');
         if(!raw){
-          accessDenied.textContent = 'Access denied: no selected character. You must select a DEO/IA character to view this portal.';
-          accessDenied.style.display = 'block';
-          window.setTimeout(() => { window.location.replace('/departments/DEO/ia-portal/403/'); }, 1400);
+          window.location.replace('/departments/DEO/ia-portal/403/');
           return;
         }
         const ch = JSON.parse(raw);
         const dept = ch && ch.department ? String(ch.department) : '';
         if(dept.indexOf('DEO/IA') === -1){
-          accessDenied.textContent = 'Access denied: this portal is restricted to Internal Affairs members.';
-          accessDenied.style.display = 'block';
-          window.setTimeout(() => { window.location.replace('/departments/DEO/ia-portal/403/'); }, 1400);
+          window.location.replace('/departments/DEO/ia-portal/403/');
           return;
         }
         // allowed
         accessDenied.style.display = 'none';
         portalContent.style.display = 'block';
       }catch(err){
-        accessDenied.textContent = 'Access check error — please contact an administrator.';
-        accessDenied.style.display = 'block';
+        window.location.replace('/departments/DEO/ia-portal/403/');
         console.error('portal access error', err);
       }
     }
 
-    document.addEventListener('includesLoaded', checkAccess);
-    document.addEventListener('DOMContentLoaded', checkAccess);
-    checkAccess();
+    // Check if user is logged in first
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace('/departments/DEO/ia-portal/403/');
+        return;
+      }
+      checkAccess();
+    });
   </script>
 
 </body>

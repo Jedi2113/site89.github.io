@@ -196,15 +196,13 @@
       try{
         const raw = localStorage.getItem('selectedCharacter');
         if(!raw){
-          accessDenied.style.display = 'block';
-          window.setTimeout(() => { window.location.replace('/departments/DEO/mtf-portal/403/'); }, 1400);
+          window.location.replace('/departments/DEO/mtf-portal/403/');
           return;
         }
         const ch = JSON.parse(raw);
         const dept = ch && ch.department ? String(ch.department) : '';
         if(dept.indexOf('DEO/MTF') === -1){
-          accessDenied.style.display = 'block';
-          window.setTimeout(() => { window.location.replace('/departments/DEO/mtf-portal/403/'); }, 1400);
+          window.location.replace('/departments/DEO/mtf-portal/403/');
           return;
         }
         // allowed
@@ -215,14 +213,19 @@
         loadRoster();
         loadLoadouts();
       }catch(err){
-        accessDenied.style.display = 'block';
+        window.location.replace('/departments/DEO/mtf-portal/403/');
         console.error('portal access error', err);
       }
     }
 
-    document.addEventListener('includesLoaded', checkAccess);
-    document.addEventListener('DOMContentLoaded', checkAccess);
-    checkAccess();
+    // Check if user is logged in first
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace('/departments/DEO/mtf-portal/403/');
+        return;
+      }
+      checkAccess();
+    });
 
     // Load operations
     async function loadOperations() {
