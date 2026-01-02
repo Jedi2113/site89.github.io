@@ -44,18 +44,30 @@
     .dosbox-container { 
       width: 100%; 
       max-width: 960px; 
-      height: 600px;
+      aspect-ratio: 4 / 3;
       border: 3px solid #ff6b6b;
       border-radius: 8px;
       background: #000;
       box-shadow: 0 0 30px rgba(255, 107, 107, 0.4);
       position: relative;
     }
+
+    .dosbox-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
     
     .dosbox-container > .dosbox-overlay { 
       background: url(https://js-dos.com/cdn/DOOM.png);
       background-size: cover;
       background-position: center;
+    }
+
+    @media (max-width: 768px) {
+      .dosbox-container {
+        max-width: 100%;
+      }
     }
 
     .game-btn {
@@ -123,6 +135,48 @@
       opacity: 0.9;
     }
 
+    .mobile-block {
+      display: none;
+    }
+
+    @media (max-width: 768px), (pointer: coarse) {
+      .dosbox-container, .game-info, .game-controls {
+        display: none !important;
+      }
+
+      .mobile-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 3rem 2rem;
+        margin: 3rem auto;
+        max-width: 500px;
+        background: rgba(139, 0, 0, 0.1);
+        border: 2px solid #8b0000;
+        border-radius: 8px;
+      }
+
+      .mobile-block i {
+        font-size: 4rem;
+        color: #8b0000;
+        margin-bottom: 1.5rem;
+      }
+
+      .mobile-block h2 {
+        color: #8b0000;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+      }
+
+      .mobile-block p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        line-height: 1.6;
+      }
+    }
+
     @media (max-width: 768px) {
       .dosbox-container {
         height: 400px;
@@ -140,6 +194,13 @@
   </section>
 
   <section class="content">
+    <div class="mobile-block">
+      <i class="fa-solid fa-mobile-screen-button"></i>
+      <h2>Sorry!</h2>
+      <p>DOOM won't work on your mobile device. This game requires a desktop computer with a keyboard to play.</p>
+      <p style="margin-top:1rem;opacity:0.8;">Please visit this page on a desktop or laptop computer.</p>
+    </div>
+
     <div class="game-container">
       
       <div class="warning-box">
@@ -148,31 +209,34 @@
 
       <div id="dosbox" class="dosbox-container"></div>
       
-      <button onclick="dosbox.requestFullScreen();" class="game-btn">
+      <button onclick="toggleFullscreen();" class="game-btn">
         <i class="fa-solid fa-expand" style="margin-right:0.5rem;"></i>Fullscreen Mode
       </button>
 
       <div class="game-info">
         <h3>About DOOM</h3>
-        <p>The classic 1993 first-person shooter. Fight your way through hordes of demons from hell across multiple episodes. This is the original shareware version running in your browser via DOSBox emulation.</p>
+        <p>Created by id Software in 1993, DOOM is the classic first-person shooter that defined the genre. Fight your way through hordes of demons from hell across multiple episodes. This is the original shareware version running in your browser via DOSBox emulation.</p>
         
         <div class="controls-list">
           <h4 style="color:#ff6b6b;margin-bottom:0.5rem;">Controls:</h4>
           <dl>
-            <dt>Arrow Keys</dt>
+            <dt>Arrow Keys (↑ ↓ ← →)</dt>
             <dd>Move forward/backward, turn left/right</dd>
             
-            <dt>Ctrl</dt>
+            <dt>W</dt>
+            <dd>Use / Open doors</dd>
+            
+            <dt>S</dt>
             <dd>Fire weapon</dd>
             
             <dt>Space</dt>
-            <dd>Use/Open doors</dd>
+            <dd>Speed on (Run)</dd>
             
             <dt>Alt</dt>
-            <dd>Strafe (side-step)</dd>
+            <dd>Strafe on</dd>
             
-            <dt>Shift</dt>
-            <dd>Run</dd>
+            <dt>A, D</dt>
+            <dd>Strafe left/right</dd>
             
             <dt>1-7</dt>
             <dd>Select weapon</dd>
@@ -184,6 +248,10 @@
             <dd>Menu / Release mouse</dd>
           </dl>
         </div>
+
+        <p style="opacity:0.8;font-size:0.9rem;margin-top:1rem;">
+          <strong>Platform:</strong> PC | <strong>Age Rating:</strong> +0 | <strong>Category:</strong> FPS
+        </p>
 
         <p style="opacity:0.8;font-size:0.9rem;margin-top:1rem;">
           <strong>Note:</strong> The game may take a moment to load. Click inside the game window to start playing. Use fullscreen mode for the best experience.
@@ -202,12 +270,23 @@
     var dosbox = new Dosbox({
       id: "dosbox",
       onload: function (dosbox) {
-        dosbox.run("https://js-dos.com/cdn/upload/DOOM-@evilution.zip", "./doom");
+        dosbox.run("https://js-dos.com/cdn/upload/DOOM-@evilution.zip", "./DOOM/DOOM.EXE");
       },
       onrun: function (dosbox, app) {
         console.log("App '" + app + "' is running");
       }
     });
+
+    function toggleFullscreen() {
+      const container = document.getElementById('dosbox');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+          console.log('Fullscreen error:', err);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
   </script>
 
 </body>

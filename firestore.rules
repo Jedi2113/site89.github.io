@@ -5,13 +5,20 @@ service cloud.firestore {
     // Characters collection - allow anyone to read (for personnel files page)
     match /characters/{characterId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == resource.data.linkedUID;
+      allow create: if request.auth != null && request.resource.data.linkedUID == request.auth.uid;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.linkedUID;
     }
 
     // Users collection - allow reads for authenticated users
     match /users/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Personnel collection - allow authenticated users to read PIDs for character creation
+    match /personnel/{personnelId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only admins can write, handled server-side
     }
 
     // Emails collection
