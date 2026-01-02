@@ -21,29 +21,23 @@ service cloud.firestore {
       allow write: if false; // Only admins can write, handled server-side
     }
 
-    // Emails collection
+    // Emails collection - character-based email system
     match /emails/{emailId} {
-      // Allow reads only for authenticated users who are involved in the email
-      // Check if their auth email matches the sender's auth email OR they are in the recipients list
-      allow read: if request.auth != null && (
-        resource.data.senderEmail == request.auth.token.email ||
-        request.auth.token.email in resource.data.recipients
-      );
+      // Allow any authenticated user to read emails (frontend filters by character)
+      allow read: if request.auth != null;
 
-      // Allow create for authenticated users sending from their character or auth email
+      // Allow create: user sends from their auth email, sender can be character or auth email
       allow create: if request.auth != null
         && request.resource.data.senderEmail == request.auth.token.email
-        && (request.resource.data.sender == request.auth.token.email || request.resource.data.sender.matches('.*@site89\\.org$'))
+        && (request.resource.data.sender.matches('.*@site89\\.org$') || request.resource.data.sender == request.auth.token.email)
         && request.resource.data.recipients is list
         && request.resource.data.subject is string
         && request.resource.data.body is string;
 
-      // Allow updates if user is involved (sender or recipient). Limit updatable keys to a safe set.
-      allow update: if request.auth != null && (
-        resource.data.senderEmail == request.auth.token.email || request.auth.token.email in resource.data.recipients
-      ) && (request.resource.data.keys().hasOnly(['sender','senderEmail','recipients','subject','body','status','folder','ts','read']) );
+      // Allow update if user is the sender
+      allow update: if request.auth != null && resource.data.senderEmail == request.auth.token.email;
 
-      // Allow delete only by the sender
+      // Allow delete if user is the sender
       allow delete: if request.auth != null && resource.data.senderEmail == request.auth.token.email;
     }
 

@@ -192,8 +192,9 @@ document.addEventListener('includesLoaded', () => {
   async function ensureSampleData(){
     const snaps = await getDocs(collection(db,'emails'));
     if (snaps.empty){
-      await addDoc(collection(db,'emails'), { sender: 'director@site89.org', recipients: [myAddress], subject: 'Welcome to Site‑89 Mail', body: 'This is a demo message. Use Compose to send test emails between characters.', status: 'sent', ts: serverTimestamp() });
-      await addDoc(collection(db,'emails'), { sender: myAddress, recipients: ['director@site89.org'], subject: 'Re: Welcome', body: 'Thanks — message received.', status: 'sent', ts: serverTimestamp() });
+      const demoSenderEmail = currentUser ? currentUser.email : 'demo@site89.org';
+      await addDoc(collection(db,'emails'), { sender: 'director@site89.org', senderEmail: 'demo@site89.org', recipients: [myAddress], subject: 'Welcome to Site‑89 Mail', body: 'This is a demo message. Use Compose to send test emails between characters.', status: 'sent', ts: serverTimestamp() });
+      await addDoc(collection(db,'emails'), { sender: myAddress, senderEmail: demoSenderEmail, recipients: ['director@site89.org'], subject: 'Re: Welcome', body: 'Thanks — message received.', status: 'sent', ts: serverTimestamp() });
     }
   }
 
