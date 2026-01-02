@@ -57,21 +57,50 @@
   }
 
   /**
+   * Initialize Firebase with proper app config
+   */
+  async function initializeFirebase() {
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js");
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+        authDomain: "site-89-2d768.firebaseapp.com",
+        projectId: "site-89-2d768",
+        storageBucket: "site-89-2d768.firebasestorage.app",
+        messagingSenderId: "851485754416",
+        appId: "1:851485754416:web:aefbe8aa2a7d1f334799f5",
+        measurementId: "G-EDX3DLNV52"
+      };
+      
+      const app = initializeApp(firebaseConfig);
+      return app;
+    } catch (err) {
+      console.error('Firebase initialization failed', err);
+      return null;
+    }
+  }
+
+  /**
    * Fetch the current user's clearance level from Firebase
    * This is the ONLY authoritative source for clearance
    */
   async function fetchUserClearanceFromFirebase(){
     try {
-      // Import Firebase modules dynamically if not already loaded
-      const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js");
+      // Initialize Firebase app
+      const app = await initializeFirebase();
+      if (!app) return NaN;
+
+      // Import Firebase modules dynamically
+      const { getAuth } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js");
       const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js");
       
       // Get the current auth state
-      const auth = getAuth();
+      const auth = getAuth(app);
       const user = auth.currentUser;
       
       if (!user) {
-        // Not authenticated
+        // Not authenticated - redirect to login
         return NaN;
       }
 
@@ -89,19 +118,20 @@
       }
 
       if (!selectedCharId) {
-        // No character selected
-        return NaN;
+        // No character selected - user may not have completed character creation yet
+        // For now, allow access and let page handle it
+        return 0;
       }
 
       // Query Firebase to verify character and get clearance
       // CRITICAL: This bypasses any localStorage tampering
-      const db = getFirestore();
+      const db = getFirestore(app);
       const charRef = doc(db, 'characters', selectedCharId);
       const charSnap = await getDoc(charRef);
       
       if (!charSnap.exists()) {
-        // Character doesn't exist
-        return NaN;
+        // Character doesn't exist in database
+        return 0;
       }
 
       const charData = charSnap.data();
@@ -115,7 +145,7 @@
 
       // Return the authoritative clearance level from Firebase
       const clearance = parseClearance(charData.clearance);
-      return clearance;
+      return Number.isNaN(clearance) ? 0 : clearance;
     } catch (err) {
       console.error('Firebase clearance fetch failed', err);
       // Fail secure - deny access on any error

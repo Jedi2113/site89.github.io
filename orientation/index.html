@@ -967,7 +967,6 @@
     const emailDisplay = document.getElementById("emailDisplay");
     const successMessage = document.getElementById("successMessage");
     const continueBtn = document.getElementById("continueBtn");
-    const finishBtn = document.getElementById("finishBtn");
     const terminalPhase = document.getElementById("terminalPhase");
     const orientationContent = document.getElementById("orientationContent");
     const progressBanner = document.getElementById("orientationProgressBanner");
@@ -1087,25 +1086,6 @@
       orientationContent.classList.remove("orientation-hidden");
       window.scrollTo(0, 0);
       initializeWizard();
-    });
-
-    finishBtn.addEventListener("click", async () => {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          // Mark orientation as complete
-          await updateDoc(doc(db, "users", user.uid), {
-            needsOrientation: false
-          });
-          // Clear orientation cookies
-          setCookie("orientationStep", "", -1);
-          setCookie(`orientation_terminal_shown_${user.uid}`, "", -1);
-          window.location.href = "/character-select/";
-        } catch (err) {
-          console.error("Error updating orientation status:", err);
-          window.location.href = "/character-select/";
-        }
-      }
     });
 
     function initializeWizard() {
