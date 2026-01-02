@@ -1111,36 +1111,6 @@
         orientationContent.classList.remove("orientation-hidden");
         initializeWizard();
       }
-    });        await delay(1200);
-        addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
-        
-        await delay(1000);
-        addTerminalLine('<span class="terminal-output">Synchronizing personnel records...</span>');
-        
-        await delay(1500);
-        successMessage.textContent = `✓ User ${user.email} created successfully`;
-        
-        await delay(2000);
-        addTerminalLine('');
-        addTerminalLine('<span class="terminal-prompt">site89% </span><span class="terminal-input">welcome</span>');
-        
-        await delay(800);
-        addTerminalLine(`<span class="terminal-success">Welcome to Site-89, ${user.email}!</span>`);
-        addTerminalLine('');
-        
-        // Mark orientation as seen and show continue button
-        await delay(1000);
-        continueBtn.style.display = "block";
-      } catch (err) {
-        console.error("Error checking orientation status:", err);
-        // If there's an error, assume they need orientation and show the process
-        statusBadge.style.display = "block";
-        emailDisplay.textContent = user.email;
-        // Still show the wizard
-        terminalPhase.style.display = "none";
-        orientationContent.classList.remove("orientation-hidden");
-        initializeWizard();
-      }
     });
 
     function addTerminalLine(content) {
@@ -1170,6 +1140,9 @@
           await updateDoc(doc(db, "users", user.uid), {
             needsOrientation: false
           });
+          // Clear orientation cookies
+          setCookie("orientationStep", "", -1);
+          setCookie(`orientation_terminal_shown_${user.uid}`, "", -1);
           window.location.href = "/character-select/";
         } catch (err) {
           console.error("Error updating orientation status:", err);
@@ -1250,6 +1223,9 @@
           await updateDoc(doc(db, "users", user.uid), {
             needsOrientation: false
           });
+          // Clear orientation cookies
+          setCookie("orientationStep", "", -1);
+          setCookie(`orientation_terminal_shown_${user.uid}`, "", -1);
           window.location.href = "/character-select/";
         } catch (err) {
           console.error("Error updating orientation status:", err);
