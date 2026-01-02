@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>404 - Page Not Found</title>
+  <title>404 - FILE NOT FOUND</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
@@ -13,45 +13,166 @@
   <link rel="stylesheet" href="assets/css/main.css">
 
   <style>
+    /* Warning screen effect */
+    .warning-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(0deg, 
+        transparent 0%, 
+        transparent 24%, 
+        rgba(255, 165, 0, 0.03) 25%, 
+        rgba(255, 165, 0, 0.03) 26%, 
+        transparent 27%, 
+        transparent 74%, 
+        rgba(255, 165, 0, 0.03) 75%, 
+        rgba(255, 165, 0, 0.03) 76%, 
+        transparent 77%, 
+        transparent 100%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+      animation: scanlines 0.15s infinite;
+    }
+
+    @keyframes scanlines {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 4px; }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes pulse-warn {
+      0%, 100% { color: var(--accent-mint); text-shadow: 0 0 10px rgba(78, 250, 170, 0.6); }
+      50% { color: #4efaaa; text-shadow: 0 0 20px rgba(78, 250, 170, 0.9); }
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--accent-mint); box-shadow: inset 0 0 20px rgba(78, 250, 170, 0.1), 0 0 20px rgba(78, 250, 170, 0.2); }
+      50% { border-color: #4efaaa; box-shadow: inset 0 0 30px rgba(78, 250, 170, 0.2), 0 0 30px rgba(78, 250, 170, 0.4); }
+    }
+
+    body {
+      background: #0a0e27;
+      overflow-x: hidden;
+    }
+
     .error-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
       gap: 2rem;
-      padding: 4rem 2rem;
+      padding: 2rem;
       text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* File not found box */
+    .file-box {
+      width: 100%;
+      max-width: 900px;
+      padding: 2rem;
+      border: 3px solid var(--accent-mint);
+      border-radius: 0;
+      background: rgba(78, 250, 170, 0.03);
+      box-shadow: inset 0 0 20px rgba(78, 250, 170, 0.05), 0 0 30px rgba(78, 250, 170, 0.15);
+      animation: pulse-border 2s ease-in-out infinite;
+      position: relative;
+    }
+
+    .file-box::before {
+      content: '⚠ FILE NOT FOUND ⚠';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0a0e27;
+      padding: 0 1rem;
+      color: var(--accent-mint);
+      font-weight: bold;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      animation: pulse-warn 1.5s ease-in-out infinite;
     }
 
     .error-code {
       font-size: 8rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent-mint);
       margin: 0;
-      line-height: 1;
+      text-shadow: 0 0 20px rgba(78, 250, 170, 0.6);
+      font-family: 'Roboto Mono', monospace;
+      letter-spacing: 0.1em;
+      animation: glitch 0.3s ease-in-out;
     }
 
     .error-message {
       font-size: 2rem;
-      color: var(--text-light);
-      font-family: var(--font-head);
-      margin: 1rem 0;
+      color: var(--accent-mint);
+      margin: 1rem 0 0 0;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(78, 250, 170, 0.5);
     }
 
     .error-description {
       font-size: 1.1rem;
       color: var(--text-light);
-      opacity: 0.8;
-      max-width: 600px;
-      margin-bottom: 2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--accent-mint);
+      padding-left: 1.5rem;
+      font-family: 'Roboto Mono', monospace;
+      line-height: 1.8;
     }
 
     .error-page-name {
-      color: var(--accent-mint);
+      color: #4efaaa;
       font-weight: bold;
+      font-family: 'Roboto Mono', monospace;
+      background: rgba(78, 250, 170, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+    }
+
+    .file-details {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--accent-teal);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: left;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    .file-details-title {
+      color: var(--accent-teal);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .file-details-content {
+      color: var(--text-light);
     }
 
     .error-actions {
@@ -59,58 +180,75 @@
       gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
+      margin-top: 2rem;
     }
 
     .error-btn {
-      padding: 0.75rem 2rem;
+      padding: 0.8rem 1.5rem;
       border: 2px solid var(--accent-mint);
       background: transparent;
       color: var(--accent-mint);
-      font-size: 1rem;
+      text-decoration: none;
       font-weight: 600;
-      border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
+      font-family: 'Roboto', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.9rem;
     }
 
     .error-btn:hover {
       background: var(--accent-mint);
-      color: var(--bg-dark);
-      box-shadow: 0 0 12px var(--accent-mint);
+      color: #0a0e27;
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.5);
     }
 
     .error-btn.primary {
-      background: var(--accent-teal);
-      border-color: var(--accent-teal);
-      color: var(--text-light);
+      background: var(--accent-mint);
+      color: #0a0e27;
+      border-color: var(--accent-mint);
     }
 
     .error-btn.primary:hover {
-      background: #00a899;
-      border-color: #00a899;
-      box-shadow: 0 0 12px var(--accent-teal);
+      background: #4efaaa;
+      border-color: #4efaaa;
+      box-shadow: 0 0 30px rgba(78, 250, 170, 0.7);
     }
 
+    /* Error icon */
     .error-icon {
-      font-size: 5rem;
+      font-size: 4rem;
       color: var(--accent-mint);
-      opacity: 0.6;
-      animation: float 3s ease-in-out infinite;
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+      text-shadow: 0 0 15px rgba(78, 250, 170, 0.6);
     }
 
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-20px);
-      }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .access-denied-footer {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      margin-top: 2rem;
+      max-width: 700px;
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    /* Dim header/footer */
+    header, footer {
+      filter: brightness(0.7);
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
+
+  <div class="warning-screen"></div>
 
   <!-- Header -->
   <div data-include="components/header.html"></div> 
@@ -120,24 +258,38 @@
 
   <section class="content error-container">
     <div class="error-icon">
-      <i class="fas fa-triangle-exclamation"></i>
+      <i class="fas fa-database"></i>
     </div>
 
-    <h1 class="error-code">404</h1>
+    <div class="file-box">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-message">File Not Found</h2>
 
-    <h2 class="error-message">Uh Oh! Page Not Found</h2>
+      <p class="error-description">
+        The requested resource <span class="error-page-name" id="pageName">unknown</span> could not be located in the database.
+      </p>
 
-    <p class="error-description">
-      The page you're looking for (<span class="error-page-name" id="pageName">doesn't exist</span>) is either missing, has been moved, or is restricted.
-    </p>
+      <div class="file-details">
+        <div class="file-details-title">QUERY RESULT:</div>
+        <div class="file-details-content">
+          → File Status: MISSING<br>
+          → Last Known Location: Unknown<br>
+          → Possible Causes: File deleted, moved, or never existed<br>
+        </div>
+      </div>
+    </div>
 
     <div class="error-actions">
       <button class="error-btn" onclick="history.back()">
-        <i class="fas fa-arrow-left"></i> Go Back
+        <i class="fas fa-arrow-left"></i> Previous Page
       </button>
       <a href="/" class="error-btn primary">
         <i class="fas fa-home"></i> Return Home
       </a>
+    </div>
+
+    <div class="access-denied-footer">
+      If you believe this is an error, please verify the resource URL or contact your site administrator.
     </div>
   </section>
 
@@ -148,34 +300,14 @@
   <script type="module" src="/assets/js/auth.js"></script>
 
   <script>
-    // Sticky nav
-    document.addEventListener("scroll", () => {
-      const nav = document.getElementById("main-nav");
-      nav.classList.toggle("is-sticky", window.scrollY > 120);
-    });
-
     // Get the missing page name from the referrer or URL
     const pageNameEl = document.getElementById("pageName");
     
-    // Try to extract the page name from the referrer
-    const referrer = document.referrer;
+    // Try to extract the page name from the current URL
     let pageName = "unknown";
-
-    if (referrer) {
-      try {
-        const url = new URL(referrer);
-        pageName = url.pathname.split('/').pop() || "unknown";
-      } catch (e) {
-        pageName = "unknown";
-      }
-    }
-
-    // Fallback: try to get from document.location.pathname
-    if (pageName === "unknown" || pageName === "") {
-      const pathSegments = window.location.pathname.split('/').filter(s => s);
-      if (pathSegments.length > 0) {
-        pageName = pathSegments[pathSegments.length - 1] || "unknown";
-      }
+    const pathSegments = window.location.pathname.split('/').filter(s => s);
+    if (pathSegments.length > 0) {
+      pageName = pathSegments[pathSegments.length - 1] || "unknown";
     }
 
     pageNameEl.textContent = pageName;
