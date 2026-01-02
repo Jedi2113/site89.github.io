@@ -192,7 +192,7 @@
     // Check access and load data
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        accessDenied.style.display = 'block';
+        location.href = '/departments/DEO/mtf-portal/403/';
         return;
       }
 
@@ -211,7 +211,7 @@
         });
 
         if (!hasAccess) {
-          accessDenied.style.display = 'block';
+          location.href = '/departments/DEO/mtf-portal/403/';
           return;
         }
 
@@ -227,7 +227,7 @@
         loadLoadouts();
       } catch (err) {
         console.error('Access check error:', err);
-        accessDenied.style.display = 'block';
+        location.href = '/departments/DEO/mtf-portal/403/';
       }
     });
 
