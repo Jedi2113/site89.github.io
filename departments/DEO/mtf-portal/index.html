@@ -64,6 +64,18 @@
     .modal-buttons button { flex:1; padding:0.6rem; border:none; border-radius:4px; cursor:pointer; font-weight:600; }
     .btn-save { background:var(--accent-mint); color:#06100e; }
     .btn-cancel { background:rgba(78,250,170,0.1); border:1px solid var(--accent-mint); color:var(--accent-mint); }
+
+    .medal-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.15); border-radius:8px; padding:1.5rem; margin-bottom:1rem; display:flex; gap:1.5rem; align-items:start; }
+    .medal-icon { font-size:2.5rem; color:var(--accent-mint); min-width:50px; text-align:center; }
+    .medal-details { flex:1; }
+    .medal-name { font-size:1.2rem; font-weight:700; color:var(--accent-mint); margin-bottom:0.5rem; }
+    .medal-recipient { color:var(--text-light); opacity:0.9; margin-bottom:0.3rem; }
+    .medal-date { color:var(--accent-teal); font-size:0.85rem; margin-bottom:0.8rem; }
+    .medal-reason { color:var(--text-light); line-height:1.6; }
+
+    .op-images { display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
+    .op-image { max-width:200px; border-radius:4px; border:1px solid rgba(78,250,170,0.2); cursor:pointer; transition:transform 0.2s ease; }
+    .op-image:hover { transform:scale(1.05); }
   </style>
 </head>
 <body>
@@ -85,14 +97,38 @@
     <div id="portalContent" style="display:none;">
       <!-- Tab Navigation -->
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'active-ops')">Active Operations</button>
+        <button class="tab-btn active" onclick="switchTab(event, 'roster')">Roster</button>
+        <button class="tab-btn" onclick="switchTab(event, 'active-ops')">Active Operations</button>
         <button class="tab-btn" onclick="switchTab(event, 'previous-ops')">Previous Operations</button>
-        <button class="tab-btn" onclick="switchTab(event, 'roster')">Roster</button>
         <button class="tab-btn" onclick="switchTab(event, 'loadouts')">Loadouts</button>
+        <button class="tab-btn" onclick="switchTab(event, 'medals')">Medals</button>
+      </div>
+
+      <!-- Roster Tab -->
+      <div id="roster" class="tab-content active">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <h2 style="color:var(--accent-mint);margin:0;">MTF Roster</h2>
+          <button id="addRosterBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Add Personnel</button>
+        </div>
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Rank</th>
+              <th>Clearance</th>
+              <th>Status</th>
+              <th>Medals</th>
+              <th id="rosterActionHeader" style="display:none;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rosterBody">
+            <tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">Loading roster...</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- Active Operations Tab -->
-      <div id="active-ops" class="tab-content active">
+      <div id="active-ops" class="tab-content">
         <div style="margin-bottom:1.5rem;">
           <h2 style="color:var(--accent-mint);margin-top:0;">Active Operations</h2>
           <button id="addOpBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Add Operation</button>
@@ -110,41 +146,38 @@
         </div>
       </div>
 
-      <!-- Roster Tab -->
-      <div id="roster" class="tab-content">
-        <h2 style="color:var(--accent-mint);margin-top:0;">MTF Roster</h2>
-        <table class="roster-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Rank</th>
-              <th>Clearance</th>
-              <th>Status</th>
-              <th id="rosterActionHeader" style="display:none;">Action</th>
-            </tr>
-          </thead>
-          <tbody id="rosterBody">
-            <tr><td colspan="5" style="text-align:center;padding:2rem;opacity:0.8;">Loading roster...</td></tr>
-          </tbody>
-        </table>
-      </div>
+
 
       <!-- Loadouts Tab -->
       <div id="loadouts" class="tab-content">
-        <h2 style="color:var(--accent-mint);margin-top:0;">Equipment Loadouts</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <h2 style="color:var(--accent-mint);margin:0;">Equipment Loadouts</h2>
+          <button id="addLoadoutBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Assign Equipment</button>
+        </div>
         <table class="loadout-table">
           <thead>
             <tr>
               <th>Personnel</th>
               <th>Equipment</th>
+              <th>Serial Number</th>
               <th>Status</th>
               <th>Issue Date</th>
+              <th id="loadoutActionHeader" style="display:none;">Action</th>
             </tr>
           </thead>
           <tbody id="loadoutBody">
-            <tr><td colspan="4" style="text-align:center;padding:2rem;opacity:0.8;">Loading loadouts...</td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">Loading loadouts...</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Medals Tab -->
+      <div id="medals" class="tab-content">
+        <h2 style="color:var(--accent-mint);margin-top:0;">MTF Medals & Commendations</h2>
+        <p style="opacity:0.8;margin-bottom:1.5rem;">Personnel awards and commendations for outstanding service</p>
+        <div id="medalsContainer">
+          <p style="opacity:0.8;">Loading medals...</p>
+        </div>
       </div>
     </div>
   </section>
@@ -212,6 +245,18 @@
         loadOperations();
         loadRoster();
         loadLoadouts();
+        loadMedals();
+        
+        // Get user clearance level
+        const ch = JSON.parse(localStorage.getItem('selectedCharacter'));
+        userClearance = ch.clearance || 0;
+        
+        // Show add buttons for L3+
+        if(userClearance >= 3){
+          document.getElementById('addOpBtn').style.display = 'inline-block';
+          document.getElementById('addRosterBtn').style.display = 'inline-block';
+          document.getElementById('addLoadoutBtn').style.display = 'inline-block';
+        }
       }catch(err){
         window.location.replace('/departments/DEO/mtf-portal/403/');
         console.error('portal access error', err);
@@ -260,17 +305,32 @@
           previousContainer.innerHTML = '';
           previous.forEach(doc => {
             const op = doc.data();
+            const statusColor = op.success ? 'rgba(78,250,170,0.1)' : 'rgba(176,0,0,0.1)';
+            const statusTextColor = op.success ? 'var(--accent-mint)' : '#ff6b6b';
+            const statusLabel = op.success ? 'SUCCESS' : 'FAILED';
+            
+            let imagesHtml = '';
+            if(op.images && Array.isArray(op.images) && op.images.length > 0){
+              imagesHtml = '<div class="op-images">';
+              op.images.forEach(imgUrl => {
+                imagesHtml += `<img src="${imgUrl}" alt="Operation image" class="op-image">`;
+              });
+              imagesHtml += '</div>';
+            }
+            
             previousContainer.innerHTML += `<div class="op-card">
               <div class="op-header">
                 <div class="op-title">${op.name}</div>
-                <div style="padding:0.4rem 0.8rem;background:rgba(176,0,0,0.1);border-radius:4px;font-size:0.85rem;color:#ff6b6b;font-weight:600;">${op.success ? 'SUCCESS' : 'FAILED'}</div>
+                <div style="padding:0.4rem 0.8rem;background:${statusColor};border-radius:4px;font-size:0.85rem;color:${statusTextColor};font-weight:600;">${statusLabel}</div>
               </div>
               <div class="op-details">
                 <div class="op-detail"><div class="op-detail-label">Started</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
                 <div class="op-detail"><div class="op-detail-label">Ended</div><div class="op-detail-value">${op.endDate || 'N/A'}</div></div>
+                <div class="op-detail"><div class="op-detail-label">Status</div><div class="op-detail-value">${statusLabel}</div></div>
               </div>
-              <div style="color:var(--text-light);line-height:1.6;">${op.description || ''}</div>
-              ${op.summary ? `<div style="margin-top:1rem;padding:1rem;background:rgba(78,250,170,0.05);border-left:3px solid var(--accent-mint);border-radius:4px;"><strong>Summary:</strong><p>${op.summary}</p></div>` : ''}
+              <div style="color:var(--text-light);line-height:1.6;margin-bottom:1rem;">${op.description || ''}</div>
+              ${op.summary ? `<div style="margin-top:1rem;padding:1rem;background:rgba(78,250,170,0.05);border-left:3px solid var(--accent-mint);border-radius:4px;"><strong style="color:var(--accent-mint);">After-Action Summary:</strong><p style="margin-top:0.5rem;line-height:1.6;">${op.summary}</p></div>` : ''}
+              ${imagesHtml}
             </div>`;
           });
         }
@@ -286,18 +346,22 @@
         const tbody = document.getElementById('rosterBody');
 
         if (chars.empty) {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel found.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel found.</td></tr>';
           return;
         }
 
         tbody.innerHTML = '';
         chars.forEach(doc => {
           const char = doc.data();
+          const medalCount = char.medals && Array.isArray(char.medals) ? char.medals.length : 0;
+          const medalDisplay = medalCount > 0 ? `<span style="padding:0.2rem 0.6rem;background:rgba(255,215,0,0.1);border-radius:4px;color:#ffd700;font-size:0.85rem;"><i class="fa-solid fa-medal" style="margin-right:0.3rem;"></i>${medalCount}</span>` : '—';
+          
           tbody.innerHTML += `<tr>
             <td>${char.name}</td>
             <td>${char.rank || 'Unassigned'}</td>
             <td>Level ${char.clearance || 0}</td>
             <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">Active</span></td>
+            <td>${medalDisplay}</td>
             ${userClearance >= 3 ? `<td><button class="edit-btn" onclick="alert('Roster edit feature coming soon')">Edit</button></td>` : '<td></td>'}
           </tr>`;
         });
@@ -318,22 +382,71 @@
         const tbody = document.getElementById('loadoutBody');
 
         if (loadouts.empty) {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;opacity:0.8;">No loadouts on record.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No loadouts on record.</td></tr>';
           return;
         }
 
         tbody.innerHTML = '';
         loadouts.forEach(doc => {
           const lo = doc.data();
+          const statusColor = lo.status === 'Issued' ? 'rgba(78,250,170,0.1)' : 'rgba(255,165,0,0.1)';
+          const statusTextColor = lo.status === 'Issued' ? 'var(--accent-mint)' : '#ffa500';
+          
           tbody.innerHTML += `<tr>
             <td>${lo.personnel || 'Unknown'}</td>
             <td>${lo.equipment || 'Unknown'}</td>
-            <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">Issued</span></td>
+            <td>${lo.serialNumber || 'N/A'}</td>
+            <td><span style="padding:0.2rem 0.6rem;background:${statusColor};border-radius:4px;color:${statusTextColor};font-size:0.85rem;">${lo.status || 'Issued'}</span></td>
             <td>${lo.issueDate || 'N/A'}</td>
+            ${userClearance >= 3 ? `<td><button class="edit-btn" onclick="alert('Loadout edit feature coming soon')">Manage</button></td>` : '<td></td>'}
           </tr>`;
         });
+        
+        // Show action header only for L3+
+        if (userClearance >= 3) {
+          document.getElementById('loadoutActionHeader').style.display = 'table-cell';
+        }
       } catch (err) {
         console.error('Error loading loadouts:', err);
+      }
+    }
+
+    // Load medals
+    async function loadMedals() {
+      try {
+        const medals = await getDocs(query(collection(db, 'mtf-medals'), orderBy('dateAwarded', 'desc')));
+        const container = document.getElementById('medalsContainer');
+
+        if (medals.empty) {
+          container.innerHTML = '<p style="opacity:0.8;">No medals awarded yet.</p>';
+          return;
+        }
+
+        container.innerHTML = '';
+        medals.forEach(doc => {
+          const medal = doc.data();
+          const medalIcons = {
+            'Valor': 'fa-star',
+            'Service': 'fa-medal',
+            'Commendation': 'fa-award',
+            'Distinguished Service': 'fa-trophy',
+            'Purple Heart': 'fa-heart',
+            'Campaign': 'fa-ribbon'
+          };
+          const icon = medalIcons[medal.type] || 'fa-medal';
+          
+          container.innerHTML += `<div class="medal-card">
+            <div class="medal-icon"><i class="fa-solid ${icon}"></i></div>
+            <div class="medal-details">
+              <div class="medal-name">${medal.name || 'Unnamed Medal'}</div>
+              <div class="medal-recipient">Awarded to: <strong>${medal.recipient || 'Unknown'}</strong></div>
+              <div class="medal-date">Date: ${medal.dateAwarded || 'Unknown'}</div>
+              <div class="medal-reason">${medal.reason || 'No citation provided'}</div>
+            </div>
+          </div>`;
+        });
+      } catch (err) {
+        console.error('Error loading medals:', err);
       }
     }
 
