@@ -18,9 +18,32 @@ const auth = getAuth(app);
 export { app, auth, onAuthStateChanged };
 
 document.addEventListener("includesLoaded", () => {
-  const navAccountsBtn = document.getElementById("navAccountsBtn");
   const navAccountsText = document.querySelector("#navAccountsBtn span");
   const navAccountsDropdown = document.getElementById("navAccountsDropdown");
+
+  // Function to position dropdown correctly
+  function positionDropdown(btn) {
+    if (!btn || !navAccountsDropdown) return;
+    
+    const btnRect = btn.getBoundingClientRect();
+    const dropdownWidth = Math.min(280, window.innerWidth - 20);
+    
+    // Position dropdown below button
+    let left = btnRect.left + btnRect.width - dropdownWidth;
+    
+    // Ensure it doesn't go off the left edge
+    if (left < 10) {
+      left = 10;
+    }
+    
+    // Ensure it doesn't go off the right edge
+    if (left + dropdownWidth > window.innerWidth - 10) {
+      left = window.innerWidth - dropdownWidth - 10;
+    }
+    
+    navAccountsDropdown.style.left = left + 'px';
+    navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
+  }
 
   onAuthStateChanged(auth, (user) => {
     let displayName = "Login";
@@ -44,12 +67,14 @@ document.addEventListener("includesLoaded", () => {
     if (navAccountsText) navAccountsText.textContent = displayName;
     
     // Update button behavior based on login status
+    let navAccountsBtn = document.getElementById("navAccountsBtn");
     if (navAccountsBtn) {
       // Remove previous click handlers by cloning the element
       const newBtn = navAccountsBtn.cloneNode(true);
       navAccountsBtn.parentNode.replaceChild(newBtn, navAccountsBtn);
+      navAccountsBtn = newBtn;
       
-      newBtn.addEventListener("click", (e) => {
+      navAccountsBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         
@@ -57,6 +82,9 @@ document.addEventListener("includesLoaded", () => {
           // Show dropdown for logged-in users
           if (navAccountsDropdown) {
             navAccountsDropdown.classList.toggle('hidden');
+            if (!navAccountsDropdown.classList.contains('hidden')) {
+              positionDropdown(navAccountsBtn);
+            }
           }
         } else {
           // Navigate to login for non-logged-in users

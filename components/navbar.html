@@ -478,34 +478,9 @@
     updateThemeUI();
   });
 
-  // Position dropdown to avoid going off-screen
-  function positionDropdown() {
-    if (!navAccountsBtn || !navAccountsDropdown) return;
-    
-    const btnRect = navAccountsBtn.getBoundingClientRect();
-    const dropdownWidth = Math.min(280, window.innerWidth - 20);
-    
-    // Position dropdown below button
-    let left = btnRect.left + btnRect.width - dropdownWidth;
-    
-    // Ensure it doesn't go off the left edge
-    if (left < 10) {
-      left = 10;
-    }
-    
-    // Ensure it doesn't go off the right edge
-    if (left + dropdownWidth > window.innerWidth - 10) {
-      left = window.innerWidth - dropdownWidth - 10;
-    }
-    
-    navAccountsDropdown.style.left = left + 'px';
-    navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
-  }
-
-  // Accounts dropdown toggle
-  // Note: The actual click handler is in auth.js to check login status
+  // Accounts dropdown - handle closing and reposition on resize
+  // Note: Click handler and positioning is in auth.js
   const navAccounts = document.getElementById('navAccounts');
-  const navAccountsBtn = document.getElementById('navAccountsBtn');
   const navAccountsDropdown = document.getElementById('navAccountsDropdown');
 
   if (navAccountsDropdown) {
@@ -524,21 +499,23 @@
     });
   }
   
-  // Watch for dropdown toggle from auth.js and position it
-  const observer = new MutationObserver(() => {
-    if (navAccountsDropdown && !navAccountsDropdown.classList.contains('hidden')) {
-      positionDropdown();
-    }
-  });
-  
-  if (navAccountsDropdown) {
-    observer.observe(navAccountsDropdown, { attributes: true, attributeFilter: ['class'] });
-  }
-  
-  // Reposition on window resize
+  // Reposition dropdown on window resize
   window.addEventListener('resize', () => {
     if (navAccountsDropdown && !navAccountsDropdown.classList.contains('hidden')) {
-      positionDropdown();
+      const navAccountsBtn = document.getElementById('navAccountsBtn');
+      if (navAccountsBtn) {
+        const btnRect = navAccountsBtn.getBoundingClientRect();
+        const dropdownWidth = Math.min(280, window.innerWidth - 20);
+        
+        let left = btnRect.left + btnRect.width - dropdownWidth;
+        if (left < 10) left = 10;
+        if (left + dropdownWidth > window.innerWidth - 10) {
+          left = window.innerWidth - dropdownWidth - 10;
+        }
+        
+        navAccountsDropdown.style.left = left + 'px';
+        navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
+      }
     }
   });
 
