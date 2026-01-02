@@ -229,11 +229,11 @@
   /* Accounts dropdown specific styling */
   .nav-dropdown-accounts {
     display: none !important;
-    position: fixed;
-    top: auto;
-    left: auto;
+    position: absolute;
+    top: 100%;
+    right: 0;
     min-width: 280px;
-    max-width: calc(100vw - 20px);
+    margin-top: 8px;
     padding: 0.5rem 0;
     background: var(--bg-card);
     border: 1px solid var(--card-border);
@@ -498,27 +498,7 @@
       });
     });
   }
-  
-  // Reposition dropdown on window resize
-  window.addEventListener('resize', () => {
-    if (navAccountsDropdown && !navAccountsDropdown.classList.contains('hidden')) {
-      const navAccountsBtn = document.getElementById('navAccountsBtn');
-      if (navAccountsBtn) {
-        const btnRect = navAccountsBtn.getBoundingClientRect();
-        const dropdownWidth = 280;
-        
-        // Align dropdown's right edge with button's right edge
-        let left = btnRect.right - dropdownWidth;
-        if (left < 10) left = 10;
-        if (left + dropdownWidth > window.innerWidth - 10) {
-          left = window.innerWidth - dropdownWidth - 10;
-        }
-        
-        navAccountsDropdown.style.left = left + 'px';
-        navAccountsDropdown.style.top = (btnRect.bottom + 8) + 'px';
-      }
-    }
-  });
+
 
   // Mobile menu toggle
   const navToggle = document.getElementById('navToggle');

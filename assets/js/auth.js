@@ -21,30 +21,6 @@ document.addEventListener("includesLoaded", () => {
   const navAccountsText = document.querySelector("#navAccountsBtn span");
   const navAccountsDropdown = document.getElementById("navAccountsDropdown");
 
-  // Function to position dropdown correctly below button
-  function positionDropdown(btn) {
-    if (!btn || !navAccountsDropdown) return;
-    
-    const btnRect = btn.getBoundingClientRect();
-    const dropdownWidth = 280;
-    
-    // Align dropdown's right edge with button's right edge
-    let left = btnRect.right - dropdownWidth;
-    
-    // Ensure it doesn't go off the left edge
-    if (left < 10) {
-      left = 10;
-    }
-    
-    // Ensure it doesn't go off the right edge
-    if (left + dropdownWidth > window.innerWidth - 10) {
-      left = window.innerWidth - dropdownWidth - 10;
-    }
-    
-    navAccountsDropdown.style.left = left + 'px';
-    navAccountsDropdown.style.top = (btnRect.bottom + 8) + 'px';
-  }
-
   onAuthStateChanged(auth, (user) => {
     let displayName = "Login";
     let isLoggedIn = false;
@@ -82,9 +58,6 @@ document.addEventListener("includesLoaded", () => {
           // Show dropdown for logged-in users
           if (navAccountsDropdown) {
             navAccountsDropdown.classList.toggle('hidden');
-            if (!navAccountsDropdown.classList.contains('hidden')) {
-              positionDropdown(navAccountsBtn);
-            }
           }
         } else {
           // Navigate to login for non-logged-in users
