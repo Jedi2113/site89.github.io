@@ -235,6 +235,174 @@
       border-left-width: 4px;
       border-left-color: var(--accent-mint);
     }
+
+    .step-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .step-page {
+      display: none;
+    }
+
+    .step-page.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .step-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .step-number {
+      color: var(--accent-teal);
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-title {
+      color: var(--accent-mint);
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 0;
+      font-family: var(--font-head);
+    }
+
+    .step-content {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-radius: 8px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .step-content h3 {
+      color: var(--accent-mint);
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .step-content h3:first-child {
+      margin-top: 0;
+    }
+
+    .step-content p {
+      color: var(--text-light);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-content ul, .step-content ol {
+      color: var(--text-light);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+    }
+
+    .step-content li {
+      margin-bottom: 0.8rem;
+    }
+
+    .step-content strong {
+      color: var(--accent-mint);
+    }
+
+    .step-content code {
+      background: rgba(78, 250, 170, 0.1);
+      border: 1px solid rgba(78, 250, 170, 0.3);
+      border-radius: 4px;
+      padding: 0.2rem 0.6rem;
+      color: var(--accent-mint);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.95rem;
+    }
+
+    .warning-box {
+      background: rgba(255, 107, 107, 0.1);
+      border-left: 4px solid #ff6b6b;
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      color: var(--text-light);
+    }
+
+    .warning-box strong {
+      color: #ff6b6b;
+    }
+
+    .info-box {
+      background: rgba(78, 250, 170, 0.1);
+      border-left: 4px solid var(--accent-mint);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      color: var(--text-light);
+    }
+
+    .info-box strong {
+      color: var(--accent-mint);
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+
+    .nav-btn {
+      padding: 1rem 2rem;
+      border: 2px solid var(--accent-mint);
+      background: transparent;
+      color: var(--accent-mint);
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--accent-mint);
+      color: #06100e;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nav-btn.primary {
+      background: var(--accent-mint);
+      color: #06100e;
+    }
+
+    .nav-btn.primary:hover {
+      background: var(--accent-teal);
+      border-color: var(--accent-teal);
+    }
+
+    .step-progress {
+      text-align: center;
+      color: var(--text-light);
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -253,91 +421,508 @@
 
   <!-- Orientation Content Phase -->
   <section class="orientation-content orientation-hidden" id="orientationContent">
-    <h1 style="text-align:center;color:var(--accent-mint);font-family:var(--font-head);font-size:2.5rem;margin-bottom:0.5rem;">Welcome to Site-89</h1>
-    <p style="text-align:center;color:var(--text-light);font-size:1.1rem;margin-bottom:3rem;">Follow these steps to get started on your Foundation journey</p>
+    <div class="step-container">
+      <!-- Step 1: Create Character Application -->
+      <div class="step-page active" data-step="1">
+        <div class="step-header">
+          <div class="step-number">Step 1 of 9</div>
+          <h1 class="step-title">Create Your Character Application</h1>
+        </div>
 
-    <div class="progress-container">
-      <div class="progress-text"><span id="progressPercent">0</span>% Complete</div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
+        <div class="step-content">
+          <h3>What is a Character Application?</h3>
+          <p>Before you can play on Site-89, you need to create a character application. This is your chance to tell the community who your character is. Think of it like writing a resume for a job at the Foundation, but for a fictional character.</p>
+          <p>Your application helps the leadership team understand what kind of character you want to play and makes sure everyone's on the same page about who you'll be portraying.</p>
+
+          <h3>Where to Find the Application Form</h3>
+          <p>The character application form is located in our <strong>Discord server</strong>. We know you haven't joined Discord yet (that's step 2), but we're just telling you this so you know what's coming next.</p>
+
+          <h3>What Information You'll Need</h3>
+          <p>When you fill out the application, you'll typically need to provide:</p>
+          <ul>
+            <li><strong>Character Name:</strong> The name of the person you want to play</li>
+            <li><strong>Department Interest:</strong> Which Foundation department interests you (like Research, Security, Medical, etc.)</li>
+            <li><strong>Character Background:</strong> A brief description of your character's background and why they work for the Foundation</li>
+            <li><strong>Discord Username:</strong> So leadership can contact you</li>
+          </ul>
+
+          <h3>Important Tips</h3>
+          <p>Be honest and creative in your application. Leadership wants to see genuine interest, not just copy-pasted information. Don't worry if you're not a professional writer — just write clearly and show that you care about the role.</p>
+
+          <div class="info-box">
+            <strong>Pro Tip:</strong> If you're not sure what the Foundation is or what departments exist, it's totally fine to come back to this step after looking at the website a bit more. You can apply once you have a better idea of what interests you.
+          </div>
+
+          <h3>What Happens Next?</h3>
+          <p>Once you submit your application, leadership will review it. Then you'll move on to the next steps while you wait for approval. The whole process usually takes 3 hours or less, but during busy times (like holidays), it might take up to 48 hours.</p>
+        </div>
+      </div>
+
+      <!-- Step 2: Join Discord -->
+      <div class="step-page" data-step="2">
+        <div class="step-header">
+          <div class="step-number">Step 2 of 9</div>
+          <h1 class="step-title">Join Our Discord Server</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>Why Discord?</h3>
+          <p>Discord is where the community hangs out. It's a chat platform where you can:</p>
+          <ul>
+            <li>Talk to other players and staff</li>
+            <li>Submit your character application</li>
+            <li>Get updates about your application status</li>
+            <li>Ask questions if you're confused</li>
+            <li>Coordinate with people and make friends</li>
+          </ul>
+
+          <h3>Getting the Discord Link</h3>
+          <p>You should have received an invitation link to the Discord server. If you didn't, check:</p>
+          <ul>
+            <li>Your email (check spam folder too)</li>
+            <li>Messages from the person who invited you</li>
+            <li>The Site-89 website footer or homepage</li>
+          </ul>
+
+          <h3>Step-by-Step: How to Join Discord</h3>
+          <ol>
+            <li>Go to <code>discord.com</code> in your browser</li>
+            <li>Click <strong>"Sign Up"</strong> if you don't have an account (or <strong>"Log In"</strong> if you do)</li>
+            <li>Create your account with a username and password (this is different from your Site-89 account)</li>
+            <li>Click the invitation link to join our server</li>
+            <li>Read the rules and introduction channels to understand how things work</li>
+          </ol>
+
+          <div class="info-box">
+            <strong>Important:</strong> You can use any Discord username you want — it doesn't have to match your Site-89 username or character name. Just make sure it's something you're okay with people seeing.
+          </div>
+
+          <h3>What to Do Once You're In</h3>
+          <p>Once you've joined the Discord:</p>
+          <ol>
+            <li>Look for the <strong>#applications</strong> or <strong>#character-applications</strong> channel</li>
+            <li>Follow the instructions to submit your character application (this goes back to Step 1)</li>
+            <li>Introduce yourself in the <strong>#introductions</strong> channel so people know who you are</li>
+            <li>Don't be shy! Ask questions if you're confused</li>
+          </ol>
+
+          <h3>Discord Etiquette</h3>
+          <p>Be respectful and follow the server rules. The community is friendly, but everyone deserves to be treated nicely. If you're not sure about something, ask a moderator (they usually have special badges or roles).</p>
+        </div>
+      </div>
+
+      <!-- Step 3: Download Techniclauncher & Modpack -->
+      <div class="step-page" data-step="3">
+        <div class="step-header">
+          <div class="step-number">Step 3 of 9</div>
+          <h1 class="step-title">Download Techniclauncher & Modpack</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>What Are These?</h3>
+          <p><strong>Techniclauncher</strong> is a special launcher for Minecraft that lets you easily install and manage modpacks. A <strong>modpack</strong> is a collection of mods (modifications) that change and enhance Minecraft to work for Site-89's roleplay experience.</p>
+          <p>Think of it like installing a special mod bundle so Minecraft looks and works the way Site-89 needs it to.</p>
+
+          <h3>Before You Start</h3>
+          <div class="warning-box">
+            <strong>⚠️ Important:</strong> Make sure you have <strong>Java installed on your computer</strong>. If you don't have Java, Minecraft won't run. You can download it for free from <code>java.com</code>.
+          </div>
+
+          <h3>Step 1: Download Techniclauncher</h3>
+          <ol>
+            <li>Go to the Techniclauncher website (check the Discord or website for the link)</li>
+            <li>Click the download button for your operating system (Windows, Mac, or Linux)</li>
+            <li>Save the file to a folder you'll remember (like your Desktop or Downloads folder)</li>
+            <li>Wait for it to finish downloading (this might take a few minutes depending on your internet)</li>
+          </ol>
+
+          <h3>Step 2: Install Techniclauncher</h3>
+          <ol>
+            <li>Find the downloaded file (usually in your Downloads folder)</li>
+            <li>Double-click it to start the installation</li>
+            <li>Follow the on-screen instructions (just click "Next" and "Agree" to the terms)</li>
+            <li>Wait for installation to complete</li>
+            <li>Once done, you should see a shortcut on your desktop or in your applications</li>
+          </ol>
+
+          <h3>Step 3: Install the Modpack</h3>
+          <ol>
+            <li>Open Techniclauncher</li>
+            <li>Look for a button that says <strong>"Add Instance"</strong> or <strong>"Install Modpack"</strong></li>
+            <li>Search for <strong>"Site-89"</strong> or paste the modpack code (ask in Discord if you need the exact code)</li>
+            <li>Click to install the modpack</li>
+            <li>This will take some time as it downloads all the mods — be patient!</li>
+            <li>Once it says "Installation Complete," you're good to go</li>
+          </ol>
+
+          <div class="info-box">
+            <strong>Pro Tip:</strong> The modpack download is large (could be 500MB-2GB depending on the mods). Use a good internet connection and don't turn off your computer during installation.
+          </div>
+
+          <h3>Testing It Out</h3>
+          <p>Once the modpack is installed, you can click "Play" to make sure it launches. You don't need to join the server yet — just make sure it opens without errors. If it crashes, ask for help in Discord!</p>
+        </div>
+      </div>
+
+      <!-- Step 4: Wait for Application Approval -->
+      <div class="step-page" data-step="4">
+        <div class="step-header">
+          <div class="step-number">Step 4 of 9</div>
+          <h1 class="step-title">Wait for Application Approval</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>What's Happening Right Now?</h3>
+          <p>Your character application is being reviewed by the leadership team. They're reading through your submission and making sure everything looks good. This is totally normal and nothing to worry about.</p>
+
+          <h3>How Long Will This Take?</h3>
+          <p><strong>Typical timeline:</strong> 3 hours or less</p>
+          <p><strong>Maximum timeline:</strong> 48 hours (usually only during busy times like holidays)</p>
+          <p>Most of the time, you'll get approved pretty quickly. The team moves fast!</p>
+
+          <h3>What Can You Do While Waiting?</h3>
+          <p>Don't just stare at your screen waiting! You can:</p>
+          <ul>
+            <li><strong>Explore the Discord:</strong> Chat with other players, ask questions, make friends</li>
+            <li><strong>Read about the Foundation:</strong> Visit the <strong>#lore</strong> or <strong>#wiki</strong> channel to learn about the SCP universe</li>
+            <li><strong>Check out the website:</strong> Look at the <a href="/departments/" style="color: var(--accent-mint);">departments page</a> to see what areas interest you</li>
+            <li><strong>Finish downloading the modpack:</strong> If you haven't already</li>
+            <li><strong>Do literally anything else:</strong> Go outside, watch Netflix, play other games. Life goes on!</li>
+          </ul>
+
+          <h3>How You'll Know You're Approved</h3>
+          <p>Leadership will notify you in Discord. Look for:</p>
+          <ul>
+            <li>A direct message from a staff member</li>
+            <li>A message in the applications channel</li>
+            <li>A role or badge next to your name in Discord</li>
+          </ul>
+
+          <div class="info-box">
+            <strong>Tip:</strong> Make sure Discord notifications are turned on for the server so you don't miss your approval notification!
+          </div>
+
+          <h3>What If I Haven't Heard Back?</h3>
+          <p>If it's been more than 48 hours and you haven't heard anything:</p>
+          <ol>
+            <li>DM a staff member in Discord politely asking about your application status</li>
+            <li>Don't spam or ask repeatedly — one message is enough</li>
+            <li>Be patient. They're volunteers running this for fun!</li>
+          </ol>
+
+          <h3>What If My Application Is Denied?</h3>
+          <p>This is rare, but sometimes an application needs adjustments. If this happens, the leadership team will tell you what changes to make. You can then resubmit an updated application. No big deal!</p>
+        </div>
+      </div>
+
+      <!-- Step 5: Join Server & Create Character -->
+      <div class="step-page" data-step="5">
+        <div class="step-header">
+          <div class="step-number">Step 5 of 9</div>
+          <h1 class="step-title">Join the Server & Create Your Character</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>You're Approved! Now What?</h3>
+          <p>Congratulations! Your application has been approved. Now it's time to actually join the Minecraft server and create your character.</p>
+
+          <h3>How to Join the Minecraft Server</h3>
+          <ol>
+            <li>Open Techniclauncher (the launcher you installed in Step 3)</li>
+            <li>Select the Site-89 modpack</li>
+            <li>Click <strong>"Play"</strong> to launch Minecraft with the modpack</li>
+            <li>Wait for Minecraft to load (this might take a minute or two)</li>
+            <li>In the main menu, look for a button that says <strong>"Multiplayer"</strong> or <strong>"Direct Connect"</strong></li>
+            <li>Enter the server address (this will be provided in Discord or in the announcements channel)</li>
+            <li>Click <strong>"Join Server"</strong></li>
+            <li>You should now be connected to the Site-89 server!</li>
+          </ol>
+
+          <div class="info-box">
+            <strong>Not sure where the server address is?</strong> Check the Discord in the <strong>#server-info</strong> or <strong>#getting-started</strong> channel. It should be pinned or easy to find.
+          </div>
+
+          <h3>Creating Your Character In-Game</h3>
+          <p>Once you join the server, you'll see instructions or commands to create your character. Usually this involves:</p>
+          <ol>
+            <li>Typing a command like <code>/character create [name]</code> (the exact command will be shown when you join)</li>
+            <li>Choosing your appearance/skin</li>
+            <li>Setting up basic character information</li>
+          </ol>
+          <p>If you're confused, don't hesitate to ask in chat or contact someone with a staff tag. Everyone is there to help!</p>
+
+          <h3>What Happens When You Join?</h3>
+          <p>You'll spawn into the world as a new character. You might:</p>
+          <ul>
+            <li>Be in a starting area where new players hang out</li>
+            <li>See other players RPing (roleplaying)</li>
+            <li>Have access to basic areas and facilities</li>
+            <li>Be given initial instructions on what to do next</li>
+          </ul>
+
+          <h3>Important Reminders</h3>
+          <div class="warning-box">
+            <strong>Rules apply here!</strong> Just because you're in the game doesn't mean you can do whatever you want. Follow server rules, be respectful to other players, and stay in character (or ask permission before going out of character).
+          </div>
+
+          <h3>Your First Few Minutes</h3>
+          <p>Don't panic if you're confused! Take your time to look around, read signs, and observe what other players are doing. You'll get the hang of it quickly.</p>
+        </div>
+      </div>
+
+      <!-- Step 6: Request IO Agent -->
+      <div class="step-page" data-step="6">
+        <div class="step-header">
+          <div class="step-number">Step 6 of 9</div>
+          <h1 class="step-title">Get Help From an IO Agent</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>What is Internal Operations (IO)?</h3>
+          <p>Internal Operations is a Foundation department that handles administrative tasks like creating new personnel records, issuing ID badges, and onboarding new staff. An IO Agent is someone from this department who will help you get officially registered in the Foundation system.</p>
+
+          <h3>Why Do You Need an IO Agent?</h3>
+          <p>To become a "real" Foundation member, you need official documentation:</p>
+          <ul>
+            <li><strong>Personnel ID (PID):</strong> Your official employee number</li>
+            <li><strong>Keycard:</strong> Your access badge to different areas of the Foundation</li>
+          </ul>
+          <p>An IO Agent will help you get both of these through an in-character onboarding process. It's actually pretty fun!</p>
+
+          <h3>How to Find an IO Agent</h3>
+          <p>There are two ways to get their attention:</p>
+
+          <h3>Option 1: Request in Chat</h3>
+          <ol>
+            <li>In the server chat, type something like: <code>"Anyone from IO available to do an onboarding?"</code> or <code>"IO? I need assistance!"</code></li>
+            <li>Wait for an IO Agent to respond</li>
+            <li>They'll usually come to where you are or ask you to meet them somewhere</li>
+          </ol>
+
+          <h3>Option 2: Wait for One to Show Up</h3>
+          <ol>
+            <li>Just hang out and participate in regular roleplay</li>
+            <li>IO Agents regularly patrol and recruit new staff</li>
+            <li>When they see a new person, they'll usually approach you</li>
+            <li>They might say something like: "We need staff in [department], want to join?"</li>
+          </ol>
+
+          <div class="info-box">
+            <strong>Tip:</strong> Most of the time, if you ask in chat, an IO Agent will be available within 10-30 minutes. Don't just sit around doing nothing — engage with the world and other players while you wait!
+          </div>
+
+          <h3>What to Expect During Onboarding</h3>
+          <p>The IO Agent will guide you through an in-character interview/process. They'll:</p>
+          <ul>
+            <li>Ask you questions about your character</li>
+            <li>Assign you a Personnel ID (PID)</li>
+            <li>Give you a keycard with access levels</li>
+            <li>Show you around and explain how things work</li>
+            <li>Send you on your way as an official Foundation employee</li>
+          </ul>
+
+          <h3>Be Patient and Respectful</h3>
+          <p>IO Agents are volunteers doing this for fun. Be polite, follow their instructions, and remember that this is roleplay. If you're confused, ask questions!</p>
+
+          <div class="warning-box">
+            <strong>Important:</strong> Listen carefully when the IO Agent gives you your Personnel ID number. <strong>You'll need it for the next step!</strong> Write it down or remember it somehow.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7: Receive ID & Keycard -->
+      <div class="step-page" data-step="7">
+        <div class="step-header">
+          <div class="step-number">Step 7 of 9</div>
+          <h1 class="step-title">Receive Your ID & Keycard</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>What Just Happened?</h3>
+          <p>Congratulations! An IO Agent has officially registered you as a Foundation employee. You now have:</p>
+          <ul>
+            <li><strong>Personnel ID (PID):</strong> Your unique employee number (something like 12345, 00789, etc.)</li>
+            <li><strong>Keycard:</strong> Your access badge to Foundation areas</li>
+            <li><strong>Clearance Level:</strong> Your security clearance (you start as an Intern with Level 1)</li>
+          </ul>
+
+          <h3>Where Is My ID & Keycard?</h3>
+          <p>In the roleplay, you should have received:</p>
+          <ul>
+            <li>A keycard in your inventory (a physical item you can see in-game)</li>
+            <li>Documentation with your PID (either in a chat message, item, or just told to you verbally)</li>
+          </ul>
+
+          <div class="info-box">
+            <strong>Remember that Personnel ID number!</strong> You'll need it for the next step. If you forgot it, you can ask the IO Agent again or check your Discord for messages about it.
+          </div>
+
+          <h3>What Does Your Keycard Do?</h3>
+          <p>Your keycard gives you access to certain areas of the Foundation:</p>
+          <ul>
+            <li><strong>Level 1 (Intern):</strong> Access to common areas, break rooms, and basic Foundation facilities</li>
+            <li>Higher clearance levels unlock more restricted areas (but you start at Level 1)</li>
+          </ul>
+          <p>You'll learn more about what areas you can access as you explore.</p>
+
+          <h3>What Now?</h3>
+          <p>You have your credentials! But there's one more step before you're fully set up — registering your character on this website. That way, your profile is complete and people can see who you are.</p>
+
+          <h3>Keep Your ID Safe!</h3>
+          <p>In the roleplay, your ID and keycard are important. Don't lose them! If you somehow do, you can ask an IO Agent to issue you new ones.</p>
+        </div>
+      </div>
+
+      <!-- Step 8: Register Character & Add Bio -->
+      <div class="step-page" data-step="8">
+        <div class="step-header">
+          <div class="step-number">Step 8 of 9</div>
+          <h1 class="step-title">Register Your Character & Add Bio</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>Why Register Here?</h3>
+          <p>This website maintains a personnel database for the Foundation. By registering your character here, you're officially adding yourself to our records. This lets other players find you, see your character info, and know who you are in the roleplay.</p>
+
+          <h3>What You'll Need</h3>
+          <p>Before you start, gather:</p>
+          <ul>
+            <li><strong>Your Personnel ID (PID):</strong> The number the IO Agent gave you (Step 7)</li>
+            <li><strong>Your Character Name:</strong> What your character is called</li>
+            <li><strong>Your Department:</strong> Which Foundation department you work in</li>
+            <li><strong>Character Bio:</strong> A description of who your character is (written below)</li>
+            <li><strong>Character Picture (Optional):</strong> A photo, drawing, or image of your character</li>
+          </ul>
+
+          <h3>Step-by-Step: How to Register</h3>
+          <ol>
+            <li>Go to the <strong>"Character Select"</strong> page (you should see it in the website navigation)</li>
+            <li>Click <strong>"Add Character"</strong> or <strong>"Create New Character"</strong></li>
+            <li>Enter your <strong>Personnel ID</strong> in the field provided</li>
+            <li>The system will look up your Foundation record (this should load automatically)</li>
+            <li>Confirm your identity and character details</li>
+            <li>You're now registered!</li>
+          </ol>
+
+          <h3>Writing Your Character Bio</h3>
+          <p>Your bio should answer questions like:</p>
+          <ul>
+            <li>Who is your character? (name, age, background)</li>
+            <li>What's their personality like?</li>
+            <li>Why do they work for the Foundation?</li>
+            <li>What are their skills or specialties?</li>
+            <li>What do they look like?</li>
+          </ul>
+
+          <p>Keep it to 2-4 paragraphs. Here's an example:</p>
+          <p style="background: rgba(78, 250, 170, 0.05); padding: 1rem; border-left: 3px solid var(--accent-mint); border-radius: 4px;">
+            <em>"Dr. Sarah Chen is a 34-year-old research scientist specializing in biological anomalies. She's methodical, curious, and sometimes a bit too focused on her work. She joined the Foundation five years ago after discovering anomalous properties in her university research. Sarah is detail-oriented, speaks three languages, and has a dark sense of humor that helps her cope with the job. She's about 5'6", fit, with black hair usually pulled back in a bun."</em>
+          </p>
+
+          <h3>Adding a Picture</h3>
+          <p>This is optional but recommended! You can use:</p>
+          <ul>
+            <li>An actual photo of a person who looks like your character</li>
+            <li>An artwork or drawing you commissioned</li>
+            <li>A character creator image</li>
+            <li>Anything that represents how your character looks</li>
+          </ul>
+          <p>Keep it appropriate and related to your character!</p>
+
+          <h3>What Happens Next?</h3>
+          <p>Once you're registered, you're all set! Other players can visit the personnel files and see your character. You're officially part of the Foundation.</p>
+
+          <div class="info-box">
+            <strong>Pro Tip:</strong> You can edit your character bio and picture anytime. As you develop your character in roleplay, come back and update your profile!
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 9: You're Done! -->
+      <div class="step-page" data-step="9">
+        <div class="step-header">
+          <div class="step-number">Step 9 of 9</div>
+          <h1 class="step-title">Welcome to the Foundation!</h1>
+        </div>
+
+        <div class="step-content">
+          <h3>You Did It!</h3>
+          <p>You're officially a Foundation member with Level 1 clearance. You have:</p>
+          <ul>
+            <li>✓ A character with a name and background</li>
+            <li>✓ A Personnel ID and keycard</li>
+            <li>✓ Access to the server</li>
+            <li>✓ A profile on this website</li>
+            <li>✓ Connections with other players in Discord</li>
+          </ul>
+
+          <h3>You're an Intern. Now What?</h3>
+          <p>As an Intern with Level 1 clearance, you're at the beginning of your Foundation journey. Here are your next steps:</p>
+
+          <h3>1. Explore the Foundation</h3>
+          <p>Wander around the server, check out different areas, and get a feel for the world. You'll see:</p>
+          <ul>
+            <li>Research labs</li>
+            <li>Containment areas</li>
+            <li>Administrative offices</li>
+            <li>Break rooms and other staff areas</li>
+          </ul>
+
+          <h3>2. Check Out the Departments</h3>
+          <p>Visit the <a href="/departments/" style="color: var(--accent-mint); text-decoration: underline;">Departments page</a> to learn about different areas you could specialize in:</p>
+          <ul>
+            <li><strong>Research & Development (R&D):</strong> Study anomalies and run experiments</li>
+            <li><strong>Security:</strong> Protect the Foundation and handle threats</li>
+            <li><strong>Medical:</strong> Treat injuries and research biological anomalies</li>
+            <li><strong>Administrative:</strong> Handle paperwork and management</li>
+            <li><strong>Internal Operations (IO):</strong> Handle personnel and logistics</li>
+            <li>And more!</li>
+          </ul>
+
+          <h3>3. Get Involved in Roleplay</h3>
+          <p>That's the whole point! Engage with other players, participate in events, do research, solve mysteries, and develop your character. This is where the real fun happens.</p>
+
+          <h3>4. Ask Questions</h3>
+          <p>If you don't understand something about the world or the rules:</p>
+          <ul>
+            <li>Ask other players in chat (politely)</li>
+            <li>Check the Discord for resources and FAQs</li>
+            <li>Contact staff members if it's important</li>
+          </ul>
+
+          <div class="info-box">
+            <strong>Everyone was new once.</strong> No one will judge you for asking questions. The community is here to help each other have fun!
+          </div>
+
+          <h3>Important Reminders</h3>
+          <div class="warning-box">
+            <strong>Remember the Rules:</strong>
+            <ul>
+              <li>Be respectful to other players (both in and out of roleplay)</li>
+              <li>Don't grief or destroy things</li>
+              <li>Follow staff instructions</li>
+              <li>Have fun, but don't ruin it for others</li>
+              <li>Keep Discord conversations appropriate</li>
+            </ul>
+          </div>
+
+          <h3>Level Up Your Clearance</h3>
+          <p>As you play and prove yourself, you might earn higher clearance levels. This opens up more areas and opportunities. Keep an eye out for advancement opportunities!</p>
+
+          <h3>One Last Thing</h3>
+          <p>Thank you for joining us! We're excited to have you as part of the Site-89 community. Now go conquer the world (or at least the Foundation). You've got this!</p>
+
+          <p style="text-align: center; color: var(--accent-mint); font-size: 1.2rem; margin-top: 2rem;">Welcome to Site-89. 🎉</p>
+        </div>
       </div>
     </div>
 
-    <div class="checklist">
-      <div class="checklist-item" data-step="1">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Create Character Application</h3>
-        </div>
-        <p class="checklist-description">Submit your character application. This is your introduction to the community and helps leadership get to know you.</p>
-      </div>
-
-      <div class="checklist-item" data-step="2">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Join Discord Server</h3>
-        </div>
-        <p class="checklist-description">Join our Discord to connect with the community, ask questions, and receive updates about your application status.</p>
-      </div>
-
-      <div class="checklist-item" data-step="3">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Download Techniclauncher & Modpack</h3>
-        </div>
-        <p class="checklist-description">Download the Techniclauncher and install the modpack for Minecraft. This is required to join the server.</p>
-      </div>
-
-      <div class="checklist-item" data-step="4">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Wait for Application Approval</h3>
-        </div>
-        <p class="checklist-description">Your application is under review. Typically, this takes 3 hours or less. During holidays, it may take up to 48 hours. You'll be notified in Discord when approved.</p>
-      </div>
-
-      <div class="checklist-item" data-step="5">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Join the Server & Create Character</h3>
-        </div>
-        <p class="checklist-description">Once approved, join the Minecraft server and create your character using this website's character creation system.</p>
-      </div>
-
-      <div class="checklist-item" data-step="6">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Request IO Agent Assistance</h3>
-        </div>
-        <p class="checklist-description">Contact Internal Operations (request in chat or wait for one to join during roleplay). An IO Agent will assist you through the onboarding process.</p>
-      </div>
-
-      <div class="checklist-item" data-step="7">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Receive ID & Keycard</h3>
-        </div>
-        <p class="checklist-description">Follow your IO Agent's directions to receive your Personnel ID and Keycard. They'll guide you through the onboarding process.</p>
-      </div>
-
-      <div class="checklist-item" data-step="8">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Register Character & Add Bio</h3>
-        </div>
-        <p class="checklist-description">Use your Personnel ID in the "Add Character" menu on this website to fully register your character and create your bio.</p>
-      </div>
-
-      <div class="checklist-item" data-step="9">
-        <div class="checklist-header">
-          <div class="checklist-checkbox"></div>
-          <h3 class="checklist-title">Explore Your New Role</h3>
-        </div>
-        <p class="checklist-description">Congratulations! You're now an Intern with Level 1 clearance. Explore the Foundation, check out the department pages to find where you'd like to focus, and start your adventure!</p>
-      </div>
+    <!-- Navigation -->
+    <div class="navigation">
+      <button class="nav-btn" id="prevBtn">← Previous</button>
+      <div class="step-progress"><span id="currentStep">1</span> / 9</div>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
     </div>
-
-    <button class="next-btn" id="finishBtn" style="margin-top:3rem;">Got It - Take Me to Character Select</button>
   </section>
 
   <div data-include="/components/footer.html"></div>
@@ -414,7 +999,7 @@
       terminalPhase.style.display = "none";
       orientationContent.classList.remove("orientation-hidden");
       window.scrollTo(0, 0);
-      initializeChecklist();
+      initializeWizard();
     });
 
     finishBtn.addEventListener("click", async () => {
@@ -433,42 +1018,67 @@
       }
     });
 
-    function initializeChecklist() {
-      const checklistItems = document.querySelectorAll(".checklist-item");
-      const progressFill = document.getElementById("progressFill");
-      const progressPercent = document.getElementById("progressPercent");
+    function initializeWizard() {
+      const stepPages = document.querySelectorAll(".step-page");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const currentStepDisplay = document.getElementById("currentStep");
+      
+      let currentStep = 1;
 
-      // Load saved progress from localStorage
-      const savedProgress = localStorage.getItem("orientationProgress") || "0";
-      let completedSteps = parseInt(savedProgress);
+      function showStep(step) {
+        stepPages.forEach(page => page.classList.remove("active"));
+        const currentPage = document.querySelector(`[data-step="${step}"]`);
+        if (currentPage) {
+          currentPage.classList.add("active");
+          window.scrollTo(0, 0);
+        }
 
-      // Update UI based on saved progress
-      checklistItems.forEach((item, index) => {
-        if (index < completedSteps) {
-          item.classList.add("completed");
+        currentStepDisplay.textContent = step;
+        prevBtn.disabled = step === 1;
+        nextBtn.disabled = step === stepPages.length;
+
+        if (step === stepPages.length) {
+          nextBtn.textContent = "Finish";
+          nextBtn.classList.add("primary");
+        } else {
+          nextBtn.textContent = "Next →";
+          nextBtn.classList.add("primary");
+        }
+      }
+
+      prevBtn.addEventListener("click", () => {
+        if (currentStep > 1) {
+          currentStep--;
+          showStep(currentStep);
         }
       });
-      updateProgressBar();
 
-      checklistItems.forEach((item, index) => {
-        item.addEventListener("click", () => {
-          const step = index + 1;
-          item.classList.toggle("completed");
-          
-          // Count completed items
-          const completed = document.querySelectorAll(".checklist-item.completed").length;
-          localStorage.setItem("orientationProgress", completed);
-          updateProgressBar();
-        });
+      nextBtn.addEventListener("click", () => {
+        if (currentStep < stepPages.length) {
+          currentStep++;
+          showStep(currentStep);
+        } else if (currentStep === stepPages.length) {
+          // Mark orientation as complete and go to character select
+          finishOrientationAndRedirect();
+        }
       });
 
-      function updateProgressBar() {
-        const completed = document.querySelectorAll(".checklist-item.completed").length;
-        const total = checklistItems.length;
-        const percentage = Math.round((completed / total) * 100);
-        
-        progressFill.style.width = percentage + "%";
-        progressPercent.textContent = percentage;
+      showStep(1);
+    }
+
+    async function finishOrientationAndRedirect() {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          await updateDoc(doc(db, "users", user.uid), {
+            needsOrientation: false
+          });
+          window.location.href = "/character-select/";
+        } catch (err) {
+          console.error("Error updating orientation status:", err);
+          window.location.href = "/character-select/";
+        }
       }
     }
   </script>
