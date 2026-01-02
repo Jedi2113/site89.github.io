@@ -264,7 +264,7 @@ a:hover { color: var(--accent-teal); text-decoration: underline; }
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  z-index: 1000;
+  z-index: 1001;
 }
 
 .nav-dropdown-content a {
