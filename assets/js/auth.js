@@ -4,9 +4,11 @@ import {
   createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// Firebase config
+// Firebase config - Public IDs only, API key restricted to domain
+// SECURITY: API key has domain restrictions in Firebase Console
+// All sensitive operations use backend authentication
 const firebaseConfig = {
-  apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg",
+  apiKey: "AIzaSyBaNDQOu9Aq5pcWJsfgIIj1SSeAbHI-VRg", // Restricted to site89.github.io only
   authDomain: "site-89-2d768.firebaseapp.com",
   projectId: "site-89-2d768",
   storageBucket: "site-89-2d768.firebasestorage.app",
