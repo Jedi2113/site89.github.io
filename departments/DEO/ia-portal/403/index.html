@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>403 - ACCESS DENIED</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <style>
+    /* Warning screen effect */
+    .warning-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(0deg, 
+        transparent 0%, 
+        transparent 24%, 
+        rgba(255, 0, 0, 0.05) 25%, 
+        rgba(255, 0, 0, 0.05) 26%, 
+        transparent 27%, 
+        transparent 74%, 
+        rgba(255, 0, 0, 0.05) 75%, 
+        rgba(255, 0, 0, 0.05) 76%, 
+        transparent 77%, 
+        transparent 100%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+      animation: scanlines 0.15s infinite;
+    }
+
+    @keyframes scanlines {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 4px; }
+    }
+
+    /* Glitch effect text */
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes redFlash {
+      0%, 100% { color: var(--accent-red); text-shadow: 0 0 10px rgba(176, 0, 0, 0.8); }
+      50% { color: #ff6b6b; text-shadow: 0 0 20px rgba(176, 0, 0, 1); }
+    }
+
+    @keyframes pulse-red {
+      0%, 100% { border-color: var(--accent-red); box-shadow: 0 0 10px rgba(176, 0, 0, 0.3); }
+      50% { border-color: #ff6b6b; box-shadow: 0 0 20px rgba(176, 0, 0, 0.8); }
+    }
+
+    body {
+      background: #0a0e27;
+      overflow-x: hidden;
+    }
+
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 2rem;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Security clearance box */
+    .clearance-box {
+      width: 100%;
+      max-width: 900px;
+      padding: 2rem;
+      border: 3px solid var(--accent-red);
+      border-radius: 0;
+      background: rgba(176, 0, 0, 0.05);
+      box-shadow: inset 0 0 30px rgba(176, 0, 0, 0.1), 0 0 30px rgba(176, 0, 0, 0.2);
+      animation: pulse-red 2s ease-in-out infinite;
+      position: relative;
+    }
+
+    .clearance-box::before {
+      content: '⚠ SECURITY ALERT ⚠';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0a0e27;
+      padding: 0 1rem;
+      color: var(--accent-red);
+      font-weight: bold;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      animation: redFlash 1.5s ease-in-out infinite;
+    }
+
+    .error-code {
+      font-size: 8rem;
+      font-weight: 800;
+      color: var(--accent-red);
+      margin: 0;
+      text-shadow: 0 0 20px rgba(176, 0, 0, 0.8);
+      font-family: 'Roboto Mono', monospace;
+      letter-spacing: 0.1em;
+      animation: glitch 0.3s ease-in-out;
+    }
+
+    .error-title {
+      font-size: 2rem;
+      color: var(--accent-red);
+      margin: 1rem 0 0 0;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(176, 0, 0, 0.6);
+    }
+
+    .error-message {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      margin: 1.5rem 0 1rem 0;
+      line-height: 1.8;
+      max-width: 700px;
+      border-left: 4px solid var(--accent-red);
+      padding-left: 1.5rem;
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    .clearance-level {
+      display: inline-block;
+      background: rgba(176, 0, 0, 0.2);
+      border: 2px solid var(--accent-red);
+      padding: 0.8rem 1.5rem;
+      margin: 1rem 0;
+      font-family: 'Roboto Mono', monospace;
+      font-weight: bold;
+      color: var(--accent-red);
+      border-radius: 2px;
+      font-size: 1.1rem;
+    }
+
+    .file-note {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--accent-teal);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: left;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    .file-note-title {
+      color: var(--accent-teal);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .file-note-content {
+      color: var(--text-light);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .error-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid var(--accent-red);
+      background: transparent;
+      color: var(--accent-red);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Roboto', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.9rem;
+    }
+
+    .error-btn:hover {
+      background: var(--accent-red);
+      color: #0a0e27;
+      box-shadow: 0 0 20px rgba(176, 0, 0, 0.5);
+    }
+
+    .error-btn.primary {
+      background: var(--accent-red);
+      color: #0a0e27;
+      border-color: var(--accent-red);
+    }
+
+    .error-btn.primary:hover {
+      background: #ff6b6b;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 30px rgba(176, 0, 0, 0.8);
+    }
+
+    /* Footer notice */
+    .access-denied-footer {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      margin-top: 2rem;
+      max-width: 700px;
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    /* Lockdown icon */
+    .lockdown-icon {
+      font-size: 4rem;
+      color: var(--accent-red);
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* Remove header/footer for more dramatic effect */
+    header, footer {
+      filter: brightness(0.7);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="warning-screen"></div>
+
+  <div data-include="/components/header.html"></div>
+
+  <section class="content error-container">
+    <div class="lockdown-icon">
+      <i class="fas fa-lock"></i>
+    </div>
+
+    <div class="clearance-box">
+      <div class="error-code">403</div>
+      <div class="error-title">ACCESS DENIED</div>
+      <div class="error-message">
+        You have attempted to access a restricted area of this facility.
+        <br><br>
+        <div class="clearance-level">INSUFFICIENT CLEARANCE LEVEL</div>
+        <br>
+        This incident has been logged.
+      </div>
+
+      <div class="file-note">
+        <div class="file-note-title">SECURITY NOTICE</div>
+        <div class="file-note-content">
+          → Your current character does not have the required security clearance to access this resource.<br>
+          → Unauthorized access attempts are monitored and recorded.<br>
+          → If you believe this is an error, contact your site administrator.<br>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <a href="/login/" class="error-btn">Verify Credentials</a>
+      <a href="/accounts/" class="error-btn">Switch Character</a>
+      <a href="/" class="error-btn primary">Authorized Access Only</a>
+    </div>
+
+    <div class="access-denied-footer">
+      Access to this restricted area is granted only to personnel with appropriate security clearance.
+      <br>Unauthorized access attempts will be logged and investigated.
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>
