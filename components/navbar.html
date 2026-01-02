@@ -505,16 +505,17 @@
       const navAccountsBtn = document.getElementById('navAccountsBtn');
       if (navAccountsBtn) {
         const btnRect = navAccountsBtn.getBoundingClientRect();
-        const dropdownWidth = Math.min(280, window.innerWidth - 20);
+        const dropdownWidth = 280;
         
-        let left = btnRect.left + btnRect.width - dropdownWidth;
+        // Align dropdown's right edge with button's right edge
+        let left = btnRect.right - dropdownWidth;
         if (left < 10) left = 10;
         if (left + dropdownWidth > window.innerWidth - 10) {
           left = window.innerWidth - dropdownWidth - 10;
         }
         
         navAccountsDropdown.style.left = left + 'px';
-        navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
+        navAccountsDropdown.style.top = (btnRect.bottom + 8) + 'px';
       }
     }
   });

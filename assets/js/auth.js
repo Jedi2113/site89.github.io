@@ -21,15 +21,15 @@ document.addEventListener("includesLoaded", () => {
   const navAccountsText = document.querySelector("#navAccountsBtn span");
   const navAccountsDropdown = document.getElementById("navAccountsDropdown");
 
-  // Function to position dropdown correctly
+  // Function to position dropdown correctly below button
   function positionDropdown(btn) {
     if (!btn || !navAccountsDropdown) return;
     
     const btnRect = btn.getBoundingClientRect();
-    const dropdownWidth = Math.min(280, window.innerWidth - 20);
+    const dropdownWidth = 280;
     
-    // Position dropdown below button
-    let left = btnRect.left + btnRect.width - dropdownWidth;
+    // Align dropdown's right edge with button's right edge
+    let left = btnRect.right - dropdownWidth;
     
     // Ensure it doesn't go off the left edge
     if (left < 10) {
@@ -42,7 +42,7 @@ document.addEventListener("includesLoaded", () => {
     }
     
     navAccountsDropdown.style.left = left + 'px';
-    navAccountsDropdown.style.top = (btnRect.bottom + 5) + 'px';
+    navAccountsDropdown.style.top = (btnRect.bottom + 8) + 'px';
   }
 
   onAuthStateChanged(auth, (user) => {
