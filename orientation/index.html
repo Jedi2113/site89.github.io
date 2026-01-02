@@ -403,11 +403,29 @@
       color: var(--text-light);
       font-weight: 500;
     }
+
+    .orientation-badge {
+      display: inline-block;
+      background: #ff9800;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
+
+  <!-- Orientation Status Badge -->
+  <div id="orientationStatusBadge" style="text-align: center; padding-top: 1rem; display: none;">
+    <div class="orientation-badge">📋 Orientation In Progress</div>
+  </div>
 
   <!-- Terminal Phase -->
   <section class="content" id="terminalPhase">
@@ -944,6 +962,7 @@
     const finishBtn = document.getElementById("finishBtn");
     const terminalPhase = document.getElementById("terminalPhase");
     const orientationContent = document.getElementById("orientationContent");
+    const statusBadge = document.getElementById("orientationStatusBadge");
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -951,36 +970,63 @@
         return;
       }
 
-      // Display email in terminal
-      emailDisplay.textContent = user.email;
+      try {
+        // Check if user needs orientation
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const needsOrientation = userDoc.exists() ? (userDoc.data().needsOrientation !== false) : true;
 
-      // Animate terminal sequence
-      await delay(500);
-      addTerminalLine('<span class="terminal-output">Setting up new user account...</span>');
-      
-      await delay(1000);
-      addTerminalLine('<span class="terminal-output">Initializing Foundation database connection...</span>');
-      
-      await delay(1200);
-      addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
-      
-      await delay(1000);
-      addTerminalLine('<span class="terminal-output">Synchronizing personnel records...</span>');
-      
-      await delay(1500);
-      successMessage.textContent = `✓ User ${user.email} created successfully`;
-      
-      await delay(2000);
-      addTerminalLine('');
-      addTerminalLine('<span class="terminal-prompt">site89% </span><span class="terminal-input">welcome</span>');
-      
-      await delay(800);
-      addTerminalLine(`<span class="terminal-success">Welcome to Site-89, ${user.email}!</span>`);
-      addTerminalLine('');
-      
-      // Mark orientation as seen and show continue button
-      await delay(1000);
-      continueBtn.style.display = "block";
+        if (!needsOrientation) {
+          // User has already completed orientation, skip to content
+          terminalPhase.style.display = "none";
+          orientationContent.classList.remove("orientation-hidden");
+          statusBadge.style.display = "none";
+          initializeWizard();
+          return;
+        }
+
+        // Show orientation in progress badge
+        statusBadge.style.display = "block";
+
+        // Display email in terminal
+        emailDisplay.textContent = user.email;
+
+        // Animate terminal sequence
+        await delay(500);
+        addTerminalLine('<span class="terminal-output">Setting up new user account...</span>');
+        
+        await delay(1000);
+        addTerminalLine('<span class="terminal-output">Initializing Foundation database connection...</span>');
+        
+        await delay(1200);
+        addTerminalLine('<span class="terminal-output">Configuring clearance levels...</span>');
+        
+        await delay(1000);
+        addTerminalLine('<span class="terminal-output">Synchronizing personnel records...</span>');
+        
+        await delay(1500);
+        successMessage.textContent = `✓ User ${user.email} created successfully`;
+        
+        await delay(2000);
+        addTerminalLine('');
+        addTerminalLine('<span class="terminal-prompt">site89% </span><span class="terminal-input">welcome</span>');
+        
+        await delay(800);
+        addTerminalLine(`<span class="terminal-success">Welcome to Site-89, ${user.email}!</span>`);
+        addTerminalLine('');
+        
+        // Mark orientation as seen and show continue button
+        await delay(1000);
+        continueBtn.style.display = "block";
+      } catch (err) {
+        console.error("Error checking orientation status:", err);
+        // If there's an error, assume they need orientation and show the process
+        statusBadge.style.display = "block";
+        emailDisplay.textContent = user.email;
+        // Still show the wizard
+        terminalPhase.style.display = "none";
+        orientationContent.classList.remove("orientation-hidden");
+        initializeWizard();
+      }
     });
 
     function addTerminalLine(content) {
