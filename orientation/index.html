@@ -468,16 +468,6 @@
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
-  <!-- Orientation Progress Banner -->
-  <div id="orientationProgressBanner" class="orientation-progress-banner">
-    <div class="orientation-progress-banner-content">
-      <div class="orientation-progress-banner-text">📋 Orientation: <span id="bannerStepText">Step 1/9</span></div>
-      <div class="orientation-progress-banner-bar">
-        <div class="orientation-progress-banner-fill" id="bannerProgressFill"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- Terminal Phase -->
   <section class="content" id="terminalPhase">
     <div class="terminal-container" id="terminal">
@@ -1013,7 +1003,6 @@
     const finishBtn = document.getElementById("finishBtn");
     const terminalPhase = document.getElementById("terminalPhase");
     const orientationContent = document.getElementById("orientationContent");
-    const progressBanner = document.getElementById("orientationProgressBanner");
 
     // Cookie utility functions
     function setCookie(name, value, days = 365) {
@@ -1049,7 +1038,6 @@
           // User has already completed orientation, skip to content
           terminalPhase.style.display = "none";
           orientationContent.classList.remove("orientation-hidden");
-          progressBanner.classList.remove("active");
           initializeWizard();
           return;
         }
@@ -1057,8 +1045,7 @@
         // Check if terminal has already been shown for this user
         const terminalShown = getCookie(`orientation_terminal_shown_${user.uid}`);
         
-        // Show progress banner
-        progressBanner.classList.add("active");
+        // Show progress banner (it's in the header component now)
 
         if (!terminalShown) {
           // Show terminal only on first visit
@@ -1104,7 +1091,6 @@
       } catch (err) {
         console.error("Error checking orientation status:", err);
         // If there's an error, assume they need orientation and show the process
-        progressBanner.classList.add("active");
         emailDisplay.textContent = user.email;
         // Still show the wizard
         terminalPhase.style.display = "none";
@@ -1156,17 +1142,20 @@
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const currentStepDisplay = document.getElementById("currentStep");
-      const bannerStepText = document.getElementById("bannerStepText");
-      const bannerProgressFill = document.getElementById("bannerProgressFill");
       
       // Load saved step from cookie
       const savedStep = getCookie("orientationStep");
       let currentStep = savedStep ? parseInt(savedStep) : 1;
 
       function updateBanner(step) {
-        const percentage = (step / 9) * 100;
-        bannerStepText.textContent = `Step ${step}/9`;
-        bannerProgressFill.style.width = percentage + "%";
+        // Update the banner in the header component
+        const bannerStepText = document.getElementById("bannerStepText");
+        const bannerProgressFill = document.getElementById("bannerProgressFill");
+        if (bannerStepText && bannerProgressFill) {
+          const percentage = (step / 9) * 100;
+          bannerStepText.textContent = `Step ${step}/9`;
+          bannerProgressFill.style.width = percentage + "%";
+        }
       }
 
       function showStep(step) {

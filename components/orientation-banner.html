@@ -1,0 +1,112 @@
+<!-- Orientation Progress Banner (appears on all pages during orientation) -->
+<div id="orientationBannerContainer" class="orientation-progress-banner" style="display: none;">
+  <div class="orientation-progress-banner-content">
+    <div class="orientation-progress-banner-text">📋 Orientation in Progress: <span id="bannerStepText">Step 1/9</span></div>
+    <div class="orientation-progress-banner-bar">
+      <div class="orientation-progress-banner-fill" id="bannerProgressFill"></div>
+    </div>
+    <a href="/orientation/" style="color: var(--accent-mint); text-decoration: none; font-weight: 600; margin-left: 1rem; white-space: nowrap;">Continue →</a>
+  </div>
+</div>
+
+<style>
+  .orientation-progress-banner {
+    background: linear-gradient(90deg, rgba(78, 250, 170, 0.15), rgba(0, 124, 107, 0.15));
+    border-bottom: 2px solid var(--accent-mint);
+    padding: 1rem 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .orientation-progress-banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .orientation-progress-banner-text {
+    color: var(--accent-mint);
+    font-weight: 600;
+  }
+
+  .orientation-progress-banner-bar {
+    background: rgba(78, 250, 170, 0.1);
+    border: 1px solid var(--accent-mint);
+    border-radius: 10px;
+    height: 8px;
+    width: 200px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .orientation-progress-banner-fill {
+    background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal));
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .orientation-progress-banner {
+      padding: 0.8rem 1rem;
+    }
+
+    .orientation-progress-banner-content {
+      gap: 1rem;
+      flex-direction: column;
+    }
+
+    .orientation-progress-banner-bar {
+      width: 100%;
+    }
+
+    .orientation-progress-banner-text {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<script>
+  // Check if user is in orientation and show banner
+  function initOrientationBanner() {
+    // Get orientation step from cookie
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.indexOf(nameEQ) === 0) {
+          return cookie.substring(nameEQ.length);
+        }
+      }
+      return null;
+    }
+
+    const orientationStep = getCookie("orientationStep");
+    if (orientationStep) {
+      const step = parseInt(orientationStep);
+      const bannerContainer = document.getElementById("orientationBannerContainer");
+      const bannerStepText = document.getElementById("bannerStepText");
+      const bannerProgressFill = document.getElementById("bannerProgressFill");
+
+      if (bannerContainer && bannerStepText && bannerProgressFill) {
+        bannerContainer.style.display = "block";
+        bannerStepText.textContent = `Step ${step}/9`;
+        const percentage = (step / 9) * 100;
+        bannerProgressFill.style.width = percentage + "%";
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOrientationBanner);
+  } else {
+    initOrientationBanner();
+  }
+</script>
