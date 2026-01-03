@@ -48,7 +48,10 @@ service cloud.firestore {
         && request.resource.data.uploaderId == request.auth.uid
         && request.resource.data.imageUrl is string
         && request.resource.data.caption is string;
-      allow delete: if request.auth != null && resource.data.uploaderId == request.auth.uid;
+      allow delete: if request.auth != null && (
+        resource.data.uploaderId == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
     }
   }
 }
