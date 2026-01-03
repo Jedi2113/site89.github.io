@@ -58,8 +58,14 @@
       }
     } catch (err) {
       console.error('Secure access check error', err);
-      // On error, redirect to safe state (fail secure)
-      blockPageAndRedirect();
+      // On error with restricted page, still block to be safe
+      // but wait a bit to see if auth loads
+      setTimeout(() => {
+        if (!accessCheckComplete) {
+          console.warn('Access check still incomplete after error, blocking as precaution');
+          blockPageAndRedirect();
+        }
+      }, 3000);
     }
   }
 
@@ -125,9 +131,11 @@
       }
 
       if (!selectedCharId) {
-        // No character selected - user may not have completed character creation yet
-        // For now, allow access and let page handle it
-        return 0;
+        // No character selected in localStorage
+        // This could mean: user hasn't completed character creation, or just hasn't selected one
+        // For research logs and similar pages, we should allow them through but they might see limited content
+        // Default to clearance 1 for authenticated users with no character selected
+        return 1;
       }
 
       // Query Firebase to verify character and get clearance
@@ -151,7 +159,8 @@
       }
 
       // Return the authoritative clearance level from Firebase
-      const clearance = parseClearance(charData.clearance);
+      // Default to clearance 1 if not specified (new characters start at Intern = Level 1)
+      const clearance = charData.clearance !== undefined ? parseClearance(charData.clearance) : 1;
       return Number.isNaN(clearance) ? 1 : clearance;
     } catch (err) {
       console.error('Firebase clearance fetch failed', err);
