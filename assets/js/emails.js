@@ -273,22 +273,36 @@ document.addEventListener('includesLoaded', () => {
 
   // Get character profile image
   async function getCharacterImage(email){
+    console.log('[ProfilePic] Looking up image for:', email);
     // Check cache first
-    if(charactersCache[email]) return charactersCache[email];
+    if(charactersCache[email]) {
+      console.log('[ProfilePic] Found in cache:', charactersCache[email]);
+      return charactersCache[email];
+    }
     
     try {
+      console.log('[ProfilePic] Fetching from Firestore...');
       const charsSnap = await getDocs(collection(db, 'characters'));
+      console.log('[ProfilePic] Total characters:', charsSnap.size);
       charsSnap.forEach(snap => {
         const ch = snap.data();
         if(ch.name){
           const charEmail = emailFromName(ch.name);
-          const image = ch.image || ch.photo || ch.photoUrl || null;
+          // Check all possible image field names
+          console.log('[ProfilePic] Character fields for', ch.name, ':', Object.keys(ch));
+          const image = ch.image || ch.photo || ch.photoUrl || ch.photoURL || ch.profileImage || ch.avatar || ch.picture || null;
           charactersCache[charEmail] = image;
+          console.log('[ProfilePic] Cached:', charEmail, '→', image);
         }
       });
-    } catch(e){ console.warn('Failed to fetch character images', e); }
+      console.log('[ProfilePic] Cache now has', Object.keys(charactersCache).length, 'entries');
+    } catch(e){ 
+      console.error('[ProfilePic] Failed to fetch character images:', e); 
+    }
     
-    return charactersCache[email] || null;
+    const result = charactersCache[email] || null;
+    console.log('[ProfilePic] Final result for', email, ':', result);
+    return result;
   }
 
   async function sendMessage(status='sent'){
@@ -388,6 +402,7 @@ document.addEventListener('includesLoaded', () => {
 
   // Render list depending on folder
   function renderList(){
+    console.log('[RenderList] Starting render with', allMessages.length, 'total messages');
     const q = (mailSearch.value||'').toLowerCase();
     const list = allMessages.filter(m => {
       if (currentFolder === 'inbox') return (m.recipients || []).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft';
@@ -396,6 +411,8 @@ document.addEventListener('includesLoaded', () => {
       if (currentFolder === 'trash') return m.folder === 'trash' && (m.sender === myAddress || (m.recipients || []).includes(myAddress));
       return false;
     }).filter(m => (m.subject||'').toLowerCase().includes(q) || (m.body||'').toLowerCase().includes(q) || (m.sender||'').toLowerCase().includes(q));
+
+    console.log('[RenderList] Filtered to', list.length, 'messages for folder:', currentFolder);
 
     // counts and unread badge on navbar
     const inboxMsgs = allMessages.filter(m => (m.recipients||[]).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft');
@@ -429,7 +446,9 @@ document.addEventListener('includesLoaded', () => {
       if(m.recipients) m.recipients.forEach(r => saveContact(r));
       
       // Try to get profile picture
+      console.log('[RenderList] Getting profile image for:', m.sender);
       const profileImage = await getCharacterImage(m.sender);
+      console.log('[RenderList] Profile image result:', profileImage);
       const avatarHtml = profileImage && !profileImage.includes('placeholder') 
         ? `<img src="${profileImage}" style="width:44px;height:44px;border-radius:6px;object-fit:cover" alt="Profile">`
         : `<div style="width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));display:flex;align-items:center;justify-content:center;color:#081413;font-weight:700">${(m.sender||'').charAt(0)||''}</div>`;
@@ -442,6 +461,7 @@ document.addEventListener('includesLoaded', () => {
       el.addEventListener('click', ()=> openMessage(m));
       messagesContainer.appendChild(el);
     });
+    console.log('[RenderList] Render complete');
   }
 
   async function openMessage(m){
