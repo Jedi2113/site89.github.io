@@ -368,8 +368,23 @@
       </div>
 
       <div>
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Name</label>
+        <input id="editName" class="modal-detail-input" placeholder="e.g., John Smith">
+      </div>
+
+      <div style="margin-top:1rem;">
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Rank</label>
         <input id="editRank" class="modal-detail-input" placeholder="e.g., Captain, Specialist">
+      </div>
+
+      <div style="margin-top:1rem;">
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Department</label>
+        <input id="editDept" class="modal-detail-input" placeholder="e.g., Administrative, Research">
+      </div>
+
+      <div style="margin-top:1rem;">
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Clearance Level</label>
+        <input id="editClearance" class="modal-detail-input" type="number" min="0" max="5" placeholder="e.g., 1, 3, 5">
       </div>
 
       <div style="margin-top:1rem;">
@@ -509,7 +524,10 @@
         // Populate form
         document.getElementById('editPhotoUrl').value = char.profileImage || '';
         document.getElementById('editPhotoPreview').src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+        document.getElementById('editName').value = char.name || '';
         document.getElementById('editRank').value = char.rank || '';
+        document.getElementById('editDept').value = char.department || '';
+        document.getElementById('editClearance').value = char.clearance || '';
         document.getElementById('editClass').value = char['class'] || '';
         
         // Load awards
@@ -570,7 +588,10 @@
       if (!currentEditingPID) return;
 
       const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
+      const name = (document.getElementById('editName').value || '').trim();
       const rank = (document.getElementById('editRank').value || '').trim();
+      const dept = (document.getElementById('editDept').value || '').trim();
+      const clearance = document.getElementById('editClearance').value;
       const personClass = (document.getElementById('editClass').value || '').trim();
 
       // Get selected awards
@@ -601,7 +622,10 @@
         // Update character
         const updateData = {};
         if (photoUrl) updateData.profileImage = photoUrl;
+        if (name) updateData.name = name;
         if (rank) updateData.rank = rank;
+        if (dept) updateData.department = dept;
+        if (clearance !== '') updateData.clearance = Number(clearance);
         if (personClass) updateData['class'] = personClass;
         updateData.awards = selectedAwards;
 

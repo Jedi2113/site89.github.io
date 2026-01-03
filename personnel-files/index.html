@@ -249,17 +249,20 @@
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.95);
       color: var(--accent-mint);
-      padding: 0.5rem 0.75rem;
+      padding: 0.6rem 0.8rem;
       border-radius: 4px;
-      white-space: nowrap;
+      white-space: normal;
+      max-width: 150px;
+      text-align: center;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
-      z-index: 100;
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
+      z-index: 1000;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
 
     .award-ribbon:hover .award-tooltip {
@@ -324,12 +327,12 @@
         </div>
       </div>
 
-      <div id="modalBioSection" style="display:none;">
-        <div class="awards-section">
-          <h3>Awards & Commendations</h3>
-          <div class="awards-display" id="modalAwards"></div>
-        </div>
+      <div class="awards-section" id="modalAwardsSection" style="display:none;">
+        <h3>Awards & Commendations</h3>
+        <div class="awards-display" id="modalAwards"></div>
+      </div>
 
+      <div id="modalBioSection" style="display:none;">
         <div style="border-top: 1px solid var(--accent-teal); padding-top: 1rem; margin-top: 1rem;">
           <h3 style="margin-top: 0; color: var(--accent-mint);">Biography</h3>
           <div class="modal-bio" id="modalBio"></div>
@@ -438,6 +441,16 @@
       }
 
       const bioSection = document.getElementById("modalBioSection");
+      const awardsSection = document.getElementById("modalAwardsSection");
+      
+      // Show awards section if there are awards
+      if (charAwards.length > 0) {
+        awardsSection.style.display = "block";
+      } else {
+        awardsSection.style.display = "none";
+      }
+      
+      // Show bio section if there's a bio
       if (char.bio && char.bio.trim()) {
         document.getElementById("modalBio").innerHTML = char.bio;
         bioSection.style.display = "block";

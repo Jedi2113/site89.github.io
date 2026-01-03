@@ -676,6 +676,11 @@
       element.style.display = "block";
     }
 
+    // Force PID to uppercase
+    charPID.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
+    });
+
     function resetCharForm() {
       pidMatchedData = null;
       pidConfirmed = false;
