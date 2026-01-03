@@ -132,26 +132,6 @@ document.addEventListener('includesLoaded', () => {
   const composeSendAs = document.getElementById('composeSendAs');
   const composeSuggestions = document.getElementById('composeSuggestions');
 
-  // Initialize TinyMCE for rich text email composition
-  console.log('[TinyMCE] Initializing editor on composeBody');
-  tinymce.init({
-    selector: '#composeBody',
-    height: 400,
-    menubar: false,
-    plugins: 'link lists code emoticons table',
-    toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link emoticons | code removeformat',
-    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 14px; }',
-    skin: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'oxide-dark' : 'oxide',
-    content_css: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
-    promotion: false, // Hide upgrade prompts
-    branding: false, // Remove "Powered by TinyMCE" branding
-    setup: function(editor) {
-      editor.on('init', function() {
-        console.log('[TinyMCE] Editor initialized successfully');
-      });
-    }
-  });
-
   let currentFolder = 'inbox';
   let myAddress = '';
   let currentUser = null; // Store current user for emails
@@ -257,12 +237,7 @@ document.addEventListener('includesLoaded', () => {
   function clearCompose(){ 
     composeTo.value=''; 
     composeSubject.value=''; 
-    const editor = tinymce.get('composeBody');
-    if(editor){
-      editor.setContent('');
-    } else {
-      composeBody.value='';
-    }
+    composeBody.value=''; 
   }
 
   // Contacts autocomplete helpers
@@ -351,18 +326,12 @@ document.addEventListener('includesLoaded', () => {
       recipients = await expandMailingLists(toRaw, db);
     } catch(e){ console.warn('Mailing list expansion error', e); recipients = toRaw; }
 
-    // Get rich text content from TinyMCE
-    console.log('[TinyMCE] Getting editor content for send');
-    const editor = tinymce.get('composeBody');
-    const bodyContent = editor ? editor.getContent() : composeBody.value || '';
-    console.log('[TinyMCE] Body content length:', bodyContent.length);
-
     const payload = {
       sender: sender,
       senderEmail: currentUser ? currentUser.email : '',
       recipients: recipients,
       subject: composeSubject.value || '(no subject)',
-      body: bodyContent,
+      body: composeBody.value || '',
       status: status, // 'sent' or 'draft'
       folder: status === 'draft' ? 'drafts' : '',
       ts: serverTimestamp()
@@ -370,7 +339,6 @@ document.addEventListener('includesLoaded', () => {
 
     try {
       await addDoc(collection(db,'emails'), payload);
-      console.log('[Email] Message sent successfully');
     } catch(e){
       console.error('send failed', e); alert('Failed to send message');
     } finally {
@@ -404,13 +372,7 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
-    const editor = tinymce.get('composeBody');
-    const replyContent = `<br><br><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p><blockquote>${currentMessage.body}</blockquote>`;
-    if(editor){
-      editor.setContent(replyContent);
-    } else {
-      composeBody.value = replyContent;
-    }
+    composeBody.value = `\n\n--- On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote: ---\n${currentMessage.body}`;
   });
 
   btnForward.addEventListener('click', ()=>{
@@ -418,13 +380,7 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
-    const editor = tinymce.get('composeBody');
-    const forwardContent = `<br><br><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p><br>${currentMessage.body}`;
-    if(editor){
-      editor.setContent(forwardContent);
-    } else {
-      composeBody.value = forwardContent;
-    }
+    composeBody.value = `\n\n--- Forwarded message ---\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\n\n${currentMessage.body}`;
   });
 
   // Render list depending on folder
@@ -488,11 +444,7 @@ document.addEventListener('includesLoaded', () => {
   async function openMessage(m){
     currentMessage = m;
     mailSubject.textContent = m.subject;
-    
-    // Render HTML content for rich text emails
-    console.log('[Email] Rendering message body as HTML');
-    mailContent.innerHTML = m.body;
-    
+    mailContent.textContent = m.body;
     mailSender.textContent = `${m.sender} → ${ (m.recipients||[]).join(', ') }`;
     mailMeta.textContent = fmtDate(m.ts);
     const md = document.getElementById('mailDate'); if(md) md.textContent = fmtDate(m.ts);
@@ -507,7 +459,6 @@ document.addEventListener('includesLoaded', () => {
       // Then update Firestore in background
       try { 
         await updateDoc(doc(db,'emails',m.id), { read: true });
-        console.log('[Email] Message marked as read');
       }
       catch(e){ 
         console.error('mark read failed', e);
