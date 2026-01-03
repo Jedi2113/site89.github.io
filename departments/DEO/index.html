@@ -13,11 +13,27 @@
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
 
     .dept-grid { display:grid; grid-template-columns: 1fr 320px; gap:1.5rem; max-width:1100px; margin:1.25rem auto; }
-    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; }
-    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; }
-    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; }
+    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; margin-bottom:1.25rem; }
+    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; font-size:1.5rem; }
+    .dept-card h3 { color:var(--accent-teal); margin-top:1.25rem; margin-bottom:0.5rem; font-size:1.2rem; }
+    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; margin-bottom:0.75rem; }
+    .dept-card ul { margin:0.5rem 0; padding-left:1.5rem; color:var(--text-light); opacity:0.9; }
+    .dept-card ul li { margin-bottom:0.4rem; }
+    
+    .leadership-section { background: rgba(78,250,170,0.02); padding:1rem; border-radius:6px; margin:1rem 0; border-left: 3px solid var(--accent-mint); }
+    .leadership-section strong { color:var(--accent-mint); }
+    
+    .division-card { background: rgba(78,250,170,0.02); padding:1.25rem; border-radius:6px; margin-bottom:1.5rem; border-left: 3px solid var(--accent-teal); }
+    .division-card h3 { margin-top:0; color:var(--accent-mint); }
+    .division-card .contact { font-family:var(--font-mono); font-size:0.9rem; color:var(--accent-teal); margin:0.5rem 0; }
+    .division-card .quote { font-style:italic; opacity:0.85; margin:0.5rem 0; padding-left:1rem; border-left:2px solid rgba(78,250,170,0.2); }
+    .division-card .status { background:rgba(78,250,170,0.1); padding:0.4rem 0.6rem; border-radius:4px; display:inline-block; font-size:0.85rem; margin-top:0.5rem; }
+    
     .side-box h3 { color:var(--accent-teal); margin:0 0 0.6rem 0; }
     .side-box ul { margin:0; padding-left:1rem; }
+    .side-box .dept-card { margin-bottom:0.8rem; }
+
+    .program-highlight { background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, rgba(78,250,170,0.01) 100%); padding:1rem; border-radius:6px; margin:1rem 0; border: 1px solid rgba(78,250,170,0.1); }
 
     @media (max-width:880px) { .dept-grid { grid-template-columns:1fr; } .dept-hero { text-align:center; flex-direction:column; } }
   </style>
@@ -27,69 +43,153 @@
   <div data-include="/components/navbar.html"></div>
 
   <section class="dept-hero">
-    <img src="/assets/img/DEO.png" alt="Site-89 Logo" class="logo">
+    <img src="/assets/img/DEO.png" alt="Site-89 External Operations" class="logo">
     <div>
       <div class="title">Department of External Operations (DEO)</div>
-      <div class="subtitle">Handles outreach, intelligence, and mobile operations beyond the site.</div>
+      <div class="subtitle">International and interdimensional operations — beyond the site, protecting the world.</div>
     </div>
   </section>
 
   <section class="content" style="padding-top:1.25rem;">
-    <!-- Bulletin Section -->
-    <div id="bulletinSection" class="dept-grid" style="margin-bottom:2rem;">
-      <div style="grid-column: 1 / -1;">
-        <div class="dept-card" style="background:linear-gradient(135deg, rgba(78,250,170,0.08), transparent); border-color: rgba(78,250,170,0.15);">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;">
-            <h2 style="margin:0;">Active Bulletin</h2>
-            <button id="editBulletinBtn" style="display:none;padding:0.6rem 1rem;background:var(--accent-mint);color:#06100e;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.9rem;">Edit Bulletin</button>
-          </div>
-          <div id="bulletinContent" style="font-size:1.05rem;line-height:1.7;color:var(--text-light);min-height:80px;">
-            <p style="opacity:0.8;font-style:italic;">No active bulletin at this time.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Department Portals -->
-    <div class="dept-grid" style="margin-bottom:2rem;grid-column:1/-1;">
-      <div style="grid-column:1/-1;"><h2 style="color:var(--accent-mint);margin:0 0 1rem 0;">Department Portals</h2></div>
-    </div>
-
     <div class="dept-grid">
       <div>
+        <!-- Hub Information -->
         <div class="dept-card">
-          <h2>Overview</h2>
-          <p>The Department of External Operations is the branch of Site-89, and the foundation as a whold responsible for maintaining international and, at times, interdimensional operations. The department has a wide array of functions dedicated for non-domestic operations, such as intelligence missions, combat expeditions, diplomacy, anomaly investigations, and joint DEO/ScD research expeditions.</p>
+          <h2>» External Operations Hub «</h2>
+          <p>The Department of External Operations is the branch of Site-89, and the foundation as a whole responsible for maintaining international and, at times, interdimensional operations. The department has a wide array of functions dedicated for non-domestic operations, such as intelligence missions, combat expeditions, diplomacy, anomaly investigations, and joint DEO/ScD research expeditions.</p>
 
-          <h2>Working in DEO — For Interns</h2>
-          <p>DEO internships offer a mix of analytic and field-support work. Interns may assist with mission planning, intel analysis, logistics, and post-operational reporting. Expect training in communication protocols, mission briefs, and basic fieldcraft under close supervision.</p>
+          <div class="leadership-section">
+            <strong>Director:</strong> Killian Rehwald<br>
+            <strong>Asst. Director:</strong> Henk Meijer
+          </div>
 
-          <h2>Skills & Experience</h2>
-          <p>Strong situational awareness, clear writing for reports, adaptability, and the ability to follow orders are essential. Interns will learn about operational planning, communications, and collaboration with multiple teams.</p>
+          <div class="program-highlight">
+            <strong style="color:var(--accent-mint);">Joint Volunteer Field Program</strong>
+            <p style="margin:0.5rem 0 0 0;">The Security Department and the Department of External Operations host a joint volunteer program for all willing Security Department members to go on field missions and operations. Interested in field work? Learn more through Security Command.</p>
+          </div>
+        </div>
 
-          <div style="margin-top:1rem;"><a href="/accounts/" class="btn-primary">Apply / Create Account</a></div>
+        <!-- Working in DEO -->
+        <div class="dept-card">
+          <h2>Working in DEO — For Interns & New Personnel</h2>
+          <p>The Department of External Operations offers unique opportunities for those interested in field operations, intelligence gathering, and international coordination. Whether you're drawn to tactical operations or analytical intelligence work, DEO provides comprehensive training and real-world experience.</p>
+
+          <h3>What You'll Do</h3>
+          <ul>
+            <li>Assist with mission planning and operational logistics</li>
+            <li>Conduct intelligence analysis and threat assessments</li>
+            <li>Support field operations and tactical deployments</li>
+            <li>Monitor Groups of Interest (GOIs) and Persons of Interest (POIs)</li>
+            <li>Participate in joint DEO/ScD research expeditions</li>
+            <li>Coordinate with international Foundation sites</li>
+            <li>Document field reports and operational debriefs</li>
+          </ul>
+
+          <h3>Skills & Experience</h3>
+          <p>Strong situational awareness, adaptability, clear communication, and the ability to remain calm under pressure are essential. New personnel receive comprehensive training in:</p>
+          <ul>
+            <li>Operational planning and mission briefings</li>
+            <li>Intelligence gathering and analysis techniques</li>
+            <li>Field communications protocols</li>
+            <li>Tactical procedures and safety protocols</li>
+            <li>Post-operational reporting and debriefing</li>
+            <li>Collaboration with international teams</li>
+          </ul>
+
+          <h3>Getting Started</h3>
+          <p>DEO welcomes personnel interested in field operations, intelligence work, and international coordination. Training is provided based on your assigned division. Visit the External Operations Office just outside Gate-A to meet with DEO personnel.</p>
+
+          <p style="margin-top:1rem; padding:1rem; background:rgba(78,250,170,0.05); border-left:3px solid var(--accent-mint); border-radius:4px;">
+            <strong style="color:var(--accent-mint);">Interested in joining External Ops?</strong><br>
+            Contact the Department of External Operations at <a href="/emails/?compose=deo@site89.org" style="color:var(--accent-teal); font-family:var(--font-mono);">deo@site89.org</a>
+          </p>
+        </div>
+
+        <!-- Divisions -->
+        <div class="dept-card">
+          <h2>» External Operations Divisions «</h2>
+          <p style="font-style:italic; opacity:0.8; margin-bottom:1.5rem;">External Operations Main Office - Lower Area</p>
+
+          <!-- Mobile Task Force -->
+          <div class="division-card">
+            <h3>Mobile Task Force (MTF)</h3>
+            <div class="contact">MTF@site89.scp</div>
+            <p><strong>MTF Commander:</strong> N/A</p>
+            
+            <div class="quote">"The people with the big guns, and special missions."</div>
+            
+            <p>The Mobile Task Forces are the main intervention teams in case of a large-scale breach, raid, or war between the Foundation and GOIs. They are some of the most elite units within the SCP Foundation, composed of personnel drawn from across the organization to handle specific threats or situations that exceed the capabilities or expertise of regular field personnel.</p>
+            
+            <div class="status">
+              <strong>Location:</strong> MTF Snow Outpost, Wait, Where is this?<br>
+              <strong>Access:</strong> Visit MTF operations area or use MTF Portal
+            </div>
+          </div>
+
+          <!-- Intelligence Agency -->
+          <div class="division-card">
+            <h3>Intelligence Agency (IA)</h3>
+            <div class="contact">IA@site89.scp</div>
+            <p><strong>IA Director:</strong> N/A</p>
+            
+            <div class="quote">"Intelligence Agency, practically just Military intelligence but with better benefits."</div>
+            
+            <p>The Intelligence Agency operates as the site's primary military intelligence unit, tasked with gathering, analyzing, and acting on information critical to national and site security. Specializing in threat assessment, surveillance, and counterintelligence, the agency monitors Groups of Interest and Persons of Interest.</p>
+            
+            <div class="status">
+              <strong>Location:</strong> External Operations Office, just outside Gate-A<br>
+              <strong>Access:</strong> Visit DEO Office or use IA Portal
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Sidebar -->
       <aside class="side-box">
         <div class="dept-card">
           <h3>Quick Facts</h3>
           <ul>
-            <li>Typical shift: Mission schedules / intel cycles</li>
-            <li>Required training: Comms & mission briefings</li>
-            <li>Contact: Ops Liaison via <a href="/accounts/">Accounts</a></li>
-            <li>Good for: Analysts, planners, calm under pressure</li>
+            <li><strong>Typical Duty:</strong> Mission schedules, intel cycles, field ops</li>
+            <li><strong>Training Required:</strong> Communications & mission briefings</li>
+            <li><strong>Deployment:</strong> International and interdimensional operations</li>
+            <li><strong>Contact:</strong> Ops Liaison via <a href="/accounts/">Accounts</a></li>
+            <li><strong>Best For:</strong> Analysts, tacticians, calm under pressure</li>
+            <li><strong>Career Path:</strong> Agent → Operative → Specialist → Commander</li>
           </ul>
         </div>
 
-        <div class="dept-card" style="margin-top:0.8rem;">
-          <a href="/departments/DEO/ia-portal/" class="btn-primary" style="display:block;width:100%;text-align:center;text-decoration:none;">IA Portal</a>
-          <div style="font-size:0.85rem;color:var(--text-light);opacity:0.75;margin-top:0.5rem;text-align:center;">Internal Affairs Only</div>
+        <div class="dept-card">
+          <h3>Division Portals</h3>
+          <div style="display:flex; flex-direction:column; gap:0.8rem;">
+            <a href="/departments/DEO/ia-portal/" class="btn-primary" style="text-align:center;">Intelligence Agency Portal</a>
+            <a href="/departments/DEO/mtf-portal/" class="btn-primary" style="text-align:center;">Mobile Task Force Portal</a>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-light); opacity:0.8; margin-top:0.75rem; margin-bottom:0;">
+            ⚠ Access restricted to respective division members
+          </p>
         </div>
 
-        <div class="dept-card" style="margin-top:0.6rem;">
-          <a href="/departments/DEO/mtf-portal/" class="btn-primary" style="display:block;width:100%;text-align:center;text-decoration:none;">MTF Portal</a>
-          <div style="font-size:0.85rem;color:var(--text-light);opacity:0.75;margin-top:0.5rem;text-align:center;">Mobile Task Force & IA</div>
+        <div class="dept-card">
+          <h3>Key Locations</h3>
+          <ul>
+            <li><strong>DEO Office:</strong> Outside Gate-A</li>
+            <li><strong>IA Headquarters:</strong> Intelligence operations center</li>
+            <li><strong>MTF Snow Outpost:</strong> Tactical operations base</li>
+            <li><strong>Operations Planning:</strong> Mission briefing rooms</li>
+            <li><strong>Communications Hub:</strong> International coordination</li>
+          </ul>
+        </div>
+
+        <div class="dept-card">
+          <h3>Important Notes</h3>
+          <ul style="font-size:0.9rem;">
+            <li>All field operations require proper authorization</li>
+            <li>Maintain operational security at all times</li>
+            <li>Report intelligence to IA immediately</li>
+            <li>Follow chain of command during missions</li>
+            <li>Debrief required after field operations</li>
+            <li>Coordinate with local authorities when needed</li>
+          </ul>
         </div>
       </aside>
     </div>

@@ -13,11 +13,33 @@
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
 
     .dept-grid { display:grid; grid-template-columns: 1fr 320px; gap:1.5rem; max-width:1100px; margin:1.25rem auto; }
-    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; }
-    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; }
-    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; }
+    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; margin-bottom:1.25rem; }
+    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; font-size:1.5rem; }
+    .dept-card h3 { color:var(--accent-teal); margin-top:1.25rem; margin-bottom:0.5rem; font-size:1.2rem; }
+    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; margin-bottom:0.75rem; }
+    .dept-card ul { margin:0.5rem 0; padding-left:1.5rem; color:var(--text-light); opacity:0.9; }
+    .dept-card ul li { margin-bottom:0.4rem; }
+    
+    .leadership-section { background: rgba(78,250,170,0.02); padding:1rem; border-radius:6px; margin:1rem 0; border-left: 3px solid var(--accent-mint); }
+    .leadership-section strong { color:var(--accent-mint); }
+    
+    .division-card { background: rgba(78,250,170,0.02); padding:1.25rem; border-radius:6px; margin-bottom:1.5rem; border-left: 3px solid var(--accent-teal); }
+    .division-card h3 { margin-top:0; color:var(--accent-mint); display:flex; align-items:center; gap:0.5rem; }
+    .division-card .div-icon { width:24px; height:24px; }
+    .division-card .contact { font-family:var(--font-mono); font-size:0.9rem; color:var(--accent-teal); margin:0.5rem 0; }
+    .division-card .quote { font-style:italic; opacity:0.85; margin:0.5rem 0; padding-left:1rem; border-left:2px solid rgba(78,250,170,0.2); }
+    .division-card .status { background:rgba(78,250,170,0.1); padding:0.4rem 0.6rem; border-radius:4px; display:inline-block; font-size:0.85rem; margin-top:0.5rem; }
+    .division-card .wip-badge { background:rgba(255,200,0,0.1); color:#ffc800; padding:0.3rem 0.6rem; border-radius:4px; font-size:0.85rem; font-weight:600; display:inline-block; }
+    
     .side-box h3 { color:var(--accent-teal); margin:0 0 0.6rem 0; }
     .side-box ul { margin:0; padding-left:1rem; }
+    .side-box .dept-card { margin-bottom:0.8rem; }
+
+    .portal-buttons { display:grid; grid-template-columns:1fr; gap:0.8rem; margin:1rem 0; }
+    .btn-portal { display:block; background:var(--accent-mint); color:var(--bg-dark); padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; transition:all 0.2s; text-align:center; }
+    .btn-portal:hover { background:var(--accent-teal); transform:translateY(-2px); box-shadow: 0 4px 12px rgba(78,250,170,0.3); }
+    .btn-portal.secondary { background:rgba(78,250,170,0.15); color:var(--accent-mint); border:1px solid var(--accent-mint); }
+    .btn-portal.secondary:hover { background:rgba(78,250,170,0.25); }
 
     @media (max-width:880px) { .dept-grid { grid-template-columns:1fr; } .dept-hero { text-align:center; flex-direction:column; } }
   </style>
@@ -27,38 +49,183 @@
   <div data-include="/components/navbar.html"></div>
 
   <section class="dept-hero">
-    <img src="/assets/img/ScD.png" alt="Site-89 Logo" class="logo">
+    <img src="/assets/img/ScD.png" alt="Site-89 Scientific Department" class="logo">
     <div>
       <div class="title">Scientific Department (ScD)</div>
-      <div class="subtitle">Research, testing, and medical oversight — the minds studying anomalies and keeping containment safe.</div>
+      <div class="subtitle">Understanding anomalies, ensuring containment — protecting the public from unspeakable horrors.</div>
     </div>
   </section>
 
   <section class="content" style="padding-top:1.25rem;">
     <div class="dept-grid">
       <div>
+        <!-- Hub Information -->
         <div class="dept-card">
-          <h2>Overview</h2>
-          <p>The Scientific Department conducts research into anomalous phenomena, develops containment procedures, and oversees experimental testing. ScD divisions include lab research, field testing teams, medical research, and occult studies.</p>
+          <h2>» Scientific Department Hub «</h2>
+          <p>The Scientific Department (ScD) is a broad department with a wide array of divisions, each specializing in its own field of expertise. It ranges from standardized testing using protocols from across the Foundation, to working with occultic rituals that violate the very nature of time and space. All divisions within the department share the same goal of understanding anomalies and ensuring we have methods to secure and contain them — protecting the public from unspeakable horrors.</p>
 
-          <h2>Working in ScD — For Interns</h2>
-          <p>Interns in ScD get hands-on research experience under strict supervision. Tasks may include assisting with experiments, data collection and analysis, compiling test reports, maintaining lab logs, and participating in controlled testing exercises. Rigorous safety protocols and mentorship by senior researchers are central to the role.</p>
+          <div class="leadership-section">
+            <strong>Scientific Director:</strong> Dr. K. Fisher<br>
+            <strong>Asst. Scientific Director:</strong> Vacant<br>
+            <strong>Medical Director:</strong> Vacant
+          </div>
 
-          <h2>Skills & Experience</h2>
-          <p>Curiosity, careful documentation, patience, and an ability to follow laboratory protocols are essential. Interns will develop scientific reasoning, experiment design awareness, and learn formal reporting standards.</p>
+          <p style="font-size:0.95rem; opacity:0.9;">
+            <strong>Contact:</strong> 
+            <code style="color:var(--accent-teal); font-family:var(--font-mono);">SCD.KameronFisher@foundation.scp</code>
+          </p>
 
-          <div style="margin-top:1rem;"><a href="/accounts/" class="btn-primary">Apply / Create Account</a></div>
+          <div class="portal-buttons">
+            <a href="/anomalies/" class="btn-portal">ACCESS SCP DATABASE</a>
+            <a href="/research-logs/" class="btn-portal secondary">ACCESS RESEARCH LOGS</a>
+          </div>
+        </div>
+
+        <!-- Working in ScD -->
+        <div class="dept-card">
+          <h2>Working in ScD — For Interns & Researchers</h2>
+          <p>The Scientific Department offers diverse opportunities for those interested in understanding the anomalous. Whether you're drawn to experimental research, medical science, or theoretical studies, ScD provides comprehensive training and mentorship from experienced researchers.</p>
+
+          <h3>What You'll Do</h3>
+          <ul>
+            <li>Assist with controlled anomaly testing and experimentation</li>
+            <li>Collect and analyze data from research trials</li>
+            <li>Document observations and compile detailed test reports</li>
+            <li>Maintain laboratory logs and research databases</li>
+            <li>Participate in safety briefings and containment protocol reviews</li>
+            <li>Support medical examinations and health monitoring</li>
+            <li>Contribute to theoretical research and hypothesis development</li>
+          </ul>
+
+          <h3>Skills & Experience</h3>
+          <p>Scientific curiosity, meticulous documentation, attention to detail, and strict adherence to safety protocols are essential. Interns and new researchers will receive training in:</p>
+          <ul>
+            <li>Foundation research methodologies and documentation standards</li>
+            <li>Laboratory safety and containment procedures</li>
+            <li>Experiment design and data analysis</li>
+            <li>Anomaly classification and containment theory</li>
+            <li>Medical protocols and emergency response</li>
+            <li>Scientific reporting and peer review processes</li>
+          </ul>
+
+          <h3>Getting Started</h3>
+          <p>The Scientific Department welcomes personnel with backgrounds in research, medicine, theoretical sciences, and related fields. Visit the Scientific Zone in the FPZ elevator section to meet with researchers.</p>
+
+          <p style="margin-top:1rem; padding:1rem; background:rgba(78,250,170,0.05); border-left:3px solid var(--accent-mint); border-radius:4px;">
+            <strong style="color:var(--accent-mint);">Interested in joining Scientific?</strong><br>
+            Contact the Scientific Department at <a href="/emails/?compose=scd@site89.org" style="color:var(--accent-teal); font-family:var(--font-mono);">scd@site89.org</a>
+          </p>
+        </div>
+
+        <!-- Divisions -->
+        <div class="dept-card">
+          <h2>» Scientific Department Divisions «</h2>
+          <p style="font-style:italic; opacity:0.8; margin-bottom:1.5rem;">Researchers Dr. M. Volkov and Dr. M. Fury's lab, upper R&DZ</p>
+
+          <!-- Research & Development -->
+          <div class="division-card">
+            <h3>
+              <span>Research & Development (R&D)</span>
+            </h3>
+            <div class="contact">RD@site89.scp</div>
+            <p><strong>Head Researcher:</strong> N/A</p>
+            
+            <div class="quote">"TBD."</div>
+            
+            <p>The Research & Development division focuses on experimental research, protocol development, and practical applications of anomalous phenomena. R&D researchers work in state-of-the-art laboratories conducting controlled tests and developing new containment methodologies.</p>
+            
+            <div class="status">
+              <strong>Location:</strong> Scientific Zone, FPZ Elevator Section<br>
+              <strong>Access:</strong> Visit R&D labs to meet with researchers
+            </div>
+          </div>
+
+          <!-- Medical Department -->
+          <div class="division-card">
+            <h3>
+              <span>Medical Department (MD)</span>
+            </h3>
+            <div class="contact">MD@site89.scp</div>
+            <p><strong>Medical Director:</strong> N/A</p>
+            
+            <div class="quote">"We keep the personnel in good health. If it wasn't for us, the site would be on fire."<br>- Dr. P. James PhD.</div>
+            
+            <p>The Medical Department provides comprehensive healthcare services to all Site-89 personnel. From routine checkups to emergency trauma care and exposure treatment, MD ensures the physical and mental wellbeing of staff working in hazardous conditions. Medical personnel are specially trained in anomalous exposure treatment and containment-related injuries.</p>
+            
+            <div class="status">
+              <strong>Location:</strong> Multiple Hospitals and Clinics across the site<br>
+              <strong>Access:</strong> Visit any medical facility or contact MD directly
+            </div>
+          </div>
+
+          <!-- Theoretical Science Research Division -->
+          <div class="division-card">
+            <h3>
+              <span>Theoretical Science Research Division (TSRD)</span>
+              <span class="wip-badge">WIP</span>
+            </h3>
+            <div class="contact">TSRD@site89.scp</div>
+            <p><strong>Head Theorist:</strong> N/A</p>
+            
+            <div class="quote">"It may not exist, or even be possible, but we will make it happen."<br>- Dr. N. Anderson</div>
+            
+            <p>The Theoretical Science Research Division explores the boundaries of possibility itself. TSRD researchers work with advanced mathematical models, quantum anomalies, temporal mechanics, and phenomena that challenge our understanding of reality. This cutting-edge division pushes the limits of what we know about the anomalous universe.</p>
+            
+            <div class="status" style="background:rgba(255,200,0,0.1); border-left:3px solid #ffc800;">
+              <strong style="color:#ffc800;">⚠ Status:</strong> Work in Progress<br>
+              <strong>Access:</strong> You cannot visit them, they do not exist yet.<br>
+              <em style="opacity:0.8;">TSRD is currently under development. Please check back later.</em>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Sidebar -->
       <aside class="side-box">
         <div class="dept-card">
           <h3>Quick Facts</h3>
           <ul>
-            <li>Typical shift: Lab-scheduled with safety briefings</li>
-            <li>Required training: Lab safety & containment orientation</li>
-            <li>Contact: Research Liaison via <a href="/accounts/">Accounts</a></li>
-            <li>Good for: Critical thinkers, careful documenters, experimental minds</li>
+            <li><strong>Typical Duty:</strong> Lab-scheduled research with safety briefings</li>
+            <li><strong>Training Required:</strong> Lab safety & containment orientation</li>
+            <li><strong>Clearance:</strong> Varies by division and research level</li>
+            <li><strong>Contact:</strong> Scientific Director via <a href="/accounts/">Accounts</a></li>
+            <li><strong>Best For:</strong> Curious, detail-oriented, analytical minds</li>
+            <li><strong>Career Path:</strong> Junior Researcher → Researcher → Senior Researcher → Specialist</li>
+          </ul>
+        </div>
+
+        <div class="dept-card">
+          <h3>Research Access</h3>
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <a href="/anomalies/" class="btn-primary" style="text-align:center;">SCP Database</a>
+            <a href="/research-logs/" class="btn-primary" style="text-align:center;">Research Logs</a>
+            <a href="/archives/" class="btn-primary" style="text-align:center;">Archives</a>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-light); opacity:0.8; margin-top:0.75rem; margin-bottom:0;">
+            Access levels vary by clearance. Some resources require department membership.
+          </p>
+        </div>
+
+        <div class="dept-card">
+          <h3>Key Locations</h3>
+          <ul>
+            <li><strong>Scientific Zone:</strong> Main research hub</li>
+            <li><strong>R&D Labs:</strong> FPZ Elevator Section</li>
+            <li><strong>Medical Facilities:</strong> Throughout site</li>
+            <li><strong>Testing Chambers:</strong> Various containment zones</li>
+            <li><strong>Archive Wing:</strong> Historical research data</li>
+          </ul>
+        </div>
+
+        <div class="dept-card">
+          <h3>Safety Protocols</h3>
+          <ul style="font-size:0.9rem;">
+            <li>Always follow containment procedures</li>
+            <li>Document all observations immediately</li>
+            <li>Report anomalous behavior to supervisors</li>
+            <li>Never conduct unauthorized experiments</li>
+            <li>Maintain proper protective equipment</li>
+            <li>Respect clearance restrictions</li>
           </ul>
         </div>
       </aside>

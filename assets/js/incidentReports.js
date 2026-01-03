@@ -31,12 +31,12 @@ function userDepartment(){
 function isDeptAllowedForIncident(dept){
   if(!dept) return false;
   const d = dept.toLowerCase();
-  return d.includes('research') || d.includes('r&d') || d.includes('scien') || d.includes('scd') || d.includes('rnd');
+  // Check for SD (Security Department) instead of ScD
+  return d.includes('sd/') || d.includes('security');
 }
 
 function canCreateIncident(){
-  const c = userClearance();
-  if(!isNaN(c) && c >= 3) return true; // clearance 3+ allowed
+  // Only SD members can create incident reports
   const dept = userDepartment();
   return isDeptAllowedForIncident(dept);
 }
@@ -45,6 +45,9 @@ function formatDate(ts){
   if(!ts) return '';
   try { return new Date(ts.seconds * 1000).toLocaleString(); } catch(e){ return ts.toString(); }
 }
+
+// TinyMCE instance holder
+let editorInstance = null;
 
 // Main
 document.addEventListener('includesLoaded', ()=>{
@@ -65,10 +68,39 @@ document.addEventListener('includesLoaded', ()=>{
   // Show 'New' for authorized
   if(newBtn){
     if(canCreateIncident()) newBtn.style.display = 'inline-block'; else newBtn.style.display = 'none';
-    newBtn.addEventListener('click', ()=>{ if(canCreateIncident()){ createModal.style.display = 'flex'; createModal.setAttribute('aria-hidden','false'); document.getElementById('incTitle').focus(); } else alert('You do not have permission to create incident reports.'); });
+    newBtn.addEventListener('click', ()=>{ 
+      if(canCreateIncident()){ 
+        createModal.style.display = 'flex'; 
+        createModal.setAttribute('aria-hidden','false'); 
+        document.getElementById('incReportId').focus(); 
+        // Initialize TinyMCE
+        if(!editorInstance){
+          tinymce.init({
+            selector: '#incContent',
+            height: 400,
+            menubar: false,
+            plugins: 'lists link table code',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link table | code',
+            skin: 'oxide-dark',
+            content_css: 'dark',
+            setup: (editor) => { editorInstance = editor; }
+          });
+        }
+      } else alert('You do not have permission to create incident reports. SD membership required.'); 
+    });
   }
-  if(closeIncidentModal) closeIncidentModal.addEventListener('click', ()=>{ createModal.style.display='none'; createModal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
-  if(cancelIncidentBtn) cancelIncidentBtn.addEventListener('click', ()=>{ createModal.style.display='none'; createModal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
+  if(closeIncidentModal) closeIncidentModal.addEventListener('click', ()=>{ 
+    createModal.style.display='none'; 
+    createModal.setAttribute('aria-hidden','true'); 
+    feedback.textContent=''; 
+    if(editorInstance) { editorInstance.remove(); editorInstance = null; }
+  });
+  if(cancelIncidentBtn) cancelIncidentBtn.addEventListener('click', ()=>{ 
+    createModal.style.display='none'; 
+    createModal.setAttribute('aria-hidden','true'); 
+    feedback.textContent=''; 
+    if(editorInstance) { editorInstance.remove(); editorInstance = null; }
+  });
 
   // render
   let cache = [];
@@ -100,29 +132,61 @@ document.addEventListener('includesLoaded', ()=>{
     createForm.addEventListener('submit', async (e)=>{
       e.preventDefault(); feedback.textContent = '';
       if(!auth.currentUser){ feedback.textContent = 'You must be signed in to create incident reports.'; return; }
-      if(!canCreateIncident()){ feedback.textContent = 'You do not have permission to create incident reports.'; return; }
+      if(!canCreateIncident()){ feedback.textContent = 'You do not have permission to create incident reports. SD membership required.'; return; }
+      
+      const reportId = document.getElementById('incReportId').value.trim();
       const title = document.getElementById('incTitle').value.trim();
       const tags = document.getElementById('incTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const docUrl = document.getElementById('incDocUrl').value.trim();
-      if(!title || !docUrl) { feedback.textContent = 'Title and document link required.'; return; }
+      const content = editorInstance ? editorInstance.getContent() : document.getElementById('incContent').value;
+      
+      // Validate report ID format
+      const pattern = /^IR-\d{2}\.\d{2}\.\d{2}-\d{3}$/;
+      if (!pattern.test(reportId)) {
+        feedback.style.color = 'var(--accent-red)';
+        feedback.textContent = 'Invalid format. Use: IR-MM.DD.YY-###';
+        return;
+      }
+      
+      if(!reportId || !title || !content) { feedback.textContent = 'Report ID, title and content required.'; return; }
       try{
         const ch = getSelectedCharacter();
         const author = ch ? (ch.name || auth.currentUser.email) : auth.currentUser.email;
-        await addDoc(collection(db,'incidentReports'), { title, tags, docUrl, author, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid });
-        feedback.style.color='var(--accent-mint)'; feedback.textContent = 'Report created.'; createForm.reset(); createModal.style.display='none'; createModal.setAttribute('aria-hidden','true');
+        const authorPid = ch ? (ch.pid || '') : '';
+        await addDoc(collection(db,'incidentReports'), { 
+          reportId, 
+          title, 
+          tags, 
+          content, 
+          author, 
+          authorPid,
+          department: ch ? ch.department || '' : '', 
+          createdAt: serverTimestamp(), 
+          createdByUid: auth.currentUser.uid 
+        });
+        feedback.style.color='var(--accent-mint)'; 
+        feedback.textContent = 'Report created.'; 
+        createForm.reset(); 
+        if(editorInstance) { editorInstance.setContent(''); }
+        setTimeout(() => {
+          createModal.style.display='none'; 
+          createModal.setAttribute('aria-hidden','true');
+        }, 1500);
       } catch(err){ feedback.style.color='var(--accent-red)'; feedback.textContent = 'Error: ' + err.message; }
     });
   }
 
   // view modal
   function openView(d){
-    viewModalTitle.textContent = d.title || '(untitled)';
+    viewModalTitle.textContent = (d.reportId ? d.reportId + ': ' : '') + (d.title || '(untitled)');
     viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
-    if(d.docUrl){
+    if(d.content){
+      viewModalBody.innerHTML = d.content;
+    } else if(d.docUrl){
+      // Legacy support for old doc links
       const safeUrl = String(d.docUrl);
-      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p><p style="margin-top:.6rem;color:var(--text-light);opacity:.9">${safeUrl}</p>`;
+      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p>`;
     } else {
-      viewModalBody.innerHTML = '<em>No document link provided.</em>';
+      viewModalBody.innerHTML = '<em>No content available.</em>';
     }
     viewModal.setAttribute('aria-hidden','false');
   }

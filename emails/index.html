@@ -29,8 +29,10 @@
 
     .mail-list { width:100%; background:var(--bg-panel); border-radius:8px; overflow:auto; flex:1 1 auto; }
     .mail-list .search { padding: .8rem; border-bottom:1px solid rgba(255,255,255,0.02); }
-    .message-item { padding:.8rem .9rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; gap:.6rem; align-items:flex-start; cursor:pointer }
-    .message-item.unread { background: rgba(78,250,170,0.02); }
+    .message-item { padding:.8rem .9rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; gap:.6rem; align-items:flex-start; cursor:pointer; transition: background-color 0.2s; }
+    .message-item:hover { background: rgba(255,255,255,0.03); }
+    .message-item.unread { background: rgba(78,250,170,0.08); border-left: 3px solid var(--accent-mint); padding-left: calc(.9rem - 3px); }
+    .message-item.unread .subject { color: var(--accent-mint); font-weight: 700; }
     .message-item .meta { flex:1; }
     .message-item .subject { font-weight:700; }
     .message-item .snippet { color:var(--text-light); opacity:.86; font-size:0.95rem }
@@ -104,6 +106,11 @@
       <div><button id="composeClose" class="btn-secondary">Close</button></div>
     </header>
     <div class="body">
+      <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
+        <select id="composeSendAs" style="flex:1;padding:.6rem;border-radius:6px;border:1px solid #333;background:#111;color:var(--text-light)">
+          <option value="">Send as personal account</option>
+        </select>
+      </div>
       <input id="composeTo" placeholder="To (comma-separated addresses)">
       <input id="composeSubject" placeholder="Subject">
       <textarea id="composeBody" placeholder="Message body..."></textarea>

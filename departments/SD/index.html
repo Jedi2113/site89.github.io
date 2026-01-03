@@ -13,11 +13,30 @@
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
 
     .dept-grid { display:grid; grid-template-columns: 1fr 320px; gap:1.5rem; max-width:1100px; margin:1.25rem auto; }
-    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; }
-    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; }
-    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; }
+    .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; margin-bottom:1.25rem; }
+    .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; font-size:1.5rem; }
+    .dept-card h3 { color:var(--accent-teal); margin-top:1.25rem; margin-bottom:0.5rem; font-size:1.2rem; }
+    .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; margin-bottom:0.75rem; }
+    .dept-card ul { margin:0.5rem 0; padding-left:1.5rem; color:var(--text-light); opacity:0.9; }
+    .dept-card ul li { margin-bottom:0.4rem; }
+    
+    .leadership-section { background: rgba(78,250,170,0.02); padding:1rem; border-radius:6px; margin:1rem 0; border-left: 3px solid var(--accent-mint); }
+    .leadership-section strong { color:var(--accent-mint); }
+    
+    .division-card { background: rgba(78,250,170,0.02); padding:1.25rem; border-radius:6px; margin-bottom:1.5rem; border-left: 3px solid var(--accent-teal); }
+    .division-card h3 { margin-top:0; color:var(--accent-mint); }
+    .division-card .contact { font-family:var(--font-mono); font-size:0.9rem; color:var(--accent-teal); margin:0.5rem 0; }
+    .division-card .quote { font-style:italic; opacity:0.85; margin:0.5rem 0; padding-left:1rem; border-left:2px solid rgba(78,250,170,0.2); }
+    .division-card .status { background:rgba(78,250,170,0.1); padding:0.4rem 0.6rem; border-radius:4px; display:inline-block; font-size:0.85rem; margin-top:0.5rem; }
+    
     .side-box h3 { color:var(--accent-teal); margin:0 0 0.6rem 0; }
     .side-box ul { margin:0; padding-left:1rem; }
+    .side-box .dept-card { margin-bottom:0.8rem; }
+
+    .program-highlight { background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, rgba(78,250,170,0.01) 100%); padding:1rem; border-radius:6px; margin:1rem 0; border: 1px solid rgba(78,250,170,0.1); }
+    
+    .btn-portal { display:inline-block; background:var(--accent-mint); color:var(--bg-dark); padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; transition:all 0.2s; text-align:center; }
+    .btn-portal:hover { background:var(--accent-teal); transform:translateY(-2px); box-shadow: 0 4px 12px rgba(78,250,170,0.3); }
 
     @media (max-width:880px) { .dept-grid { grid-template-columns:1fr; } .dept-hero { text-align:center; flex-direction:column; } }
   </style>
@@ -27,38 +46,190 @@
   <div data-include="/components/navbar.html"></div>
 
   <section class="dept-hero">
-    <img src="/assets/img/SD.png" alt="Site-89 Logo" class="logo">
+    <img src="/assets/img/SD.png" alt="Site-89 Security Department" class="logo">
     <div>
       <div class="title">Security Department (SD)</div>
-      <div class="subtitle">Ensures site safety, containment, and personnel security — the guardians of Site-89.</div>
+      <div class="subtitle">Prevention, Observation, and Safety — The guardians of Site-89.</div>
     </div>
   </section>
 
   <section class="content" style="padding-top:1.25rem;">
     <div class="dept-grid">
       <div>
+        <!-- Information Central -->
         <div class="dept-card">
-          <h2>Overview</h2>
-          <p>The Security Department maintains site security, coordinates containment operations, and protects personnel. SD handles access control, routine patrols, incident responses, and works closely with other departments to ensure threats are managed effectively.</p>
+          <h2>» Information Central «</h2>
+          <p>The Security Department (SD) is the security wing of Site-89 specializing in the containment of anomalies, security of facilities and personnel, and coordination of site affairs. All inquiries and requests about the SD and its activities are to be processed through Security Command, and passed down to the needed subdepartment.</p>
 
-          <h2>Working in SD — For Interns</h2>
-          <p>Interns in SD support watch rotations, assist with access control and incident reporting, and take part in drills and training. Expectations include punctuality, procedural adherence, teamwork, and a commitment to safety. Training is provided and ongoing mentorship ensures interns learn proper containment and security procedures.</p>
+          <div class="leadership-section">
+            <strong>Director:</strong> Alyx M. Andrews<br>
+            <strong>Assistant Director:</strong> "Storm"
+          </div>
 
-          <h2>Skills & Experience</h2>
-          <p>Discipline, reliability, clear communication, and ability to follow protocols are key. Interns will gain experience with incident reporting, routine security operations, and containment support.</p>
+          <div class="program-highlight">
+            <strong style="color:var(--accent-mint);">Joint Volunteer Field Program</strong>
+            <p style="margin:0.5rem 0 0 0;">The Security Department and the Department of External Operations host a joint volunteer program for all willing Security Department members to go on field missions and operations. Interested in field work? Learn more through Security Command.</p>
+          </div>
+        </div>
 
-          <div style="margin-top:1rem;"><a href="/accounts/" class="btn-primary">Apply / Create Account</a></div>
+        <!-- Working in SD -->
+        <div class="dept-card">
+          <h2>Working in SD — For Interns & New Personnel</h2>
+          <p>The Security Department offers opportunities for personnel at all levels, from new recruits to elite specialists. Whether you're interested in standard security operations, intelligence gathering, or specialized tactical response, SD provides comprehensive training and career progression.</p>
+
+          <h3>What You'll Do</h3>
+          <ul>
+            <li>Guard secure areas and maintain checkpoint security</li>
+            <li>Monitor and respond to containment breaches</li>
+            <li>Escort valuable research tests and VIP personnel</li>
+            <li>Patrol facilities and conduct routine security sweeps</li>
+            <li>Manage Class-D personnel and handle rogue staff situations</li>
+            <li>Participate in recontainment operations and emergency response</li>
+            <li>Document incidents and maintain security reports</li>
+          </ul>
+
+          <h3>Skills & Experience</h3>
+          <p>Discipline, reliability, situational awareness, and clear communication are essential. New members receive comprehensive training in:</p>
+          <ul>
+            <li>Foundation security protocols and containment procedures</li>
+            <li>Firearms handling and safety (permit required)*</li>
+            <li>Emergency response and breach protocols</li>
+            <li>Incident documentation and reporting</li>
+            <li>Team coordination and tactical communication</li>
+          </ul>
+          <p style="font-size:0.9rem; opacity:0.8; margin-top:0.5rem;">*Access to firearms is limited for newer recruits and members who fail to perform their duties responsibly. Contact Director A. Andrews for more information on firearms permits.</p>
+
+          <h3>Getting Started</h3>
+          <p><strong>Security & Containment is open to all facility personnel</strong> willing to undergo the Security Department Intro Training or create an appropriate character. Visit the Security Zone on the second floor of the Upper FPZ, just past Tom's Diner, to meet with SD personnel.</p>
+
+          <p style="margin-top:1rem; padding:1rem; background:rgba(78,250,170,0.05); border-left:3px solid var(--accent-mint); border-radius:4px;">
+            <strong style="color:var(--accent-mint);">Interested in joining Security?</strong><br>
+            Contact the Security Department at <a href="/emails/?compose=sd@site89.org" style="color:var(--accent-teal); font-family:var(--font-mono);">sd@site89.org</a>
+          </p>
+        </div>
+
+        <!-- Divisions -->
+        <div class="dept-card">
+          <h2>» Security Department Divisions «</h2>
+          <p style="font-style:italic; opacity:0.8; margin-bottom:1.5rem;">Security Department Main Lobby [With BSL Shaders]</p>
+
+          <!-- Security Command -->
+          <div class="division-card">
+            <h3>Security Command</h3>
+            <div class="contact">SD.Cmd@Site89.org</div>
+            <p><strong>Operations Commander:</strong> N/A</p>
+            
+            <p>Security Command is the Security Department's advisory and control body, operating within the Security Control Room, Site Control Room, and Dispatch Office. This small elite group advises Upper Command on security issues and enacts policies to further the department's goal of Prevention, Observation, and Safety. They control the distribution of Firearms Permits along with IO, ensuring personnel are responsible and licensed to carry firearms.</p>
+            
+            <div class="quote">- Dir. Andrews</div>
+            
+            <div class="status">
+              <strong>Status:</strong> Limited to Sergeants and above (Cap: 9 members)<br>
+              <strong>Access:</strong> Visit SDZ Second Level Control Room or Dispatch Office
+            </div>
+          </div>
+
+          <!-- Security Intelligence Service -->
+          <div class="division-card">
+            <h3>Security Intelligence Service (SIS)</h3>
+            <div class="contact">SD.SIS@Site89.org</div>
+            <p><strong>Intelligence Manager:</strong> N/A</p>
+            
+            <p>The Security Intelligence Service is the Security Department's primary intelligence-gathering agency, working closely with the Department of External Affairs' Intelligence Agency. They primarily work on and around the site, also attending IA Operations. The SIS oversees the Volunteer Field Agent Program, coordinating security personnel for external missions.</p>
+            
+            <div class="status">
+              <strong>Status:</strong> Invite Only<br>
+              <strong>Access:</strong> Visit Joint IA & SIS Section
+            </div>
+          </div>
+
+          <!-- Specialized Divisions Unit -->
+          <div class="division-card">
+            <h3>Specialized Divisions Unit (SDU)</h3>
+            <div class="contact">SD.SDU@Site89.org</div>
+            <p><strong>Commander:</strong> "Storm"</p>
+            
+            <div class="quote">We live to save lives.</div>
+            
+            <p>The Specialized Divisions Units of Site-89 are some of the most elite in the entire region. Their main job is to recontain breached SCP objects as needed, High-Value asset recovery, CSI, CBRN, and Diving. We are among some of the few on-site personnel qualified to accomplish this task properly. We also help regain control over any Class-D who may find themselves armed. Being in unit usually indicates you are among the best of the best in terms of on-site operations.</p>
+            
+            <div class="quote">- [REDACTED]</div>
+            
+            <p style="font-size:0.9rem; opacity:0.8;"><em>Termination orders are subject to Security Command approval.</em></p>
+            
+            <div class="status">
+              <strong>Status:</strong> Selection process from best Security Members<br>
+              <strong>Access:</strong> Visit SDZ to meet with SDU personnel
+            </div>
+          </div>
+
+          <!-- Security & Containment -->
+          <div class="division-card">
+            <h3>Security & Containment (S&C)</h3>
+            <div class="contact">SD.SecCont@Site89.org</div>
+            <p><strong>Security Chief:</strong> N/A</p>
+            
+            <div class="quote">Guns are fun, but always the last option.</div>
+            
+            <p>Here at the Foundation, things aren't always exactly safe. We here at the Security & Containment Division are in charge of keeping other valued foundation staff safe. We are among the first line of defense in the event of a breach or infiltration. Some of our duties include (but are definitely not limited to) guarding secure areas, dealing with rogue personnel, keeping Class-D in check, guarding checkpoints, patrolling, and escorting valuable tests regarding research. We accomplish these duties through many various ways, but as a general guiding rule, you will need a gun*. In S&C, you will be the first line for security for the site.</p>
+            
+            <div class="quote">- N/A</div>
+            
+            <p style="font-size:0.9rem; opacity:0.8;"><em>*Access to firearms is limited for newer recruits and members who fail to do their job. Contact Director A. Andrews for more information.</em></p>
+            
+            <div class="status">
+              <strong>Status:</strong> Open to all facility personnel<br>
+              <strong>Requirements:</strong> Security Department Intro Training<br>
+              <strong>Location:</strong> Security Zone, 2nd Floor Upper FPZ (past Tom's Diner)
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Sidebar -->
       <aside class="side-box">
         <div class="dept-card">
           <h3>Quick Facts</h3>
           <ul>
-            <li>Typical shift: Watch rotations</li>
-            <li>Required training: Security basics & incident procedures</li>
-            <li>Contact: Security Command via <a href="/accounts/">Accounts</a></li>
-            <li>Good for: Organized, steady, team players</li>
+            <li><strong>Typical Duty:</strong> Watch rotations, patrols, guard posts</li>
+            <li><strong>Training Required:</strong> SD Intro Training & ongoing drills</li>
+            <li><strong>Firearms:</strong> Permit required (earned through training)</li>
+            <li><strong>Contact:</strong> Security Command via <a href="/accounts/">Accounts</a></li>
+            <li><strong>Best For:</strong> Disciplined, reliable, team-oriented personnel</li>
+            <li><strong>Career Path:</strong> Recruit → Officer → Sergeant → Specialist/Command</li>
+          </ul>
+        </div>
+
+        <div class="dept-card" style="text-align:center;">
+          <h3 style="margin-bottom:0.8rem;">Officer's Portal</h3>
+          <a href="/departments/SD/portal/" class="btn-portal">ACCESS SD INTERNAL NETWORK</a>
+          <div style="font-size:0.9rem; color:var(--text-light); opacity:0.85; margin-top:0.75rem;">
+            Incident reporting, internal communications, and operational resources
+          </div>
+          <div style="font-size:0.85rem; color:var(--accent-mint); margin-top:0.5rem;">
+            ⚠ Access limited to Security Department personnel
+          </div>
+        </div>
+
+        <div class="dept-card">
+          <h3>Key Locations</h3>
+          <ul>
+            <li><strong>Security Zone (SDZ):</strong> Main operations hub</li>
+            <li><strong>Control Room:</strong> 2nd Level SDZ</li>
+            <li><strong>Dispatch Office:</strong> Security Command</li>
+            <li><strong>Armory:</strong> Firearms & equipment</li>
+            <li><strong>Training Facility:</strong> Recruit training area</li>
+          </ul>
+        </div>
+
+        <div class="dept-card">
+          <h3>Important Notes</h3>
+          <ul style="font-size:0.9rem;">
+            <li>All security operations follow Foundation Code of Conduct</li>
+            <li>Lethal force is always the last resort</li>
+            <li>Document all incidents immediately</li>
+            <li>Chain of command must be respected</li>
+            <li>Report suspicious activity to Security Command</li>
           </ul>
         </div>
       </aside>

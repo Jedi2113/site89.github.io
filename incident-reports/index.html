@@ -7,6 +7,8 @@
   <meta name="required-clearance" content="1">
   <title>Incident Reports — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- TinyMCE -->
+  <script src="https://cdn.tiny.cloud/1/wgqechbx2jopsbvntv872129bj4qw3wbxsvy35z27edgkqz4/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
   <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
@@ -48,7 +50,7 @@
       <div class="ms-header">
         <div class="ms-title">
           <h1>Incident Reports</h1>
-          <p class="ms-sub">Logged incident reports — click any title to open the full report. Anyone with ScD or clearance ≥ 1 can view; creation requires ScD or clearance ≥ 3.</p>
+          <p class="ms-sub">Logged incident reports — click any title to open the full report. Anyone with clearance ≥ 1 can view; creation requires SD (Security Department) membership.</p>
         </div>
 
         <div class="ms-toolbar">
@@ -70,25 +72,28 @@
 
       <!-- View modal -->
       <div id="viewIncidentModal" class="view-modal" aria-hidden="true">
-        <div class="modal-box" role="dialog" aria-modal="true">
+        <div class="modal-box" role="dialog" aria-modal="true" style="max-width:1100px; max-height:90vh; overflow-y:auto;">
           <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="viewIncidentTitle">Title</h2><button id="viewIncidentClose" class="btn-link">✕</button></div>
           <div id="viewIncidentMeta" class="meta"></div>
-          <div id="viewIncidentBody" style="margin-top:.6rem"></div>
+          <div id="viewIncidentBody" style="margin-top:1rem; line-height:1.6;"></div>
         </div>
       </div>
 
       <!-- Create modal (same pattern as research logs) -->
       <div id="createIncidentModal" class="modal" aria-hidden="true" style="display:none">
-        <div class="modal-content" role="dialog" aria-modal="true">
+        <div class="modal-content" role="dialog" aria-modal="true" style="max-width:900px;">
           <div class="modal-header">
             <h2>Create New Incident Report</h2>
             <button id="closeIncidentModal" class="btn-link" title="Close">✕</button>
           </div>
 
           <form id="createIncidentForm">
+            <label>Report ID <input id="incReportId" placeholder="IR-MM.DD.YY-###" required></label>
             <label>Title <input id="incTitle" placeholder="Title" required></label>
             <label>Tags <input id="incTags" placeholder="Tags (comma separated)"></label>
-            <label>Document Link <input id="incDocUrl" placeholder="Google Doc URL (shareable link)" required></label>
+            <label style="display:block; margin-bottom:0.5rem;">Report Content
+              <textarea id="incContent" style="width:100%; min-height:400px;"></textarea>
+            </label>
             <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createIncidentBtn" class="btn-primary" type="submit">Create</button><button id="cancelIncidentBtn" class="btn-secondary" type="button">Cancel</button></div>
             <p id="incFeedback" class="feedback"></p>
           </form>

@@ -21,21 +21,31 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
-    // Emails collection - character-based email system
+    // Emails collection - character-based email system with director support
     match /emails/{emailId} {
-      // Allow any authenticated user to read emails (frontend filters by character)
+      // Allow any authenticated user to read emails (frontend filters by character and mailing lists)
       allow read: if request.auth != null;
 
-      // Allow create: user sends from their auth email, sender can be character or auth email
+      // Allow create: user sends from their auth email, sender can be character/personal email or division address
+      // Division-specific addresses (bod@, io@, sd@, scd@, deo@, mtf@, ia@site89.org):
+      // - Frontend validates director permissions via character.directorOf array before sending
+      // - Mailing lists (e.g., SD@site89.org) are expanded on frontend to individual character emails
+      // - Backend trusts frontend validation since user auth ties to email
       allow create: if request.auth != null
         && request.resource.data.senderEmail == request.auth.token.email
         && (request.resource.data.sender.matches('.*@site89\\.org$') || request.resource.data.sender == request.auth.token.email)
         && request.resource.data.recipients is list
+        && request.resource.data.recipients.size() > 0
         && request.resource.data.subject is string
         && request.resource.data.body is string;
 
-      // Allow update if user is the sender
-      allow update: if request.auth != null && resource.data.senderEmail == request.auth.token.email;
+      // Allow update if:
+      // - User is the sender (can update folder, status, etc.)
+      // - OR user is updating ONLY the 'read' field (recipients marking as read)
+      allow update: if request.auth != null && (
+        resource.data.senderEmail == request.auth.token.email ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']))
+      );
 
       // Allow delete if user is the sender
       allow delete: if request.auth != null && resource.data.senderEmail == request.auth.token.email;
@@ -50,6 +60,43 @@ service cloud.firestore {
         && request.resource.data.caption is string;
       allow delete: if request.auth != null && (
         resource.data.uploaderId == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
+    }
+
+    // Research Logs collection
+    match /researchLogs/{logId} {
+      // Allow authenticated users with clearance >= 1 to read
+      allow read: if request.auth != null;
+      
+      // Allow create for authenticated users
+      // (The frontend checks if user is in ScD or has clearance >= 5)
+      allow create: if request.auth != null
+        && request.resource.data.createdByUid == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.content is string;
+      
+      // Allow update/delete by creator or admin
+      allow update, delete: if request.auth != null && (
+        resource.data.createdByUid == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
+    }
+
+    // Incident Reports collection (for SD portal)
+    match /incidentReports/{reportId} {
+      // Allow authenticated users to read
+      allow read: if request.auth != null;
+      
+      // Allow create for authenticated users
+      allow create: if request.auth != null
+        && request.resource.data.createdByUid == request.auth.uid
+        && request.resource.data.reportId is string
+        && request.resource.data.content is string;
+      
+      // Allow update/delete by creator or admin
+      allow update, delete: if request.auth != null && (
+        resource.data.createdByUid == request.auth.uid ||
         request.auth.token.email == 'jedi21132@gmail.com'
       );
     }

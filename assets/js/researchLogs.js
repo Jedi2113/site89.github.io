@@ -46,6 +46,9 @@ function formatDate(ts){
   try { return new Date(ts.seconds * 1000).toLocaleString(); } catch(e){ return ts.toString(); }
 }
 
+// TinyMCE instance holder
+let editorInstance = null;
+
 function initializeResearchLogs(){
   const newBtn = document.getElementById('newLogBtn');
   const modal = document.getElementById('createModal');
@@ -59,10 +62,39 @@ function initializeResearchLogs(){
   // Show 'New' button only to authorized users
   if(newBtn){
     if(canCreate()) newBtn.style.display = 'inline-block'; else newBtn.style.display = 'none';
-    newBtn.addEventListener('click', ()=>{ if(canCreate()) { modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); document.getElementById('logTitle').focus(); } else alert('You do not have permission to create research logs.'); });
+    newBtn.addEventListener('click', ()=>{ 
+      if(canCreate()) { 
+        modal.style.display='flex'; 
+        modal.setAttribute('aria-hidden','false'); 
+        document.getElementById('logTitle').focus(); 
+        // Initialize TinyMCE
+        if(!editorInstance){
+          tinymce.init({
+            selector: '#logContent',
+            height: 400,
+            menubar: false,
+            plugins: 'lists link image table code',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code',
+            skin: 'oxide-dark',
+            content_css: 'dark',
+            setup: (editor) => { editorInstance = editor; }
+          });
+        }
+      } else alert('You do not have permission to create research logs.'); 
+    });
   }
-  if(closeModalBtn) closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
-  if(cancelLogBtn) cancelLogBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); feedback.textContent=''; });
+  if(closeModalBtn) closeModalBtn.addEventListener('click', ()=>{ 
+    modal.style.display='none'; 
+    modal.setAttribute('aria-hidden','true'); 
+    feedback.textContent=''; 
+    if(editorInstance) { editorInstance.remove(); editorInstance = null; }
+  });
+  if(cancelLogBtn) cancelLogBtn.addEventListener('click', ()=>{ 
+    modal.style.display='none'; 
+    modal.setAttribute('aria-hidden','true'); 
+    feedback.textContent=''; 
+    if(editorInstance) { editorInstance.remove(); editorInstance = null; }
+  });
 
   // Helper: render logs into table with optional search filter
   let logsCache = [];
@@ -102,11 +134,14 @@ function initializeResearchLogs(){
   function openViewModal(d){
     viewModalTitle.textContent = d.title || '(untitled)';
     viewModalMeta.textContent = `${d.author || 'Unknown'} • ${d.department || ''} • ${formatDate(d.createdAt)}`;
-    if(d.docUrl){
+    if(d.content){
+      viewModalBody.innerHTML = d.content;
+    } else if(d.docUrl){
+      // Legacy support for old doc links
       const safeUrl = String(d.docUrl);
-      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p><p style="margin-top:.6rem;color:var(--text-light);opacity:.9">${safeUrl}</p>`;
+      viewModalBody.innerHTML = `<p><a href="${safeUrl}" target="_blank" rel="noopener">Open Document →</a></p>`;
     } else {
-      viewModalBody.innerHTML = '<em>No document link provided.</em>';
+      viewModalBody.innerHTML = '<em>No content available.</em>';
     }
     viewModal.setAttribute('aria-hidden','false');
   }
@@ -123,17 +158,18 @@ function initializeResearchLogs(){
       if(!canCreate()){ feedback.textContent = 'You do not have permission to create research logs.'; return; }
       const title = document.getElementById('logTitle').value.trim();
       const tags = document.getElementById('logTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const docUrl = document.getElementById('logDocUrl').value.trim();
-      if(!title || !docUrl) { feedback.textContent = 'Title and document link required.'; return; }
+      const content = editorInstance ? editorInstance.getContent() : document.getElementById('logContent').value;
+      if(!title || !content) { feedback.textContent = 'Title and content required.'; return; }
       try{
         const ch = getSelectedCharacter();
         const author = ch ? (ch.name || auth.currentUser.email) : auth.currentUser.email;
         const authorPid = ch ? (ch.pid || '') : '';
         await addDoc(collection(db,'researchLogs'), {
-          title, tags, docUrl, author, authorPid, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid
+          title, tags, content, author, authorPid, department: ch ? ch.department || '' : '', createdAt: serverTimestamp(), createdByUid: auth.currentUser.uid
         });
         feedback.style.color = 'var(--accent-mint)'; feedback.textContent = 'Entry created.';
         createForm.reset();
+        if(editorInstance) { editorInstance.setContent(''); editorInstance.remove(); editorInstance = null; }
         modal.style.display='none'; modal.setAttribute('aria-hidden','true');
       } catch(err){ feedback.style.color='var(--accent-red)'; feedback.textContent = 'Error: ' + err.message; }
     });
