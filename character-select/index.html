@@ -432,7 +432,7 @@
       <div class="char-editor-header">
         <img id="charEditorImage" class="char-editor-image" src="https://via.placeholder.com/150" alt="Character photo">
         <div style="flex: 1;">
-          <input type="text" id="charImgurLink" placeholder="Imgur image URL (e.g., https://i.imgur.com/...)">
+          <input type="text" id="charImgurLink" placeholder="Catbox image URL (e.g., https://files.catbox.moe/...)">
           <button type="button" id="updatePhotoBtn" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; background: var(--accent-teal); color: #fff; border: none; border-radius: 6px; cursor: pointer;">Update Photo</button>
         </div>
       </div>
@@ -501,7 +501,7 @@
           const card = document.createElement("div");
           card.className = "character-card";
 
-          const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+          const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
           const isSelected = localStorage.getItem("selectedCharacter") ? 
             JSON.parse(localStorage.getItem("selectedCharacter")).id === char.id : false;
 
@@ -510,7 +510,7 @@
           img.src = photoUrl;
           img.alt = char.name || "Character";
           img.className = "character-card-image";
-          img.onerror = function() { this.src = 'https://i.imgur.com/1xP4NEN.png'; };
+          img.onerror = function() { this.src = 'https://files.catbox.moe/aa9390.png'; };
 
           const info = document.createElement("div");
           info.className = "character-card-info";

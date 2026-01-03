@@ -381,11 +381,11 @@
           const card = document.createElement("div");
           card.className = "personnel-card";
 
-          const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+          const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
           const maskedPid = maskPID(char.pid || '');
 
           card.innerHTML = `
-            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
+            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
             <div class="personnel-card-info">
               <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
               <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
@@ -409,7 +409,7 @@
       document.getElementById("modalDept").textContent = char.department || "—";
       document.getElementById("modalPID").textContent = maskPID(char.pid || '') || '—';
       document.getElementById("modalClearance").textContent = char.clearance || "—";
-      document.getElementById("modalPhoto").src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+      document.getElementById("modalPhoto").src = char.profileImage || 'https://files.catbox.moe/aa9390.png';
 
       // Load and display awards
       const awardsContainer = document.getElementById("modalAwards");

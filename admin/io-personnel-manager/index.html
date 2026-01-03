@@ -482,10 +482,10 @@
         const card = document.createElement('div');
         card.className = 'personnel-card';
 
-        const photoUrl = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+        const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
 
         card.innerHTML = `
-          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://i.imgur.com/1xP4NEN.png'">
+          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
           <div class="personnel-card-info">
             <h3 class="personnel-card-name">${char.name || 'Unknown'}</h3>
             <p class="personnel-card-rank">${char.rank || 'Unassigned'}</p>
@@ -523,7 +523,7 @@
 
         // Populate form
         document.getElementById('editPhotoUrl').value = char.profileImage || '';
-        document.getElementById('editPhotoPreview').src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+        document.getElementById('editPhotoPreview').src = char.profileImage || 'https://files.catbox.moe/aa9390.png';
         document.getElementById('editName').value = char.name || '';
         document.getElementById('editRank').value = char.rank || '';
         document.getElementById('editDept').value = char.department || '';
