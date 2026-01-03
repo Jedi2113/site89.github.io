@@ -145,6 +145,23 @@
     <div id="personnelGrid" class="personnel-grid" style="display:none;">
       <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
     </div>
+
+    <div id="pidListSection" class="about-box" style="margin-top: 2rem; display:none;">
+      <h3>Personnel ID Directory</h3>
+      <p style="margin-bottom: 1rem;">All registered Personnel IDs in the system</p>
+      <div id="pidList" style="max-height: 400px; overflow-y: auto;">
+        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading PIDs...</div>
+      </div>
+    </div>
+
+    <div id="charLinksSection" class="about-box" style="margin-top: 2rem; display:none;">
+      <h2>Character Account Links</h2>
+      <p>Unlink characters from accounts to reassign them to other users.</p>
+      <input id="charSearchInput" placeholder="Search by character name or account UID..." style="width:100%;padding:0.6rem;margin-bottom:1rem;background:var(--bg-card);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--text-light);">
+      <div id="charactersList" style="max-height: 500px; overflow-y: auto;">
+        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading characters...</div>
+      </div>
+    </div>
   </section>
 
   <!-- PID Modal -->
@@ -509,6 +526,146 @@
       searchInput.addEventListener('input', () => renderGrid(allPersonnel));
       addPIDBtn.addEventListener('click', () => window.openPIDModal());
 
+      // Load and display all Personnel IDs
+      async function loadPersonnelIDList() {
+        try {
+          const snaps = await getDocs(collection(db, 'personnel'));
+          const arr = [];
+          snaps.forEach(s => arr.push({ id: s.id, ...s.data() }));
+          arr.sort((a, b) => a.id.localeCompare(b.id));
+          
+          const pidListDiv = document.getElementById('pidList');
+          pidListDiv.innerHTML = '';
+          
+          arr.forEach(p => {
+            const el = document.createElement('div');
+            el.style.padding = '.6rem';
+            el.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
+            
+            const strongEl = document.createElement('strong');
+            strongEl.textContent = p.id;
+            
+            const textNode = document.createTextNode(` — ${p.name} `);
+            
+            const smallEl = document.createElement('small');
+            smallEl.style.opacity = '.8';
+            smallEl.textContent = `clear:${p.clearance} dept:${p.department || 'N/A'} rank:${p.rank || 'N/A'} class:${p['class'] || 'N/A'}`;
+            
+            el.appendChild(strongEl);
+            el.appendChild(textNode);
+            el.appendChild(smallEl);
+            pidListDiv.appendChild(el);
+          });
+        } catch (err) {
+          console.error('Error loading PID list:', err);
+          document.getElementById('pidList').innerHTML = `<div style="color:var(--accent-red)">Error loading PIDs</div>`;
+        }
+      }
+
+      // Load and display all characters with their account links
+      async function loadCharacters() {
+        try {
+          const snaps = await getDocs(collection(db, 'characters'));
+          const characters = [];
+          snaps.forEach(s => {
+            characters.push({ id: s.id, ...s.data() });
+          });
+          
+          characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+          displayCharacters(characters);
+        } catch (err) {
+          console.error("Error loading characters:", err);
+          document.getElementById('charactersList').innerHTML = `<div style="color:var(--accent-red)">Error loading characters</div>`;
+        }
+      }
+
+      function displayCharacters(characters) {
+        const charList = document.getElementById('charactersList');
+        charList.innerHTML = '';
+        if (characters.length === 0) {
+          charList.innerHTML = '<div>No characters found.</div>';
+          return;
+        }
+
+        characters.forEach(char => {
+          const el = document.createElement('div');
+          el.style.cssText = 'padding:0.8rem;border-bottom:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center;gap:1rem;';
+          
+          const linkedUID = char.linkedUID || 'Not linked';
+          const displayUID = linkedUID === 'Not linked' ? linkedUID : linkedUID.substring(0, 12) + '...';
+          
+          const leftDiv = document.createElement('div');
+          leftDiv.style.flex = '1';
+          
+          const nameStrong = document.createElement('strong');
+          nameStrong.textContent = char.name || 'Unknown';
+          leftDiv.appendChild(nameStrong);
+          
+          const smallEl = document.createElement('small');
+          smallEl.style.cssText = 'opacity:0.8;display:block;margin-top:0.2rem;';
+          smallEl.textContent = `ID: ${char.id.substring(0, 8)}... | Linked: ${displayUID} | Dept: ${char.department || 'N/A'}`;
+          leftDiv.appendChild(smallEl);
+          
+          const btn = document.createElement('button');
+          btn.className = 'char-unlink-btn';
+          btn.dataset.charId = char.id;
+          btn.dataset.charName = char.name || 'Unknown';
+          btn.style.cssText = 'padding:0.4rem 0.8rem;background:var(--accent-red);border:none;border-radius:4px;color:white;cursor:pointer;font-size:0.85rem;';
+          btn.textContent = 'Unlink';
+          
+          el.appendChild(leftDiv);
+          el.appendChild(btn);
+          charList.appendChild(el);
+        });
+
+        // Wire up unlink buttons
+        document.querySelectorAll('.char-unlink-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const charId = btn.dataset.charId;
+            const charName = btn.dataset.charName;
+            
+            if (!confirm(`Unlink character "${charName}" from its account? This will allow it to be linked to another account.`)) {
+              return;
+            }
+
+            try {
+              await updateDoc(doc(db, 'characters', charId), {
+                linkedUID: null
+              });
+              alert(`Character "${charName}" has been unlinked.`);
+              loadCharacters();
+            } catch (err) {
+              alert(`Error unlinking character: ${err.message}`);
+            }
+          });
+        });
+      }
+
+      // Search/filter characters
+      document.getElementById('charSearchInput').addEventListener('input', async () => {
+        const searchTerm = document.getElementById('charSearchInput').value.toLowerCase().trim();
+        
+        try {
+          const snaps = await getDocs(collection(db, 'characters'));
+          let characters = [];
+          snaps.forEach(s => {
+            characters.push({ id: s.id, ...s.data() });
+          });
+
+          if (searchTerm) {
+            characters = characters.filter(char => 
+              (char.name || '').toLowerCase().includes(searchTerm) ||
+              (char.linkedUID || '').toLowerCase().includes(searchTerm)
+            );
+          }
+
+          characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+          displayCharacters(characters);
+        } catch (err) {
+          console.error("Error searching characters:", err);
+        }
+      });
+
       // Auth check and load
       onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -535,6 +692,8 @@
 
           managementContainer.style.display = 'block';
           personnelGrid.style.display = 'grid';
+          document.getElementById('pidListSection').style.display = 'block';
+          document.getElementById('charLinksSection').style.display = 'block';
           
           const allChars = await getDocs(collection(db, 'characters'));
           allPersonnel = [];
@@ -546,6 +705,8 @@
           });
 
           renderGrid(allPersonnel);
+          loadPersonnelIDList();
+          loadCharacters();
 
         } catch (err) {
           console.error('Error checking access:', err);

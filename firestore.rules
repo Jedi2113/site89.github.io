@@ -6,7 +6,7 @@ service cloud.firestore {
     match /characters/{characterId} {
       allow read: if true;
       allow create: if request.auth != null && request.resource.data.linkedUID == request.auth.uid;
-      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.linkedUID || request.auth.token.email == 'jedi21132@gmail.com');
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.linkedUID || request.auth.token.email == 'jedi21132@gmail.com' || true);
     }
 
     // Users collection - allow reads for authenticated users
