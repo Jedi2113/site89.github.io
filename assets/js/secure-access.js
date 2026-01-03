@@ -1,19 +1,19 @@
 /**
- * SECURE ACCESS CONTROL
+ * SECURE ACCESS CONTROL - REVISED
  * 
  * This module handles clearance-based access control with server-side verification.
- * It prevents race conditions where users can see restricted content on page load.
+ * REVISED: Now tries to authenticate first, only blocks if we're sure access is denied.
  * 
  * CRITICAL: This must be loaded before any page content renders.
  * Add to ALL pages with clearance requirements as EARLY as possible in head.
  */
 
 (function(){
-  // IMMEDIATELY block page rendering
-  document.documentElement.style.opacity = '0';
-  document.documentElement.style.pointerEvents = 'none';
-  
   let accessCheckComplete = false;
+  let pageBlocked = false;
+  
+  // Don't block immediately - only block if we determine we need to
+  // This prevents the "403 before auth loads" problem
   
   async function performSecureAccessCheck(){
     try {
@@ -27,45 +27,40 @@
 
       const required = getRequired();
       if (!required) {
-        // No restriction on this page - allow rendering
-        unblockPage();
+        // No restriction on this page
+        completeCheck(true);
         return;
       }
 
-      // Page has clearance requirement - must verify with Firebase
+      // Page has clearance requirement - try to verify
       const userClearance = await fetchUserClearanceFromFirebase();
       const reqNum = parseClearance(required);
       
       if (Number.isNaN(reqNum)) {
-        // Invalid required value, allow (fail open safely)
-        unblockPage();
+        // Invalid required value - allow (fail open)
+        completeCheck(true);
         return;
       }
 
-      // If no user/character, userClearance will be NaN - block access
+      // Check clearance result
       if (Number.isNaN(userClearance)) {
-        blockPageAndRedirect();
+        // No valid user/clearance - BLOCK
+        blockPage();
         return;
       }
 
-      // Check if user has sufficient clearance (>= required level)
       if (userClearance >= reqNum) {
-        // User has valid access - allow rendering
-        unblockPage();
+        // User has sufficient clearance - ALLOW
+        completeCheck(true);
       } else {
-        // User doesn't have sufficient clearance - redirect
-        blockPageAndRedirect();
+        // User has insufficient clearance - BLOCK
+        blockPage();
       }
     } catch (err) {
-      console.error('Secure access check error', err);
-      // On error with restricted page, still block to be safe
-      // but wait a bit to see if auth loads
-      setTimeout(() => {
-        if (!accessCheckComplete) {
-          console.warn('Access check still incomplete after error, blocking as precaution');
-          blockPageAndRedirect();
-        }
-      }, 3000);
+      console.error('Secure access check error:', err);
+      // On error, allow the page to load and let it handle auth
+      // This prevents complete failures
+      completeCheck(true);
     }
   }
 
@@ -96,40 +91,55 @@
 
   /**
    * Fetch the current user's clearance level from Firebase
-   * This is the ONLY authoritative source for clearance
+   * Returns NaN if user is not authenticated or doesn't have access
+   * Returns clearance number if user is authenticated
    */
   async function fetchUserClearanceFromFirebase(){
     try {
       // Initialize Firebase app
       const app = await initializeFirebase();
-      if (!app) return NaN;
+      if (!app) {
+        console.warn('Firebase app not initialized');
+        return NaN;
+      }
 
       // Import Firebase modules dynamically
       const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js");
       const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js");
       
-      // Get the current auth state
+      // Get auth instance
       const auth = getAuth(app);
       
-      // Wait for auth state to be initialized
+      // Wait for auth state to be established - with longer timeout for slower connections
       const user = await new Promise((resolve) => {
+        let resolved = false;
+        
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-          unsubscribe();
-          resolve(user);
+          if (!resolved) {
+            resolved = true;
+            unsubscribe();
+            resolve(user);
+          }
         });
-        // Timeout after 3 seconds to prevent hanging
-        setTimeout(() => {
-          unsubscribe();
-          resolve(null);
-        }, 3000);
+        
+        // Timeout after 5 seconds (longer to allow for slower networks)
+        const timeoutId = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            unsubscribe();
+            console.warn('Auth state check timed out');
+            resolve(null);
+          }
+        }, 5000);
       });
       
       if (!user) {
-        // Not authenticated - redirect to login
+        // Not authenticated
+        console.log('User not authenticated');
         return NaN;
       }
 
-      // Get user's selected character from localStorage (as hint)
+      // User is authenticated - check their character clearance
       const selectedCharRaw = localStorage.getItem('selectedCharacter');
       let selectedCharId = null;
       
@@ -138,45 +148,43 @@
           const char = JSON.parse(selectedCharRaw);
           selectedCharId = char.id;
         } catch (e) {
-          // Invalid localStorage data - ignore it
+          console.warn('Invalid selectedCharacter in localStorage');
         }
       }
 
       if (!selectedCharId) {
-        // No character selected in localStorage
-        // This could mean: user hasn't completed character creation, or just hasn't selected one
-        // For research logs and similar pages, we should allow them through but they might see limited content
-        // Default to clearance 1 for authenticated users with no character selected
+        // No character selected - default to clearance 1 (Intern)
+        console.log('No character selected, defaulting to clearance 1');
         return 1;
       }
 
-      // Query Firebase to verify character and get clearance
-      // CRITICAL: This bypasses any localStorage tampering
+      // Get character from Firebase
       const db = getFirestore(app);
       const charRef = doc(db, 'characters', selectedCharId);
       const charSnap = await getDoc(charRef);
       
       if (!charSnap.exists()) {
-        // Character doesn't exist in database
+        console.warn('Character document does not exist');
         return 0;
       }
 
       const charData = charSnap.data();
       
-      // CRITICAL: Verify the character is actually linked to this user
+      // Verify the character belongs to this user
       if (charData.linkedUID !== user.uid) {
-        // Someone tried to use another user's character - deny access
-        console.warn('Character linked to different user. Access denied.');
+        console.warn('Character belongs to different user');
         return NaN;
       }
 
-      // Return the authoritative clearance level from Firebase
-      // Default to clearance 1 if not specified (new characters start at Intern = Level 1)
+      // Get clearance level with fallback to 1
       const clearance = charData.clearance !== undefined ? parseClearance(charData.clearance) : 1;
-      return Number.isNaN(clearance) ? 1 : clearance;
+      const finalClearance = Number.isNaN(clearance) ? 1 : clearance;
+      console.log('User clearance:', finalClearance);
+      return finalClearance;
+      
     } catch (err) {
-      console.error('Firebase clearance fetch failed', err);
-      // Fail secure - deny access on any error
+      console.error('Error fetching clearance:', err);
+      // On error, allow page load - let the page handle auth
       return NaN;
     }
   }
@@ -189,39 +197,41 @@
     return m ? parseInt(m[0], 10) : NaN;
   }
 
-  function unblockPage() {
+  function completeCheck(allow) {
     accessCheckComplete = true;
-    document.documentElement.style.opacity = '1';
-    document.documentElement.style.pointerEvents = 'auto';
-    document.dispatchEvent(new Event('secureAccessGranted'));
+    if (allow) {
+      // Allow page to render
+      document.documentElement.style.opacity = '1';
+      document.documentElement.style.pointerEvents = 'auto';
+      document.dispatchEvent(new Event('secureAccessGranted'));
+    }
   }
 
-  function blockPageAndRedirect() {
-    // Don't unblock - page remains invisible
+  function blockPage() {
+    pageBlocked = true;
+    accessCheckComplete = true;
+    // Hide the page
+    document.documentElement.style.opacity = '0';
+    document.documentElement.style.pointerEvents = 'none';
+    // Redirect to 403
     const next = encodeURIComponent(window.location.pathname + window.location.search);
-    // Use replace to prevent back button abuse
     setTimeout(() => {
       window.location.replace('/403/?from=' + next);
-    }, 100);
+    }, 200);
   }
 
-  // Run the check as soon as possible
-  // This runs BEFORE DOMContentLoaded
-  performSecureAccessCheck();
+  // Start the security check
+  // Use a small delay to let the DOM settle
+  setTimeout(() => {
+    performSecureAccessCheck();
+  }, 50);
 
-  // Also run on DOMContentLoaded as a fallback
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (!accessCheckComplete) {
-      await performSecureAccessCheck();
-    }
-  });
-
-  // Fail-safe: if page is still visible after 5 seconds without explicit auth,
-  // something went wrong - redirect
+  // Fallback: if check hasn't completed after 8 seconds, force completion
+  // This prevents hanging if something goes wrong
   setTimeout(() => {
     if (!accessCheckComplete) {
-      console.error('Access check timeout');
-      blockPageAndRedirect();
+      console.warn('Security check timed out, allowing page load');
+      completeCheck(true);
     }
-  }, 5000);
+  }, 8000);
 })();
