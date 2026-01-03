@@ -19,7 +19,7 @@
   <style>
     .personnel-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -137,13 +137,25 @@
 
     <div id="managementContainer" style="display:none;">
       <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <input id="searchInput" type="text" placeholder="Search by name or PID..." style="flex: 1; min-width: 200px; padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+        <input id="searchInput" type="text" placeholder="Search by name, rank, or department..." style="flex: 1; min-width: 200px; padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+        <select id="sortSelect" style="padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+          <option value="name">Sort by: Name</option>
+          <option value="rank">Sort by: Rank</option>
+          <option value="department">Sort by: Department</option>
+          <option value="clearance">Sort by: Clearance</option>
+        </select>
         <button id="addPIDBtn" style="padding: 0.6rem 1.2rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 0 1 auto;">+ Add Personnel ID</button>
       </div>
     </div>
 
     <div id="personnelGrid" class="personnel-grid" style="display:none;">
       <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
+    </div>
+
+    <div id="paginationContainer" style="display:none; text-align:center; margin:2rem 0; gap:0.5rem;">
+      <button id="prevPageBtn" style="padding:0.5rem 1rem;background:var(--bg-card);border:1px solid rgba(78,250,170,0.3);border-radius:4px;color:var(--text-light);cursor:pointer;margin-right:0.5rem;">← Previous</button>
+      <span id="pageInfo" style="display:inline-block;padding:0.5rem 1rem;color:var(--text-light);"></span>
+      <button id="nextPageBtn" style="padding:0.5rem 1rem;background:var(--bg-card);border:1px solid rgba(78,250,170,0.3);border-radius:4px;color:var(--text-light);cursor:pointer;margin-left:0.5rem;">Next →</button>
     </div>
 
     <div id="pidListSection" class="about-box" style="margin-top: 2rem; display:none;">
@@ -297,21 +309,54 @@
         return '█'.repeat(s.length - 3) + last;
       }
 
-      function renderGrid(list = allPersonnel) {
-        personnelGrid.innerHTML = "";
-        const q = (searchInput.value || "").toLowerCase();
-        const filtered = list.filter(p => {
+      let currentPage = 1;
+      const itemsPerPage = 9; // 3x3 grid
+      let filteredPersonnel = [];
+
+      function filterAndSortPersonnel() {
+        const searchQuery = (searchInput.value || "").toLowerCase();
+        const sortBy = (document.getElementById('sortSelect').value || "name");
+
+        filteredPersonnel = allPersonnel.filter(p => {
           const name = (p.name || "").toLowerCase();
-          const pid = (p.pid || "").toLowerCase();
-          return name.includes(q) || pid.includes(q);
+          const rank = (p.rank || "").toLowerCase();
+          const dept = (p.department || "").toLowerCase();
+          return name.includes(searchQuery) || rank.includes(searchQuery) || dept.includes(searchQuery);
         });
 
-        if (filtered.length === 0) {
+        // Sort
+        filteredPersonnel.sort((a, b) => {
+          switch (sortBy) {
+            case 'rank':
+              return (a.rank || "").localeCompare(b.rank || "");
+            case 'department':
+              return (a.department || "").localeCompare(b.department || "");
+            case 'clearance':
+              return (parseInt(b.clearance) || 0) - (parseInt(a.clearance) || 0);
+            case 'name':
+            default:
+              return (a.name || "").localeCompare(b.name || "");
+          }
+        });
+
+        currentPage = 1;
+        renderGrid();
+      }
+
+      function renderGrid() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredPersonnel.slice(start, end);
+
+        personnelGrid.innerHTML = "";
+
+        if (filteredPersonnel.length === 0) {
           personnelGrid.innerHTML = '<div class="empty-state">No personnel found.</div>';
+          document.getElementById('paginationContainer').style.display = 'none';
           return;
         }
 
-        filtered.forEach(p => {
+        pageItems.forEach(p => {
           const card = document.createElement('div');
           card.className = 'personnel-card';
           const photoUrl = p.profileImage || 'https://files.catbox.moe/aa9390.png';
@@ -329,6 +374,17 @@
           card.addEventListener('click', () => window.openEditModal(p));
           personnelGrid.appendChild(card);
         });
+
+        // Update pagination
+        const totalPages = Math.ceil(filteredPersonnel.length / itemsPerPage);
+        if (totalPages > 1) {
+          document.getElementById('paginationContainer').style.display = 'block';
+          document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+          document.getElementById('prevPageBtn').disabled = currentPage === 1;
+          document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+        } else {
+          document.getElementById('paginationContainer').style.display = 'none';
+        }
       }
 
       window.openPIDModal = function() {
@@ -446,11 +502,10 @@
           } catch (err) {
             console.warn('Could not update personnel record:', err);
           }
-
           window.showEditFeedback('Personnel record updated successfully!', 'success');
           setTimeout(() => {
             window.closeEditModal();
-            renderGrid(allPersonnel);
+            filterAndSortPersonnel();
           }, 1500);
         } catch (err) {
           console.error('Error saving changes:', err);
@@ -523,7 +578,23 @@
       });
 
       pidForm.addEventListener('submit', savePID);
-      searchInput.addEventListener('input', () => renderGrid(allPersonnel));
+      searchInput.addEventListener('input', () => filterAndSortPersonnel());
+      document.getElementById('sortSelect').addEventListener('change', () => filterAndSortPersonnel());
+      document.getElementById('prevPageBtn').addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderGrid();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      document.getElementById('nextPageBtn').addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredPersonnel.length / itemsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderGrid();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
       addPIDBtn.addEventListener('click', () => window.openPIDModal());
 
       // Load and display all Personnel IDs
@@ -704,7 +775,7 @@
             }
           });
 
-          renderGrid(allPersonnel);
+          filterAndSortPersonnel();
           loadPersonnelIDList();
           loadCharacters();
 

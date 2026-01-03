@@ -21,7 +21,7 @@
   <style>
     .personnel-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -305,6 +305,12 @@
     <div id="personnelGrid" class="personnel-grid">
       <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
     </div>
+
+    <div id="paginationContainer" style="display:none; text-align:center; margin:2rem 0; gap:0.5rem;">
+      <button id="prevPageBtn" style="padding:0.5rem 1rem;background:var(--bg-card);border:1px solid rgba(78,250,170,0.3);border-radius:4px;color:var(--text-light);cursor:pointer;margin-right:0.5rem;">← Previous</button>
+      <span id="pageInfo" style="display:inline-block;padding:0.5rem 1rem;color:var(--text-light);"></span>
+      <button id="nextPageBtn" style="padding:0.5rem 1rem;background:var(--bg-card);border:1px solid rgba(78,250,170,0.3);border-radius:4px;color:var(--text-light);cursor:pointer;margin-left:0.5rem;">Next →</button>
+    </div>
   </section>
 
   <!-- Personnel Modal -->
@@ -364,6 +370,9 @@
     const db = getFirestore(app);
 
     let allPersonnel = [];
+    let currentPage = 1;
+    const itemsPerPage = 9; // 3x3 grid
+    let filteredPersonnel = [];
 
     // Mask a PID by replacing all but the last 3 characters with █
     function maskPID(pid) {
@@ -375,17 +384,22 @@
       return '█'.repeat(maskLen) + last;
     }
 
-    // Render personnel grid with optional filtering/sorting
-    function renderPersonnelGrid(personnelList = allPersonnel) {
+    // Render personnel grid with pagination
+    function renderPersonnelGrid() {
       const personnelGrid = document.getElementById("personnelGrid");
       personnelGrid.innerHTML = "";
 
-      if (personnelList.length === 0) {
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = filteredPersonnel.slice(start, end);
+
+      if (filteredPersonnel.length === 0) {
         personnelGrid.innerHTML = '<div class="empty-state">No personnel records found.</div>';
+        document.getElementById('paginationContainer').style.display = 'none';
         return;
       }
 
-      personnelList.forEach(char => {
+      pageItems.forEach(char => {
         const card = document.createElement("div");
         card.className = "personnel-card";
 
@@ -403,6 +417,17 @@
         card.addEventListener("click", () => openPersonnelModal(char));
         personnelGrid.appendChild(card);
       });
+
+      // Update pagination
+      const totalPages = Math.ceil(filteredPersonnel.length / itemsPerPage);
+      if (totalPages > 1) {
+        document.getElementById('paginationContainer').style.display = 'block';
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('prevPageBtn').disabled = currentPage === 1;
+        document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+      } else {
+        document.getElementById('paginationContainer').style.display = 'none';
+      }
     }
 
     // Filter and sort personnel
@@ -410,7 +435,7 @@
       const searchQuery = document.getElementById("searchInput").value.toLowerCase();
       const sortBy = document.getElementById("sortSelect").value;
 
-      let filtered = allPersonnel.filter(char => {
+      filteredPersonnel = allPersonnel.filter(char => {
         const name = (char.name || "").toLowerCase();
         const rank = (char.rank || "").toLowerCase();
         const dept = (char.department || "").toLowerCase();
@@ -418,7 +443,7 @@
       });
 
       // Sort
-      filtered.sort((a, b) => {
+      filteredPersonnel.sort((a, b) => {
         switch (sortBy) {
           case 'rank':
             return (a.rank || "").localeCompare(b.rank || "");
@@ -432,7 +457,8 @@
         }
       });
 
-      renderPersonnelGrid(filtered);
+      currentPage = 1;
+      renderPersonnelGrid();
     }
 
     // Load personnel from Firebase
@@ -459,6 +485,23 @@
         // Wire search and sort inputs
         document.getElementById("searchInput").addEventListener("input", filterAndSortPersonnel);
         document.getElementById("sortSelect").addEventListener("change", filterAndSortPersonnel);
+
+        // Wire pagination buttons
+        document.getElementById("prevPageBtn").addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderPersonnelGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+        document.getElementById("nextPageBtn").addEventListener("click", () => {
+          const totalPages = Math.ceil(filteredPersonnel.length / itemsPerPage);
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderPersonnelGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
       } catch (err) {
         console.error("Error loading personnel:", err);
         personnelGrid.innerHTML = '<div class="empty-state">Error loading personnel records.</div>';
