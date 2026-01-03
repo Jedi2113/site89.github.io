@@ -46,7 +46,7 @@ function formatDate(ts){
   try { return new Date(ts.seconds * 1000).toLocaleString(); } catch(e){ return ts.toString(); }
 }
 
-document.addEventListener('includesLoaded', ()=>{
+function initializeResearchLogs(){
   const newBtn = document.getElementById('newLogBtn');
   const modal = document.getElementById('createModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
@@ -146,6 +146,19 @@ document.addEventListener('includesLoaded', ()=>{
     snap.forEach(docSnap => logsCache.push({ id: docSnap.id, ...(docSnap.data()||{}) }));
     renderLogs(logsCache);
   }, (err)=>{
-    logsList.innerHTML = '<p>Error loading logs: ' + err.message + '</p>';
+    const tableBody = document.getElementById('logsTableBody');
+    if(tableBody) tableBody.innerHTML = '<tr><td colspan="2" class="empty">Error loading logs: ' + err.message + '</td></tr>';
   });
-});
+}
+
+// Initialize when includes are loaded
+document.addEventListener('includesLoaded', initializeResearchLogs);
+
+// Fallback: also try to initialize immediately in case includesLoaded has already fired
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', ()=>{
+    setTimeout(initializeResearchLogs, 100);
+  });
+} else {
+  setTimeout(initializeResearchLogs, 100);
+}

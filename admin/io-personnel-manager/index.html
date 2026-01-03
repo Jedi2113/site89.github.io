@@ -346,10 +346,61 @@
       <p>Only characters from the Administrative Department - Internal Operations can access this page.</p>
     </div>
 
+    <div id="managementContainer" style="display:none;">
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <input id="searchInput" type="text" placeholder="Search by name or PID..." style="flex: 1; min-width: 200px; padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+        <button id="addPIDBtn" class="personnel-card-btn" style="flex: 0 1 auto;">+ Add Personnel ID</button>
+      </div>
+    </div>
+
     <div id="personnelGrid" class="personnel-grid" style="display:none;">
       <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading personnel...</div>
     </div>
   </section>
+
+  <!-- PID Modal -->
+  <div id="pidModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Personnel ID</h2>
+        <button class="modal-close" onclick="closePIDModal()">&times;</button>
+      </div>
+
+      <form id="pidForm" style="display:flex;flex-direction:column;gap:1rem;">
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Personnel ID</label>
+          <input id="pidInput" class="modal-detail-input" placeholder="e.g., 89A0B123" required>
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Name</label>
+          <input id="pidNameInput" class="modal-detail-input" placeholder="e.g., John Smith" required>
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Clearance Level</label>
+          <input id="pidClearanceInput" class="modal-detail-input" type="number" min="0" max="5" placeholder="e.g., 1" required>
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Department</label>
+          <input id="pidDeptInput" class="modal-detail-input" placeholder="e.g., Research">
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Rank</label>
+          <input id="pidRankInput" class="modal-detail-input" placeholder="e.g., Specialist">
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Class</label>
+          <input id="pidClassInput" class="modal-detail-input" placeholder="e.g., Administrative">
+        </div>
+
+        <div id="pidFeedback" style="display:none;"></div>
+
+        <div class="modal-actions">
+          <button class="btn-save" type="submit">Create Personnel ID</button>
+          <button class="btn-cancel" type="button" onclick="closePIDModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Edit Modal -->
   <div id="editModal" class="modal">
@@ -414,15 +465,66 @@
 
   <script type="module">
     import { app, auth, onAuthStateChanged } from "/assets/js/auth.js";
-    import { getFirestore, collection, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, where, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const db = getFirestore(app);
 
     let currentEditingPID = null;
+    let allPersonnel = [];
     const accessDeniedDiv = document.getElementById('accessDenied');
+    const managementContainer = document.getElementById('managementContainer');
     const personnelGrid = document.getElementById('personnelGrid');
     const editModal = document.getElementById('editModal');
+    const pidModal = document.getElementById('pidModal');
+    const pidForm = document.getElementById('pidForm');
     const editFeedback = document.getElementById('editFeedback');
+    const pidFeedback = document.getElementById('pidFeedback');
+    const searchInput = document.getElementById('searchInput');
+    const addPIDBtn = document.getElementById('addPIDBtn');
+
+    // Mask a PID by replacing all but the last 3 characters with █
+    function maskPID(pid) {
+      if (!pid) return '';
+      const s = String(pid);
+      if (s.length <= 3) return s;
+      const last = s.slice(-3);
+      const maskLen = Math.max(0, s.length - 3);
+      return '█'.repeat(maskLen) + last;
+    }
+
+    function renderPersonnelGrid(personnelList = allPersonnel) {
+      personnelGrid.innerHTML = "";
+      const searchQuery = (searchInput.value || "").toLowerCase();
+      const filtered = personnelList.filter(p => {
+        const name = (p.name || "").toLowerCase();
+        const pid = (p.pid || "").toLowerCase();
+        return name.includes(searchQuery) || pid.includes(searchQuery);
+      });
+
+      if (filtered.length === 0) {
+        personnelGrid.innerHTML = '<div class="empty-state">No personnel found.</div>';
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'personnel-card';
+        const photoUrl = p.profileImage || 'https://files.catbox.moe/aa9390.png';
+        
+        card.innerHTML = `
+          <img src="${photoUrl}" alt="${p.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
+          <div class="personnel-card-info">
+            <h3 class="personnel-card-name">${p.name || "Unknown"}</h3>
+            <p class="personnel-card-rank">${p.rank || "Unassigned"}</p>
+            <p class="personnel-card-dept">${p.department || "Unassigned"}</p>
+            <p class="personnel-card-pid">PID: ${maskPID(p.pid || '')}</p>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openEditModal(p));
+        personnelGrid.appendChild(card);
+      });
+    }
 
     // Check auth and load personnel
     onAuthStateChanged(auth, async (user) => {
@@ -450,125 +552,145 @@
           return;
         }
 
-        // Load all personnel
+        // Has access - show management UI
+        managementContainer.style.display = 'block';
         personnelGrid.style.display = 'grid';
-        loadPersonnel();
+        
+        // Load all characters and create personnel list
+        const allChars = await getDocs(collection(db, 'characters'));
+        allPersonnel = [];
+        allChars.forEach(doc => {
+          const char = doc.data();
+          if (char.pid) {
+            allPersonnel.push({ docId: doc.id, ...char });
+          }
+        });
+
+        renderPersonnelGrid(allPersonnel);
+
+        // Wire search
+        searchInput.addEventListener('input', () => renderPersonnelGrid(allPersonnel));
+
+        // Wire add PID button
+        addPIDBtn.addEventListener('click', () => openPIDModal());
+
+        // Wire PID form
+        pidForm.addEventListener('submit', savePID);
 
       } catch (err) {
-        console.error('Access check error:', err);
+        console.error('Error checking access:', err);
         accessDeniedDiv.style.display = 'block';
       }
     });
 
-    async function loadPersonnel() {
-      const snaps = await getDocs(collection(db, 'characters'));
-      const personnel = [];
-      
-      snaps.forEach(docSnap => {
-        personnel.push({ pid: docSnap.id, ...docSnap.data() });
-      });
+    // PID Modal functions
+    window.openPIDModal = function() {
+      pidForm.reset();
+      pidFeedback.style.display = 'none';
+      pidModal.classList.add('show');
+      document.getElementById('pidInput').focus();
+    };
 
-      // Sort by name
-      personnel.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    window.closePIDModal = function() {
+      pidModal.classList.remove('show');
+      pidFeedback.style.display = 'none';
+      pidForm.reset();
+    };
 
-      personnelGrid.innerHTML = '';
+    async function savePID(e) {
+      e.preventDefault();
+      const pid = (document.getElementById('pidInput').value || '').trim().toUpperCase();
+      const name = (document.getElementById('pidNameInput').value || '').trim();
+      const clearance = parseInt(document.getElementById('pidClearanceInput').value);
+      const dept = (document.getElementById('pidDeptInput').value || '').trim();
+      const rank = (document.getElementById('pidRankInput').value || '').trim();
+      const personClass = (document.getElementById('pidClassInput').value || '').trim();
 
-      if (personnel.length === 0) {
-        personnelGrid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;">No personnel found.</div>';
+      if (!pid || !name || isNaN(clearance)) {
+        showPIDFeedback('Please fill in all required fields', 'error');
         return;
       }
 
-      personnel.forEach(char => {
-        const card = document.createElement('div');
-        card.className = 'personnel-card';
-
-        const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
-
-        card.innerHTML = `
-          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
-          <div class="personnel-card-info">
-            <h3 class="personnel-card-name">${char.name || 'Unknown'}</h3>
-            <p class="personnel-card-rank">${char.rank || 'Unassigned'}</p>
-            <p class="personnel-card-dept">${char.department || 'Unassigned'}</p>
-            <p class="personnel-card-pid">${char.pid || 'No PID'}</p>
-            <button class="personnel-card-btn" onclick="openEditModal('${char.pid}', '${char.name || ''}')">Edit</button>
-          </div>
-        `;
-
-        personnelGrid.appendChild(card);
-      });
-    }
-
-    window.openEditModal = async function(pid, name) {
-      currentEditingPID = pid;
-      document.getElementById('editPersonnelName').textContent = name;
-      
       try {
-        // Get character data
-        const chars = await getDocs(collection(db, 'characters'));
-        let char = null;
-        let charDocId = null;
-        
-        chars.forEach(doc => {
-          if (doc.data().pid === pid) {
-            char = doc.data();
-            charDocId = doc.id;
-          }
+        // Create/update personnel record
+        await setDoc(doc(db, 'personnel', pid), {
+          id: pid,
+          name,
+          clearance,
+          department: dept,
+          rank,
+          'class': personClass
         });
 
-        if (!char) {
-          alert('Character not found');
-          return;
-        }
+        showPIDFeedback('Personnel ID created successfully!', 'success');
+        pidForm.reset();
+        setTimeout(() => {
+          closePIDModal();
+          location.reload();
+        }, 1000);
+      } catch (err) {
+        console.error('Error saving PID:', err);
+        showPIDFeedback('Error: ' + err.message, 'error');
+      }
+    }
 
-        // Populate form
-        document.getElementById('editPhotoUrl').value = char.profileImage || '';
-        document.getElementById('editPhotoPreview').src = char.profileImage || 'https://files.catbox.moe/aa9390.png';
-        document.getElementById('editName').value = char.name || '';
-        document.getElementById('editRank').value = char.rank || '';
-        document.getElementById('editDept').value = char.department || '';
-        document.getElementById('editClearance').value = char.clearance || '';
-        document.getElementById('editClass').value = char['class'] || '';
-        
-        // Load awards
+    function showPIDFeedback(message, type) {
+      pidFeedback.className = 'feedback ' + type;
+      pidFeedback.textContent = message;
+      pidFeedback.style.display = 'block';
+    }
+
+    // Edit Modal function
+    async function openEditModal(person) {
+      currentEditingPID = person.pid;
+      document.getElementById('editPersonnelName').textContent = person.name || 'Unknown';
+      document.getElementById('editPhotoUrl').value = person.profileImage || '';
+      document.getElementById('editPhotoPreview').src = person.profileImage || 'https://files.catbox.moe/aa9390.png';
+      document.getElementById('editName').value = person.name || '';
+      document.getElementById('editRank').value = person.rank || '';
+      document.getElementById('editDept').value = person.department || '';
+      document.getElementById('editClearance').value = person.clearance || '';
+      document.getElementById('editClass').value = person['class'] || '';
+
+      // Load awards
+      const awardsContainer = document.getElementById('editAwardsContainer');
+      awardsContainer.innerHTML = '';
+      const charAwards = person.awards || [];
+
+      try {
         const awardsRes = await fetch('/assets/data/awards.json');
         const allAwards = await awardsRes.json();
-        const charAwards = char.awards || [];
-        const awardsContainer = document.getElementById('editAwardsContainer');
-        awardsContainer.innerHTML = '';
-        
+
         allAwards.forEach(award => {
-          const isChecked = charAwards.includes(award.id);
           const label = document.createElement('label');
           label.style.display = 'flex';
           label.style.alignItems = 'center';
           label.style.gap = '0.5rem';
           label.style.padding = '0.5rem';
-          label.style.border = '1px solid rgba(78,250,170,0.2)';
           label.style.borderRadius = '6px';
           label.style.cursor = 'pointer';
-          label.style.color = 'var(--text-light)';
-          
+          label.style.transition = 'background 0.2s ease';
+
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
-          checkbox.checked = isChecked;
+          checkbox.checked = charAwards.includes(award.id);
           checkbox.dataset.awardId = award.id;
-          
+
           const span = document.createElement('span');
           span.textContent = award.name;
-          
+          span.style.color = 'var(--text-light)';
+
           label.appendChild(checkbox);
           label.appendChild(span);
           awardsContainer.appendChild(label);
         });
-        
-        editFeedback.style.display = 'none';
-        editModal.classList.add('show');
       } catch (err) {
-        console.error('Error loading character:', err);
-        alert('Error loading character data');
+        console.warn('Error loading awards:', err);
       }
-    };
+
+      editFeedback.style.display = 'none';
+      editModal.classList.add('show');
+    }
 
     window.closeEditModal = function() {
       editModal.classList.remove('show');
@@ -631,10 +753,23 @@
 
         await updateDoc(doc(db, 'characters', charDocId), updateData);
 
+        // Also update personnel record
+        try {
+          await updateDoc(doc(db, 'personnel', currentEditingPID), {
+            name,
+            clearance: clearance !== '' ? Number(clearance) : undefined,
+            department: dept,
+            rank,
+            'class': personClass
+          });
+        } catch (err) {
+          console.warn('Could not update personnel record:', err);
+        }
+
         showEditFeedback('Personnel record updated successfully!', 'success');
         setTimeout(() => {
           closeEditModal();
-          loadPersonnel();
+          renderPersonnelGrid(allPersonnel);
         }, 1500);
 
       } catch (err) {
@@ -648,6 +783,110 @@
       editFeedback.textContent = message;
       editFeedback.style.display = 'block';
     }
+
+    // Close modals when clicking outside
+    pidModal.addEventListener('click', (e) => {
+      if (e.target === pidModal) closePIDModal();
+    });
+
+    editModal.addEventListener('click', (e) => {
+      if (e.target === editModal) closeEditModal();
+    });
+
+    // Update photo preview when URL changes
+    document.getElementById('editPhotoUrl').addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url) {
+        document.getElementById('editPhotoPreview').src = url;
+      }
+    });
+
+    window.savePersonnelChanges = async function() {
+      if (!currentEditingPID) return;
+
+      const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
+      const name = (document.getElementById('editName').value || '').trim();
+      const rank = (document.getElementById('editRank').value || '').trim();
+      const dept = (document.getElementById('editDept').value || '').trim();
+      const clearance = document.getElementById('editClearance').value;
+      const personClass = (document.getElementById('editClass').value || '').trim();
+
+      // Get selected awards
+      const awardCheckboxes = document.querySelectorAll('#editAwardsContainer input[type="checkbox"]');
+      const selectedAwards = [];
+      awardCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedAwards.push(checkbox.dataset.awardId);
+        }
+      });
+
+      try {
+        // Find and update character by PID
+        const chars = await getDocs(collection(db, 'characters'));
+        let charDocId = null;
+
+        chars.forEach(doc => {
+          if (doc.data().pid === currentEditingPID) {
+            charDocId = doc.id;
+          }
+        });
+
+        if (!charDocId) {
+          showEditFeedback('Character not found', 'error');
+          return;
+        }
+
+        // Update character
+        const updateData = {};
+        if (photoUrl) updateData.profileImage = photoUrl;
+        if (name) updateData.name = name;
+        if (rank) updateData.rank = rank;
+        if (dept) updateData.department = dept;
+        if (clearance !== '') updateData.clearance = Number(clearance);
+        if (personClass) updateData['class'] = personClass;
+        updateData.awards = selectedAwards;
+
+        await updateDoc(doc(db, 'characters', charDocId), updateData);
+
+        // Also update personnel record
+        try {
+          await updateDoc(doc(db, 'personnel', currentEditingPID), {
+            name,
+            clearance: clearance !== '' ? Number(clearance) : undefined,
+            department: dept,
+            rank,
+            'class': personClass
+          });
+        } catch (err) {
+          console.warn('Could not update personnel record:', err);
+        }
+
+        showEditFeedback('Personnel record updated successfully!', 'success');
+        setTimeout(() => {
+          closeEditModal();
+          renderPersonnelGrid(allPersonnel);
+        }, 1500);
+
+      } catch (err) {
+        console.error('Error saving changes:', err);
+        showEditFeedback('Error saving changes: ' + err.message, 'error');
+      }
+    };
+
+    function showEditFeedback(message, type) {
+      editFeedback.className = 'feedback ' + type;
+      editFeedback.textContent = message;
+      editFeedback.style.display = 'block';
+    }
+
+    // Close modals when clicking outside
+    pidModal.addEventListener('click', (e) => {
+      if (e.target === pidModal) closePIDModal();
+    });
+
+    editModal.addEventListener('click', (e) => {
+      if (e.target === editModal) closeEditModal();
+    });
   </script>
 
 </body>

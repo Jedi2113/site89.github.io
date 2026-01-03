@@ -290,6 +290,16 @@
     <div class="about-box" style="margin-bottom: 2rem;">
       <h2>Foundation Personnel Files</h2>
       <p>Browse active personnel and their official records. Click any personnel to view detailed information.</p>
+      
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+        <input id="searchInput" type="text" placeholder="Search by name, rank, or department..." style="flex: 1; min-width: 200px; padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+        <select id="sortSelect" style="padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
+          <option value="name">Sort by: Name</option>
+          <option value="rank">Sort by: Rank</option>
+          <option value="department">Sort by: Department</option>
+          <option value="clearance">Sort by: Clearance</option>
+        </select>
+      </div>
     </div>
 
     <div id="personnelGrid" class="personnel-grid">
@@ -353,6 +363,8 @@
 
     const db = getFirestore(app);
 
+    let allPersonnel = [];
+
     // Mask a PID by replacing all but the last 3 characters with █
     function maskPID(pid) {
       if (!pid) return '';
@@ -361,6 +373,66 @@
       const last = s.slice(-3);
       const maskLen = Math.max(0, s.length - 3);
       return '█'.repeat(maskLen) + last;
+    }
+
+    // Render personnel grid with optional filtering/sorting
+    function renderPersonnelGrid(personnelList = allPersonnel) {
+      const personnelGrid = document.getElementById("personnelGrid");
+      personnelGrid.innerHTML = "";
+
+      if (personnelList.length === 0) {
+        personnelGrid.innerHTML = '<div class="empty-state">No personnel records found.</div>';
+        return;
+      }
+
+      personnelList.forEach(char => {
+        const card = document.createElement("div");
+        card.className = "personnel-card";
+
+        const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
+
+        card.innerHTML = `
+          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
+          <div class="personnel-card-info">
+            <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
+            <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
+            <p class="personnel-card-dept">${char.department || "Unassigned"}</p>
+          </div>
+        `;
+
+        card.addEventListener("click", () => openPersonnelModal(char));
+        personnelGrid.appendChild(card);
+      });
+    }
+
+    // Filter and sort personnel
+    function filterAndSortPersonnel() {
+      const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      let filtered = allPersonnel.filter(char => {
+        const name = (char.name || "").toLowerCase();
+        const rank = (char.rank || "").toLowerCase();
+        const dept = (char.department || "").toLowerCase();
+        return name.includes(searchQuery) || rank.includes(searchQuery) || dept.includes(searchQuery);
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        switch (sortBy) {
+          case 'rank':
+            return (a.rank || "").localeCompare(b.rank || "");
+          case 'department':
+            return (a.department || "").localeCompare(b.department || "");
+          case 'clearance':
+            return (parseInt(b.clearance) || 0) - (parseInt(a.clearance) || 0);
+          case 'name':
+          default:
+            return (a.name || "").localeCompare(b.name || "");
+        }
+      });
+
+      renderPersonnelGrid(filtered);
     }
 
     // Load personnel from Firebase
@@ -376,26 +448,17 @@
           return;
         }
 
+        allPersonnel = [];
         querySnapshot.forEach(docSnap => {
-          const char = docSnap.data();
-          const card = document.createElement("div");
-          card.className = "personnel-card";
-
-          const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
-          const maskedPid = maskPID(char.pid || '');
-
-          card.innerHTML = `
-            <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='https://files.catbox.moe/aa9390.png'">
-            <div class="personnel-card-info">
-              <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
-              <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
-              <p class="personnel-card-dept">${char.department || "Unassigned"}</p>
-            </div>
-          `;
-
-          card.addEventListener("click", () => openPersonnelModal(char));
-          personnelGrid.appendChild(card);
+          allPersonnel.push(docSnap.data());
         });
+
+        // Initial render with default sort
+        filterAndSortPersonnel();
+
+        // Wire search and sort inputs
+        document.getElementById("searchInput").addEventListener("input", filterAndSortPersonnel);
+        document.getElementById("sortSelect").addEventListener("change", filterAndSortPersonnel);
       } catch (err) {
         console.error("Error loading personnel:", err);
         personnelGrid.innerHTML = '<div class="empty-state">Error loading personnel records.</div>';
