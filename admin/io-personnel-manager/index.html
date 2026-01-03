@@ -367,7 +367,7 @@
               <h3 class="personnel-card-name">${p.name || "Unknown"}</h3>
               <p class="personnel-card-rank">${p.rank || "Unassigned"}</p>
               <p class="personnel-card-dept">${p.department || "Unassigned"}</p>
-              <p class="personnel-card-pid">PID: ${maskPID(p.pid || '')}</p>
+              <p class="personnel-card-pid">PID: ${p.pid || ''}</p>
             </div>
           `;
 
@@ -409,7 +409,20 @@
         document.getElementById('editRank').value = person.rank || '';
         document.getElementById('editDept').value = person.department || '';
         document.getElementById('editClearance').value = person.clearance || '';
-        document.getElementById('editClass').value = person['class'] || '';
+
+        // Load class and other data from personnel collection
+        try {
+          const pidDoc = await getDoc(doc(db, 'personnel', person.pid));
+          if (pidDoc.exists()) {
+            const pidData = pidDoc.data();
+            document.getElementById('editClass').value = pidData['class'] || '';
+          } else {
+            document.getElementById('editClass').value = '';
+          }
+        } catch (err) {
+          console.warn('Error loading PID data:', err);
+          document.getElementById('editClass').value = '';
+        }
 
         const awardsContainer = document.getElementById('editAwardsContainer');
         awardsContainer.innerHTML = '';
