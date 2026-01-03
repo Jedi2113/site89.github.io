@@ -14,20 +14,16 @@ function emailFromName(name){
 function getDirectorDivisions(){
   try {
     const ch = JSON.parse(localStorage.getItem('selectedCharacter'));
-    console.log('getDirectorDivisions - Full character data:', ch);
     if(!ch) return [];
     
     // Check if character has directorOf array (explicit permission)
     if(ch.directorOf && Array.isArray(ch.directorOf)){
-      console.log('Found directorOf array:', ch.directorOf);
       return ch.directorOf;
     }
     
     // Check clearance level - must be 5 or higher to send from division addresses
     const clearance = ch.clearance || 0;
     const department = ch.department || '';
-    
-    console.log('Checking clearance:', clearance, 'department:', department);
     
     if(clearance >= 5 && department){
       const divisions = [];
@@ -42,11 +38,9 @@ function getDirectorDivisions(){
       if(deptUpper.includes('MTF')) divisions.push('mtf');
       if(deptUpper.includes('IA')) divisions.push('ia');
       
-      console.log('Clearance 5+ check returned divisions:', divisions);
       return [...new Set(divisions)];
     }
     
-    console.log('Character does not have clearance 5+ or no department found');
     return [];
   } catch(e){ 
     console.error('getDirectorDivisions error:', e);
@@ -138,6 +132,26 @@ document.addEventListener('includesLoaded', () => {
   const composeSendAs = document.getElementById('composeSendAs');
   const composeSuggestions = document.getElementById('composeSuggestions');
 
+  // Initialize TinyMCE for rich text email composition
+  console.log('[TinyMCE] Initializing editor on composeBody');
+  tinymce.init({
+    selector: '#composeBody',
+    height: 400,
+    menubar: false,
+    plugins: 'link lists code emoticons table',
+    toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link emoticons | code removeformat',
+    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 14px; }',
+    skin: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'oxide-dark' : 'oxide',
+    content_css: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
+    promotion: false, // Hide upgrade prompts
+    branding: false, // Remove "Powered by TinyMCE" branding
+    setup: function(editor) {
+      editor.on('init', function() {
+        console.log('[TinyMCE] Editor initialized successfully');
+      });
+    }
+  });
+
   let currentFolder = 'inbox';
   let myAddress = '';
   let currentUser = null; // Store current user for emails
@@ -165,7 +179,6 @@ document.addEventListener('includesLoaded', () => {
   // Update Send As dropdown when compose opens
   function updateSendAsOptions(){
     composeSendAs.innerHTML = '<option value="">Send as personal account</option>';
-    console.log('Director divisions available:', directorDivisions);
     if(directorDivisions && directorDivisions.length > 0){
       const divisionMap = {
         'bod': 'Board of Directors (bod@site89.org)',
@@ -182,8 +195,6 @@ document.addEventListener('includesLoaded', () => {
         opt.textContent = divisionMap[div] || div + '@site89.org';
         composeSendAs.appendChild(opt);
       });
-    } else {
-      console.log('No director divisions found for character');
     }
   }
 
@@ -243,7 +254,16 @@ document.addEventListener('includesLoaded', () => {
     composeSendAs.value = '';
   });
 
-  function clearCompose(){ composeTo.value=''; composeSubject.value=''; composeBody.value=''; }
+  function clearCompose(){ 
+    composeTo.value=''; 
+    composeSubject.value=''; 
+    const editor = tinymce.get('composeBody');
+    if(editor){
+      editor.setContent('');
+    } else {
+      composeBody.value='';
+    }
+  }
 
   // Contacts autocomplete helpers
   function saveContact(email){
@@ -273,36 +293,24 @@ document.addEventListener('includesLoaded', () => {
 
   // Get character profile image
   async function getCharacterImage(email){
-    console.log('[ProfilePic] Looking up image for:', email);
     // Check cache first
-    if(charactersCache[email]) {
-      console.log('[ProfilePic] Found in cache:', charactersCache[email]);
-      return charactersCache[email];
-    }
+    if(charactersCache[email]) return charactersCache[email];
     
     try {
-      console.log('[ProfilePic] Fetching from Firestore...');
       const charsSnap = await getDocs(collection(db, 'characters'));
-      console.log('[ProfilePic] Total characters:', charsSnap.size);
       charsSnap.forEach(snap => {
         const ch = snap.data();
         if(ch.name){
           const charEmail = emailFromName(ch.name);
-          // Check all possible image field names
-          console.log('[ProfilePic] Character fields for', ch.name, ':', Object.keys(ch));
           const image = ch.image || ch.photo || ch.photoUrl || ch.photoURL || ch.profileImage || ch.avatar || ch.picture || null;
           charactersCache[charEmail] = image;
-          console.log('[ProfilePic] Cached:', charEmail, '→', image);
         }
       });
-      console.log('[ProfilePic] Cache now has', Object.keys(charactersCache).length, 'entries');
     } catch(e){ 
-      console.error('[ProfilePic] Failed to fetch character images:', e); 
+      console.error('Failed to fetch character images:', e); 
     }
     
-    const result = charactersCache[email] || null;
-    console.log('[ProfilePic] Final result for', email, ':', result);
-    return result;
+    return charactersCache[email] || null;
   }
 
   async function sendMessage(status='sent'){
@@ -343,12 +351,18 @@ document.addEventListener('includesLoaded', () => {
       recipients = await expandMailingLists(toRaw, db);
     } catch(e){ console.warn('Mailing list expansion error', e); recipients = toRaw; }
 
+    // Get rich text content from TinyMCE
+    console.log('[TinyMCE] Getting editor content for send');
+    const editor = tinymce.get('composeBody');
+    const bodyContent = editor ? editor.getContent() : composeBody.value || '';
+    console.log('[TinyMCE] Body content length:', bodyContent.length);
+
     const payload = {
       sender: sender,
       senderEmail: currentUser ? currentUser.email : '',
       recipients: recipients,
       subject: composeSubject.value || '(no subject)',
-      body: composeBody.value || '',
+      body: bodyContent,
       status: status, // 'sent' or 'draft'
       folder: status === 'draft' ? 'drafts' : '',
       ts: serverTimestamp()
@@ -356,6 +370,7 @@ document.addEventListener('includesLoaded', () => {
 
     try {
       await addDoc(collection(db,'emails'), payload);
+      console.log('[Email] Message sent successfully');
     } catch(e){
       console.error('send failed', e); alert('Failed to send message');
     } finally {
@@ -389,7 +404,13 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote: ---\n${currentMessage.body}`;
+    const editor = tinymce.get('composeBody');
+    const replyContent = `<br><br><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p><blockquote>${currentMessage.body}</blockquote>`;
+    if(editor){
+      editor.setContent(replyContent);
+    } else {
+      composeBody.value = replyContent;
+    }
   });
 
   btnForward.addEventListener('click', ()=>{
@@ -397,12 +418,17 @@ document.addEventListener('includesLoaded', () => {
     composeModal.style.display='block';
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- Forwarded message ---\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\n\n${currentMessage.body}`;
+    const editor = tinymce.get('composeBody');
+    const forwardContent = `<br><br><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p><br>${currentMessage.body}`;
+    if(editor){
+      editor.setContent(forwardContent);
+    } else {
+      composeBody.value = forwardContent;
+    }
   });
 
   // Render list depending on folder
   function renderList(){
-    console.log('[RenderList] Starting render with', allMessages.length, 'total messages');
     const q = (mailSearch.value||'').toLowerCase();
     const list = allMessages.filter(m => {
       if (currentFolder === 'inbox') return (m.recipients || []).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft';
@@ -411,8 +437,6 @@ document.addEventListener('includesLoaded', () => {
       if (currentFolder === 'trash') return m.folder === 'trash' && (m.sender === myAddress || (m.recipients || []).includes(myAddress));
       return false;
     }).filter(m => (m.subject||'').toLowerCase().includes(q) || (m.body||'').toLowerCase().includes(q) || (m.sender||'').toLowerCase().includes(q));
-
-    console.log('[RenderList] Filtered to', list.length, 'messages for folder:', currentFolder);
 
     // counts and unread badge on navbar
     const inboxMsgs = allMessages.filter(m => (m.recipients||[]).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft');
@@ -446,9 +470,7 @@ document.addEventListener('includesLoaded', () => {
       if(m.recipients) m.recipients.forEach(r => saveContact(r));
       
       // Try to get profile picture
-      console.log('[RenderList] Getting profile image for:', m.sender);
       const profileImage = await getCharacterImage(m.sender);
-      console.log('[RenderList] Profile image result:', profileImage);
       const avatarHtml = profileImage && !profileImage.includes('placeholder') 
         ? `<img src="${profileImage}" style="width:44px;height:44px;border-radius:6px;object-fit:cover" alt="Profile">`
         : `<div style="width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));display:flex;align-items:center;justify-content:center;color:#081413;font-weight:700">${(m.sender||'').charAt(0)||''}</div>`;
@@ -461,13 +483,16 @@ document.addEventListener('includesLoaded', () => {
       el.addEventListener('click', ()=> openMessage(m));
       messagesContainer.appendChild(el);
     });
-    console.log('[RenderList] Render complete');
   }
 
   async function openMessage(m){
     currentMessage = m;
     mailSubject.textContent = m.subject;
-    mailContent.textContent = m.body;
+    
+    // Render HTML content for rich text emails
+    console.log('[Email] Rendering message body as HTML');
+    mailContent.innerHTML = m.body;
+    
     mailSender.textContent = `${m.sender} → ${ (m.recipients||[]).join(', ') }`;
     mailMeta.textContent = fmtDate(m.ts);
     const md = document.getElementById('mailDate'); if(md) md.textContent = fmtDate(m.ts);
@@ -482,6 +507,7 @@ document.addEventListener('includesLoaded', () => {
       // Then update Firestore in background
       try { 
         await updateDoc(doc(db,'emails',m.id), { read: true });
+        console.log('[Email] Message marked as read');
       }
       catch(e){ 
         console.error('mark read failed', e);
@@ -531,7 +557,7 @@ document.addEventListener('includesLoaded', () => {
       myAddress = emailFromName(selected.name);
       // Get director divisions for this character
       directorDivisions = getDirectorDivisions();
-      console.log('Character loaded:', selected.name, 'Director divisions:', directorDivisions);
+      updateSendAsOptions();
     } else if (user && user.email){
       myAddress = user.email;
       directorDivisions = [];
