@@ -80,249 +80,38 @@
       letter-spacing: 1px;
     }
 
-    .personnel-card-btn {
-      display: block;
-      margin-top: 1rem;
-      padding: 0.6rem 1rem;
-      background: var(--accent-mint);
-      color: #06100e;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      width: 100%;
-      text-align: center;
-    }
+    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); animation: fadeIn 0.3s ease; }
+    .modal.show { display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: var(--bg-card); border: 2px solid var(--accent-mint); border-radius: 10px; padding: 2rem; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15); animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--accent-teal); padding-bottom: 1rem; }
+    .modal-header h2 { margin: 0; color: var(--accent-mint); font-size: 1.8rem; }
+    .modal-close { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--accent-mint); transition: color 0.2s ease; }
+    .modal-close:hover { color: var(--accent-teal); }
+    .feedback { padding: 1rem; border-radius: 6px; margin-top: 1rem; font-weight: 500; }
+    .feedback.success { background: rgba(78, 250, 170, 0.1); color: var(--accent-mint); border: 1px solid rgba(78, 250, 170, 0.3); }
+    .feedback.error { background: rgba(176, 0, 0, 0.1); color: #ff6b6b; border: 1px solid rgba(176, 0, 0, 0.3); }
+    .access-denied { text-align: center; padding: 3rem; color: var(--text-light); }
+    .empty-state { text-align: center; padding: 2rem; color: var(--text-light); opacity: 0.7; }
 
-    .personnel-card-btn:hover {
-      background: var(--accent-teal);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(78, 250, 170, 0.3);
-    }
+    .modal-detail-input { width: 100%; padding: 0.6rem; margin: 0.5rem 0 1rem 0; background: var(--bg-soft); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
+    .modal-detail-input:focus { outline: none; border-color: var(--accent-mint); box-shadow: 0 0 8px rgba(78, 250, 170, 0.2); }
 
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      animation: fadeIn 0.3s ease;
-    }
+    .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--accent-teal); padding-top: 1.5rem; }
+    .modal-actions button { flex: 1; padding: 0.8rem 1.5rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    .btn-save { background: var(--accent-mint); color: #06100e; }
+    .btn-save:hover { background: var(--accent-teal); }
+    .btn-cancel { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: var(--text-light); }
+    .btn-cancel:hover { border-color: var(--accent-mint); color: var(--accent-mint); }
 
-    .modal.show {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .edit-photo-section { margin-bottom: 1.5rem; }
+    .photo-preview { text-align: center; margin: 1rem 0; }
+    .photo-preview img { max-width: 150px; max-height: 150px; border-radius: 8px; border: 2px solid var(--accent-teal); }
 
-    .modal-content {
-      background: var(--bg-card);
-      border: 2px solid var(--accent-mint);
-      border-radius: 10px;
-      padding: 2rem;
-      width: 90%;
-      max-width: 800px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15);
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      border-bottom: 2px solid var(--accent-teal);
-      padding-bottom: 1rem;
-    }
-
-    .modal-header h2 {
-      margin: 0;
-      color: var(--accent-mint);
-      font-size: 1.8rem;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 2rem;
-      cursor: pointer;
-      color: var(--accent-mint);
-      transition: color 0.2s ease;
-    }
-
-    .modal-close:hover {
-      color: var(--accent-teal);
-    }
-
-    .modal-body {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .modal-photo {
-      width: 150px;
-      height: 150px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 2px solid var(--accent-teal);
-    }
-
-    .modal-details {
-      flex: 1;
-    }
-
-    .modal-detail-row {
-      display: flex;
-      margin-bottom: 1rem;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .modal-detail-label {
-      font-weight: 600;
-      color: var(--accent-mint);
-      min-width: 100px;
-      font-size: 0.95rem;
-    }
-
-    .modal-detail-value {
-      color: var(--text-light);
-      flex: 1;
-    }
-
-    .modal-detail-input {
-      background: var(--bg-soft);
-      border: 1px solid rgba(78, 250, 170, 0.3);
-      border-radius: 6px;
-      padding: 0.5rem;
-      color: var(--text-light);
-      font-family: var(--font-body);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .modal-detail-input:focus {
-      outline: none;
-      border-color: var(--accent-mint);
-      box-shadow: 0 0 8px rgba(78, 250, 170, 0.2);
-    }
-
-    .modal-photo-url-input {
-      width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      background: var(--bg-soft);
-      border: 1px solid rgba(78, 250, 170, 0.3);
-      border-radius: 6px;
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-
-    .modal-photo-url-input:focus {
-      outline: none;
-      border-color: var(--accent-mint);
-      box-shadow: 0 0 8px rgba(78, 250, 170, 0.2);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      border-top: 1px solid var(--accent-teal);
-      padding-top: 1.5rem;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 0.95rem;
-    }
-
-    .btn-save {
-      background: var(--accent-mint);
-      color: #06100e;
-    }
-
-    .btn-save:hover {
-      background: var(--accent-teal);
-      box-shadow: 0 4px 12px rgba(78, 250, 170, 0.3);
-    }
-
-    .btn-cancel {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: var(--text-light);
-    }
-
-    .btn-cancel:hover {
-      border-color: var(--accent-mint);
-      color: var(--accent-mint);
-    }
-
-    .feedback {
-      padding: 1rem;
-      border-radius: 6px;
-      margin-top: 1rem;
-      font-weight: 500;
-    }
-
-    .feedback.success {
-      background: rgba(78, 250, 170, 0.1);
-      color: var(--accent-mint);
-      border: 1px solid rgba(78, 250, 170, 0.3);
-    }
-
-    .feedback.error {
-      background: rgba(176, 0, 0, 0.1);
-      color: #ff6b6b;
-      border: 1px solid rgba(176, 0, 0, 0.3);
-    }
-
-    .access-denied {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-light);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-light);
-      opacity: 0.7;
-    }
+    #editAwardsContainer { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+    #editAwardsContainer label { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: background 0.2s ease; }
+    #editAwardsContainer label:hover { background: rgba(78, 250, 170, 0.1); }
   </style>
 </head>
 <body>
@@ -349,7 +138,7 @@
     <div id="managementContainer" style="display:none;">
       <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
         <input id="searchInput" type="text" placeholder="Search by name or PID..." style="flex: 1; min-width: 200px; padding: 0.6rem; background: var(--bg-card); border: 1px solid rgba(78, 250, 170, 0.3); border-radius: 6px; color: var(--text-light);">
-        <button id="addPIDBtn" class="personnel-card-btn" style="flex: 0 1 auto;">+ Add Personnel ID</button>
+        <button id="addPIDBtn" style="padding: 0.6rem 1.2rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 0 1 auto;">+ Add Personnel ID</button>
       </div>
     </div>
 
@@ -363,10 +152,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2>Add Personnel ID</h2>
-        <button class="modal-close" onclick="closePIDModal()">&times;</button>
+        <button class="modal-close" onclick="window.closePIDModal()">&times;</button>
       </div>
 
-      <form id="pidForm" style="display:flex;flex-direction:column;gap:1rem;">
+      <form id="pidForm">
         <div>
           <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Personnel ID</label>
           <input id="pidInput" class="modal-detail-input" placeholder="e.g., 89A0B123" required>
@@ -377,7 +166,7 @@
         </div>
         <div>
           <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Clearance Level</label>
-          <input id="pidClearanceInput" class="modal-detail-input" type="number" min="0" max="5" placeholder="e.g., 1" required>
+          <input id="pidClearanceInput" class="modal-detail-input" type="number" min="0" max="5" required>
         </div>
         <div>
           <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Department</label>
@@ -396,7 +185,7 @@
 
         <div class="modal-actions">
           <button class="btn-save" type="submit">Create Personnel ID</button>
-          <button class="btn-cancel" type="button" onclick="closePIDModal()">Cancel</button>
+          <button class="btn-cancel" type="button" onclick="window.closePIDModal()">Cancel</button>
         </div>
       </form>
     </div>
@@ -407,14 +196,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2>Edit <span id="editPersonnelName"></span></h2>
-        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+        <button class="modal-close" onclick="window.closeEditModal()">&times;</button>
       </div>
 
-      <div style="margin-bottom: 1.5rem;">
+      <div class="edit-photo-section">
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Photo URL</label>
-        <input id="editPhotoUrl" class="modal-photo-url-input" placeholder="https://example.com/photo.jpg">
-        <div style="text-align:center;margin:1rem 0;">
-          <img id="editPhotoPreview" src="" alt="Photo preview" style="max-width:150px;max-height:150px;border-radius:8px;border:2px solid var(--accent-teal);">
+        <input id="editPhotoUrl" class="modal-detail-input" placeholder="https://example.com/photo.jpg">
+        <div class="photo-preview">
+          <img id="editPhotoPreview" src="" alt="Photo preview">
         </div>
       </div>
 
@@ -423,36 +212,36 @@
         <input id="editName" class="modal-detail-input" placeholder="e.g., John Smith">
       </div>
 
-      <div style="margin-top:1rem;">
+      <div>
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Rank</label>
         <input id="editRank" class="modal-detail-input" placeholder="e.g., Captain, Specialist">
       </div>
 
-      <div style="margin-top:1rem;">
+      <div>
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Department</label>
         <input id="editDept" class="modal-detail-input" placeholder="e.g., Administrative, Research">
       </div>
 
-      <div style="margin-top:1rem;">
+      <div>
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Clearance Level</label>
         <input id="editClearance" class="modal-detail-input" type="number" min="0" max="5" placeholder="e.g., 1, 3, 5">
       </div>
 
-      <div style="margin-top:1rem;">
+      <div>
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Personnel Class</label>
         <input id="editClass" class="modal-detail-input" placeholder="e.g., Administrative, O5-Council">
       </div>
 
       <div style="margin-top:1.5rem;">
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Awards & Commendations</label>
-        <div id="editAwardsContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem;"></div>
+        <div id="editAwardsContainer"></div>
       </div>
 
       <div id="editFeedback" style="display:none;"></div>
 
       <div class="modal-actions">
-        <button class="btn-save" onclick="savePersonnelChanges()">Save Changes</button>
-        <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button class="btn-save" onclick="window.savePersonnelChanges()">Save Changes</button>
+        <button class="btn-cancel" onclick="window.closeEditModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -471,8 +260,7 @@
     let currentEditingPID = null;
     let allPersonnel = [];
 
-    // Initialize after includes load
-    async function initializeManager() {
+    function initializeManager() {
       const accessDeniedDiv = document.getElementById('accessDenied');
       const managementContainer = document.getElementById('managementContainer');
       const personnelGrid = document.getElementById('personnelGrid');
@@ -484,22 +272,21 @@
       const searchInput = document.getElementById('searchInput');
       const addPIDBtn = document.getElementById('addPIDBtn');
 
-      function maskPID(pid) {
-        if (!pid) return '';
-        const s = String(pid);
+      function maskPID(s) {
+        if (!s) return '';
+        s = String(s);
         if (s.length <= 3) return s;
         const last = s.slice(-3);
-        const maskLen = Math.max(0, s.length - 3);
-        return '█'.repeat(maskLen) + last;
+        return '█'.repeat(s.length - 3) + last;
       }
 
-      function renderPersonnelGrid(personnelList = allPersonnel) {
+      function renderGrid(list = allPersonnel) {
         personnelGrid.innerHTML = "";
-        const searchQuery = (searchInput.value || "").toLowerCase();
-        const filtered = personnelList.filter(p => {
+        const q = (searchInput.value || "").toLowerCase();
+        const filtered = list.filter(p => {
           const name = (p.name || "").toLowerCase();
           const pid = (p.pid || "").toLowerCase();
-          return name.includes(searchQuery) || pid.includes(searchQuery);
+          return name.includes(q) || pid.includes(q);
         });
 
         if (filtered.length === 0) {
@@ -522,378 +309,258 @@
             </div>
           `;
 
-          card.addEventListener('click', () => openEditModal(p));
+          card.addEventListener('click', () => window.openEditModal(p));
           personnelGrid.appendChild(card);
         });
       }
 
-      onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        accessDeniedDiv.style.display = 'block';
-        return;
-      }
+      window.openPIDModal = function() {
+        pidForm.reset();
+        pidFeedback.style.display = 'none';
+        pidModal.classList.add('show');
+        document.getElementById('pidInput').focus();
+      };
 
-      try {
-        // Get current user's character
-        const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
-        const charSnap = await getDocs(q);
-        
-        // Check if character is in AD/IO
-        let hasAccess = false;
-        charSnap.forEach(doc => {
-          const char = doc.data();
-          if ((char.department || '').includes('AD') || (char.department || '').includes('Internal Operations')) {
-            hasAccess = true;
+      window.closePIDModal = function() {
+        pidModal.classList.remove('show');
+        pidFeedback.style.display = 'none';
+        pidForm.reset();
+      };
+
+      window.openEditModal = async function(person) {
+        currentEditingPID = person.pid;
+        document.getElementById('editPersonnelName').textContent = person.name || 'Unknown';
+        document.getElementById('editPhotoUrl').value = person.profileImage || '';
+        document.getElementById('editPhotoPreview').src = person.profileImage || 'https://files.catbox.moe/aa9390.png';
+        document.getElementById('editName').value = person.name || '';
+        document.getElementById('editRank').value = person.rank || '';
+        document.getElementById('editDept').value = person.department || '';
+        document.getElementById('editClearance').value = person.clearance || '';
+        document.getElementById('editClass').value = person['class'] || '';
+
+        const awardsContainer = document.getElementById('editAwardsContainer');
+        awardsContainer.innerHTML = '';
+        const charAwards = person.awards || [];
+
+        try {
+          const awardsRes = await fetch('/assets/data/awards.json');
+          const allAwards = await awardsRes.json();
+          allAwards.forEach(award => {
+            const label = document.createElement('label');
+            label.style.color = 'var(--text-light)';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = charAwards.includes(award.id);
+            checkbox.dataset.awardId = award.id;
+
+            const span = document.createElement('span');
+            span.textContent = award.name;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            awardsContainer.appendChild(label);
+          });
+        } catch (err) {
+          console.warn('Error loading awards:', err);
+        }
+
+        editFeedback.style.display = 'none';
+        editModal.classList.add('show');
+      };
+
+      window.closeEditModal = function() {
+        editModal.classList.remove('show');
+        currentEditingPID = null;
+        editFeedback.style.display = 'none';
+      };
+
+      window.savePersonnelChanges = async function() {
+        if (!currentEditingPID) return;
+
+        const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
+        const name = (document.getElementById('editName').value || '').trim();
+        const rank = (document.getElementById('editRank').value || '').trim();
+        const dept = (document.getElementById('editDept').value || '').trim();
+        const clearance = document.getElementById('editClearance').value;
+        const personClass = (document.getElementById('editClass').value || '').trim();
+
+        const awardCheckboxes = document.querySelectorAll('#editAwardsContainer input[type="checkbox"]');
+        const selectedAwards = [];
+        awardCheckboxes.forEach(checkbox => {
+          if (checkbox.checked) {
+            selectedAwards.push(checkbox.dataset.awardId);
           }
         });
 
-        if (!hasAccess) {
+        try {
+          const chars = await getDocs(collection(db, 'characters'));
+          let charDocId = null;
+
+          chars.forEach(doc => {
+            if (doc.data().pid === currentEditingPID) {
+              charDocId = doc.id;
+            }
+          });
+
+          if (!charDocId) {
+            window.showEditFeedback('Character not found', 'error');
+            return;
+          }
+
+          const updateData = {};
+          if (photoUrl) updateData.profileImage = photoUrl;
+          if (name) updateData.name = name;
+          if (rank) updateData.rank = rank;
+          if (dept) updateData.department = dept;
+          if (clearance !== '') updateData.clearance = Number(clearance);
+          if (personClass) updateData['class'] = personClass;
+          updateData.awards = selectedAwards;
+
+          await updateDoc(doc(db, 'characters', charDocId), updateData);
+
+          try {
+            await updateDoc(doc(db, 'personnel', currentEditingPID), {
+              name,
+              clearance: clearance !== '' ? Number(clearance) : undefined,
+              department: dept,
+              rank,
+              'class': personClass
+            });
+          } catch (err) {
+            console.warn('Could not update personnel record:', err);
+          }
+
+          window.showEditFeedback('Personnel record updated successfully!', 'success');
+          setTimeout(() => {
+            window.closeEditModal();
+            renderGrid(allPersonnel);
+          }, 1500);
+        } catch (err) {
+          console.error('Error saving changes:', err);
+          window.showEditFeedback('Error saving changes: ' + err.message, 'error');
+        }
+      };
+
+      window.showEditFeedback = function(message, type) {
+        editFeedback.className = 'feedback ' + type;
+        editFeedback.textContent = message;
+        editFeedback.style.display = 'block';
+      };
+
+      async function savePID(e) {
+        e.preventDefault();
+        const pid = (document.getElementById('pidInput').value || '').trim().toUpperCase();
+        const name = (document.getElementById('pidNameInput').value || '').trim();
+        const clearance = parseInt(document.getElementById('pidClearanceInput').value);
+        const dept = (document.getElementById('pidDeptInput').value || '').trim();
+        const rank = (document.getElementById('pidRankInput').value || '').trim();
+        const personClass = (document.getElementById('pidClassInput').value || '').trim();
+
+        if (!pid || !name || isNaN(clearance)) {
+          window.showPIDFeedback('Please fill in all required fields', 'error');
+          return;
+        }
+
+        try {
+          await setDoc(doc(db, 'personnel', pid), {
+            id: pid,
+            name,
+            clearance,
+            department: dept,
+            rank,
+            'class': personClass
+          });
+
+          window.showPIDFeedback('Personnel ID created successfully!', 'success');
+          pidForm.reset();
+          setTimeout(() => {
+            window.closePIDModal();
+            location.reload();
+          }, 1000);
+        } catch (err) {
+          console.error('Error saving PID:', err);
+          window.showPIDFeedback('Error: ' + err.message, 'error');
+        }
+      }
+
+      window.showPIDFeedback = function(message, type) {
+        pidFeedback.className = 'feedback ' + type;
+        pidFeedback.textContent = message;
+        pidFeedback.style.display = 'block';
+      };
+
+      // Event listeners
+      document.getElementById('editPhotoUrl').addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        if (url) {
+          document.getElementById('editPhotoPreview').src = url;
+        }
+      });
+
+      pidModal.addEventListener('click', (e) => {
+        if (e.target === pidModal) window.closePIDModal();
+      });
+
+      editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) window.closeEditModal();
+      });
+
+      pidForm.addEventListener('submit', savePID);
+      searchInput.addEventListener('input', () => renderGrid(allPersonnel));
+      addPIDBtn.addEventListener('click', () => window.openPIDModal());
+
+      // Auth check and load
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
           accessDeniedDiv.style.display = 'block';
           return;
         }
 
-        // Has access - show management UI
-        managementContainer.style.display = 'block';
-        personnelGrid.style.display = 'grid';
-        
-        // Load all characters and create personnel list
-        const allChars = await getDocs(collection(db, 'characters'));
-        allPersonnel = [];
-        allChars.forEach(doc => {
-          const char = doc.data();
-          if (char.pid) {
-            allPersonnel.push({ docId: doc.id, ...char });
-          }
-        });
-
-        renderPersonnelGrid(allPersonnel);
-
-        // Wire search
-        searchInput.addEventListener('input', () => renderPersonnelGrid(allPersonnel));
-
-        // Wire add PID button
-        addPIDBtn.addEventListener('click', () => openPIDModal());
-
-        // Wire PID form
-        pidForm.addEventListener('submit', savePID);
-
-      } catch (err) {
-        console.error('Error checking access:', err);
-        accessDeniedDiv.style.display = 'block';
-      }
-    });
-
-    // PID Modal functions
-    window.openPIDModal = function() {
-      pidForm.reset();
-      pidFeedback.style.display = 'none';
-      pidModal.classList.add('show');
-      document.getElementById('pidInput').focus();
-    };
-
-    window.closePIDModal = function() {
-      pidModal.classList.remove('show');
-      pidFeedback.style.display = 'none';
-      pidForm.reset();
-    };
-
-    async function savePID(e) {
-      e.preventDefault();
-      const pid = (document.getElementById('pidInput').value || '').trim().toUpperCase();
-      const name = (document.getElementById('pidNameInput').value || '').trim();
-      const clearance = parseInt(document.getElementById('pidClearanceInput').value);
-      const dept = (document.getElementById('pidDeptInput').value || '').trim();
-      const rank = (document.getElementById('pidRankInput').value || '').trim();
-      const personClass = (document.getElementById('pidClassInput').value || '').trim();
-
-      if (!pid || !name || isNaN(clearance)) {
-        showPIDFeedback('Please fill in all required fields', 'error');
-        return;
-      }
-
-      try {
-        // Create/update personnel record
-        await setDoc(doc(db, 'personnel', pid), {
-          id: pid,
-          name,
-          clearance,
-          department: dept,
-          rank,
-          'class': personClass
-        });
-
-        showPIDFeedback('Personnel ID created successfully!', 'success');
-        pidForm.reset();
-        setTimeout(() => {
-          closePIDModal();
-          location.reload();
-        }, 1000);
-      } catch (err) {
-        console.error('Error saving PID:', err);
-        showPIDFeedback('Error: ' + err.message, 'error');
-      }
-    }
-
-    function showPIDFeedback(message, type) {
-      pidFeedback.className = 'feedback ' + type;
-      pidFeedback.textContent = message;
-      pidFeedback.style.display = 'block';
-    }
-
-    // Edit Modal function
-    async function openEditModal(person) {
-      currentEditingPID = person.pid;
-      document.getElementById('editPersonnelName').textContent = person.name || 'Unknown';
-      document.getElementById('editPhotoUrl').value = person.profileImage || '';
-      document.getElementById('editPhotoPreview').src = person.profileImage || 'https://files.catbox.moe/aa9390.png';
-      document.getElementById('editName').value = person.name || '';
-      document.getElementById('editRank').value = person.rank || '';
-      document.getElementById('editDept').value = person.department || '';
-      document.getElementById('editClearance').value = person.clearance || '';
-      document.getElementById('editClass').value = person['class'] || '';
-
-      // Load awards
-      const awardsContainer = document.getElementById('editAwardsContainer');
-      awardsContainer.innerHTML = '';
-      const charAwards = person.awards || [];
-
-      try {
-        const awardsRes = await fetch('/assets/data/awards.json');
-        const allAwards = await awardsRes.json();
-
-        allAwards.forEach(award => {
-          const label = document.createElement('label');
-          label.style.display = 'flex';
-          label.style.alignItems = 'center';
-          label.style.gap = '0.5rem';
-          label.style.padding = '0.5rem';
-          label.style.borderRadius = '6px';
-          label.style.cursor = 'pointer';
-          label.style.transition = 'background 0.2s ease';
-
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.checked = charAwards.includes(award.id);
-          checkbox.dataset.awardId = award.id;
-
-          const span = document.createElement('span');
-          span.textContent = award.name;
-          span.style.color = 'var(--text-light)';
-
-          label.appendChild(checkbox);
-          label.appendChild(span);
-          awardsContainer.appendChild(label);
-        });
-      } catch (err) {
-        console.warn('Error loading awards:', err);
-      }
-
-      editFeedback.style.display = 'none';
-      editModal.classList.add('show');
-    }
-
-    window.closeEditModal = function() {
-      editModal.classList.remove('show');
-      currentEditingPID = null;
-      editFeedback.style.display = 'none';
-    };
-
-    // Update photo preview when URL changes
-    document.getElementById('editPhotoUrl').addEventListener('input', (e) => {
-      const url = e.target.value.trim();
-      if (url) {
-        document.getElementById('editPhotoPreview').src = url;
-      }
-    });
-
-    window.savePersonnelChanges = async function() {
-      if (!currentEditingPID) return;
-
-      const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
-      const name = (document.getElementById('editName').value || '').trim();
-      const rank = (document.getElementById('editRank').value || '').trim();
-      const dept = (document.getElementById('editDept').value || '').trim();
-      const clearance = document.getElementById('editClearance').value;
-      const personClass = (document.getElementById('editClass').value || '').trim();
-
-      // Get selected awards
-      const awardCheckboxes = document.querySelectorAll('#editAwardsContainer input[type="checkbox"]');
-      const selectedAwards = [];
-      awardCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          selectedAwards.push(checkbox.dataset.awardId);
-        }
-      });
-
-      try {
-        // Find and update character by PID
-        const chars = await getDocs(collection(db, 'characters'));
-        let charDocId = null;
-
-        chars.forEach(doc => {
-          if (doc.data().pid === currentEditingPID) {
-            charDocId = doc.id;
-          }
-        });
-
-        if (!charDocId) {
-          showEditFeedback('Character not found', 'error');
-          return;
-        }
-
-        // Update character
-        const updateData = {};
-        if (photoUrl) updateData.profileImage = photoUrl;
-        if (name) updateData.name = name;
-        if (rank) updateData.rank = rank;
-        if (dept) updateData.department = dept;
-        if (clearance !== '') updateData.clearance = Number(clearance);
-        if (personClass) updateData['class'] = personClass;
-        updateData.awards = selectedAwards;
-
-        await updateDoc(doc(db, 'characters', charDocId), updateData);
-
-        // Also update personnel record
         try {
-          await updateDoc(doc(db, 'personnel', currentEditingPID), {
-            name,
-            clearance: clearance !== '' ? Number(clearance) : undefined,
-            department: dept,
-            rank,
-            'class': personClass
+          const q = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
+          const charSnap = await getDocs(q);
+          
+          let hasAccess = false;
+          charSnap.forEach(doc => {
+            const char = doc.data();
+            if ((char.department || '').includes('AD') || (char.department || '').includes('Internal Operations')) {
+              hasAccess = true;
+            }
           });
-        } catch (err) {
-          console.warn('Could not update personnel record:', err);
-        }
 
-        showEditFeedback('Personnel record updated successfully!', 'success');
-        setTimeout(() => {
-          closeEditModal();
-          renderPersonnelGrid(allPersonnel);
-        }, 1500);
-
-      } catch (err) {
-        console.error('Error saving changes:', err);
-        showEditFeedback('Error saving changes: ' + err.message, 'error');
-      }
-    };
-
-    function showEditFeedback(message, type) {
-      editFeedback.className = 'feedback ' + type;
-      editFeedback.textContent = message;
-      editFeedback.style.display = 'block';
-    }
-
-    // Close modals when clicking outside
-    pidModal.addEventListener('click', (e) => {
-      if (e.target === pidModal) closePIDModal();
-    });
-
-    editModal.addEventListener('click', (e) => {
-      if (e.target === editModal) closeEditModal();
-    });
-
-    // Update photo preview when URL changes
-    document.getElementById('editPhotoUrl').addEventListener('input', (e) => {
-      const url = e.target.value.trim();
-      if (url) {
-        document.getElementById('editPhotoPreview').src = url;
-      }
-    });
-
-    window.savePersonnelChanges = async function() {
-      if (!currentEditingPID) return;
-
-      const photoUrl = (document.getElementById('editPhotoUrl').value || '').trim();
-      const name = (document.getElementById('editName').value || '').trim();
-      const rank = (document.getElementById('editRank').value || '').trim();
-      const dept = (document.getElementById('editDept').value || '').trim();
-      const clearance = document.getElementById('editClearance').value;
-      const personClass = (document.getElementById('editClass').value || '').trim();
-
-      // Get selected awards
-      const awardCheckboxes = document.querySelectorAll('#editAwardsContainer input[type="checkbox"]');
-      const selectedAwards = [];
-      awardCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          selectedAwards.push(checkbox.dataset.awardId);
-        }
-      });
-
-      try {
-        // Find and update character by PID
-        const chars = await getDocs(collection(db, 'characters'));
-        let charDocId = null;
-
-        chars.forEach(doc => {
-          if (doc.data().pid === currentEditingPID) {
-            charDocId = doc.id;
+          if (!hasAccess) {
+            accessDeniedDiv.style.display = 'block';
+            return;
           }
-        });
 
-        if (!charDocId) {
-          showEditFeedback('Character not found', 'error');
-          return;
-        }
-
-        // Update character
-        const updateData = {};
-        if (photoUrl) updateData.profileImage = photoUrl;
-        if (name) updateData.name = name;
-        if (rank) updateData.rank = rank;
-        if (dept) updateData.department = dept;
-        if (clearance !== '') updateData.clearance = Number(clearance);
-        if (personClass) updateData['class'] = personClass;
-        updateData.awards = selectedAwards;
-
-        await updateDoc(doc(db, 'characters', charDocId), updateData);
-
-        // Also update personnel record
-        try {
-          await updateDoc(doc(db, 'personnel', currentEditingPID), {
-            name,
-            clearance: clearance !== '' ? Number(clearance) : undefined,
-            department: dept,
-            rank,
-            'class': personClass
+          managementContainer.style.display = 'block';
+          personnelGrid.style.display = 'grid';
+          
+          const allChars = await getDocs(collection(db, 'characters'));
+          allPersonnel = [];
+          allChars.forEach(doc => {
+            const char = doc.data();
+            if (char.pid) {
+              allPersonnel.push({ docId: doc.id, ...char });
+            }
           });
+
+          renderGrid(allPersonnel);
+
         } catch (err) {
-          console.warn('Could not update personnel record:', err);
+          console.error('Error checking access:', err);
+          accessDeniedDiv.style.display = 'block';
         }
-
-        showEditFeedback('Personnel record updated successfully!', 'success');
-        setTimeout(() => {
-          closeEditModal();
-          renderPersonnelGrid(allPersonnel);
-        }, 1500);
-
-      } catch (err) {
-        console.error('Error saving changes:', err);
-        showEditFeedback('Error saving changes: ' + err.message, 'error');
-      }
-    };
-
-    function showEditFeedback(message, type) {
-      editFeedback.className = 'feedback ' + type;
-      editFeedback.textContent = message;
-      editFeedback.style.display = 'block';
-    }
-
-    // Close modals when clicking outside
-    pidModal.addEventListener('click', (e) => {
-      if (e.target === pidModal) closePIDModal();
-    });
-
-    editModal.addEventListener('click', (e) => {
-      if (e.target === editModal) closeEditModal();
-    });
       });
     }
 
-    // Call initialization when includes are loaded
+    // Initialize when includes load
     if (document.readyState === 'loading') {
       document.addEventListener('includesLoaded', initializeManager);
     } else {
       initializeManager();
     }
+  </script>
+
+</body>
 </html>
