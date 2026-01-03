@@ -145,7 +145,7 @@
 
       // Return the authoritative clearance level from Firebase
       const clearance = parseClearance(charData.clearance);
-      return Number.isNaN(clearance) ? 0 : clearance;
+      return Number.isNaN(clearance) ? 1 : clearance;
     } catch (err) {
       console.error('Firebase clearance fetch failed', err);
       // Fail secure - deny access on any error
