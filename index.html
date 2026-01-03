@@ -642,10 +642,90 @@
       background: rgba(78, 250, 170, 0.1);
       border-color: var(--accent-mint);
     }
+
+    /* Beta warning modal */
+    .beta-warning-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .beta-warning-modal-overlay.show {
+      display: flex;
+    }
+
+    .beta-warning-modal-content {
+      background: var(--bg-card);
+      border: 2px solid #ff9800;
+      border-radius: 12px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(255, 152, 0, 0.2);
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .beta-warning-modal-content h1 {
+      font-size: 1.8rem;
+      margin: 0 0 0.5rem 0;
+      color: #ff9800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .beta-warning-modal-content p {
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .beta-warning-modal-content .beta-warning-button {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+    }
+
+    .beta-warning-modal-content .beta-warning-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(78, 250, 170, 0.4);
+    }
   </style>
 
   <!-- Navbar only (no header) -->
   <div data-include="/components/navbar.html"></div>
+
+  <!-- Beta Warning Modal (shown first to first-time visitors) -->
+  <div id="betaWarningModal" class="beta-warning-modal-overlay">
+    <div class="beta-warning-modal-content">
+      <h1>
+        <i class="fas fa-flask-vial"></i> BETA NOTICE
+      </h1>
+      <p>This webpage is heavily work in progress. Expect bugs, incomplete features, and frequent changes. Your feedback helps us improve!</p>
+      <button class="beta-warning-button" onclick="closeBetaWarningModal()">
+        I Understand
+      </button>
+    </div>
+  </div>
 
   <!-- First-time visitor modal -->
   <div id="firstTimeModal" class="first-time-modal-overlay">
@@ -1035,6 +1115,7 @@
 
     // First-time visitor modal logic
     function checkFirstTimeVisitor() {
+      const betaWarningModal = document.getElementById('betaWarningModal');
       const firstTimeModalOverlay = document.getElementById('firstTimeModal');
       const hasVisited = localStorage.getItem('site89_visited');
       
@@ -1042,17 +1123,33 @@
       const selectedChar = localStorage.getItem('selectedCharacter');
       const hasAuth = selectedChar !== null;
 
-      // Show modal only for non-logged-in first-time visitors
+      // Show modals only for non-logged-in first-time visitors
       if (!hasVisited && !hasAuth) {
         // Mark as visited
         localStorage.setItem('site89_visited', 'true');
         
-        // Show modal after a short delay (after boot animation if it plays)
+        // Show beta warning first after a short delay (after boot animation if it plays)
+        setTimeout(() => {
+          if (betaWarningModal) {
+            betaWarningModal.classList.add('show');
+          }
+        }, 1000);
+      }
+    }
+
+    function closeBetaWarningModal() {
+      const betaWarningModal = document.getElementById('betaWarningModal');
+      const firstTimeModalOverlay = document.getElementById('firstTimeModal');
+      
+      if (betaWarningModal) {
+        betaWarningModal.classList.remove('show');
+        
+        // Show welcome modal after beta warning closes
         setTimeout(() => {
           if (firstTimeModalOverlay) {
             firstTimeModalOverlay.classList.add('show');
           }
-        }, 1000);
+        }, 300);
       }
     }
 
