@@ -42,12 +42,19 @@
         return;
       }
 
-      if (Number.isNaN(userClearance) || userClearance < reqNum) {
-        // User doesn't have access - redirect BEFORE rendering
+      // If no user/character, userClearance will be NaN - block access
+      if (Number.isNaN(userClearance)) {
         blockPageAndRedirect();
-      } else {
+        return;
+      }
+
+      // Check if user has sufficient clearance (>= required level)
+      if (userClearance >= reqNum) {
         // User has valid access - allow rendering
         unblockPage();
+      } else {
+        // User doesn't have sufficient clearance - redirect
+        blockPageAndRedirect();
       }
     } catch (err) {
       console.error('Secure access check error', err);

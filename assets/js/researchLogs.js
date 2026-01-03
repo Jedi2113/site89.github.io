@@ -75,7 +75,8 @@ document.addEventListener('includesLoaded', ()=>{
 
   function renderLogs(arr){
     const q = (searchInput && searchInput.value || '').trim().toLowerCase();
-    if(isNaN(userClearance()) || userClearance() <= 0){ tableBody.innerHTML = '<tr><td colspan="2" class="empty">You need clearance &gt; 0 to view research logs.</td></tr>'; return; }
+    // Users need clearance >= 1 to view research logs (enforced by secure-access.js, but check here too)
+    if(isNaN(userClearance()) || userClearance() < 1){ tableBody.innerHTML = '<tr><td colspan="2" class="empty">You need clearance >= 1 to view research logs.</td></tr>'; return; }
     const filtered = (!q) ? arr : arr.filter(d => (d.title||'').toLowerCase().includes(q) || (d.tags||[]).join(' ').toLowerCase().includes(q));
     if(filtered.length === 0){ tableBody.innerHTML = '<tr><td colspan="2" class="empty">No entries match.</td></tr>'; return; }
     tableBody.innerHTML = '';
