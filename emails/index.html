@@ -48,6 +48,9 @@
     .compose-modal header { padding:0.8rem 1rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; justify-content:space-between }
     .compose-modal .body { padding:1rem }
     .compose-modal input, .compose-modal textarea { width:100%; padding:.6rem; margin-bottom:.6rem; border-radius:6px; border:1px solid #333; background:#111; color:var(--text-light) }
+    .compose-suggestions { position:absolute; background:var(--bg-card); border:1px solid rgba(78,250,170,0.2); border-radius:6px; max-height:200px; overflow-y:auto; z-index:1000; width:calc(100% - 2rem); display:none; }
+    .compose-suggestions div { padding:.5rem .8rem; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .compose-suggestions div:hover { background:rgba(78,250,170,0.1); }
 
     @media (max-width: 1000px){ .mail-list{display:none} .mail-sidebar{display:none} .mail-left{display:none} .mail-app{padding:.6rem} .compose-modal{left:8px;right:8px;width:auto} .mail-view{min-width:unset} }
   </style>
@@ -111,7 +114,10 @@
           <option value="">Send as personal account</option>
         </select>
       </div>
-      <input id="composeTo" placeholder="To (comma-separated addresses)">
+      <div style="position:relative">
+        <input id="composeTo" placeholder="To (comma-separated addresses)" autocomplete="off">
+        <div id="composeSuggestions" class="compose-suggestions"></div>
+      </div>
       <input id="composeSubject" placeholder="Subject">
       <textarea id="composeBody" placeholder="Message body..."></textarea>
       <div style="display:flex;gap:.5rem;justify-content:flex-end">

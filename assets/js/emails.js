@@ -136,6 +136,7 @@ document.addEventListener('includesLoaded', () => {
   const btnForward = document.getElementById('btnForward');
   const btnDelete = document.getElementById('btnDelete');
   const composeSendAs = document.getElementById('composeSendAs');
+  const composeSuggestions = document.getElementById('composeSuggestions');
 
   let currentFolder = 'inbox';
   let myAddress = '';
@@ -146,6 +147,8 @@ document.addEventListener('includesLoaded', () => {
   let directorDivisions = []; // Current character's director divisions
   let directorSendAddr = ''; // Currently selected send-as address
   let locallyMarkedRead = new Set(); // Track messages we've marked as read locally
+  let contactsList = new Set(); // Track known email addresses for autocomplete
+  let charactersCache = {}; // Cache character data for profile pictures
 
   function isValidEmail(e){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -188,6 +191,46 @@ document.addEventListener('includesLoaded', () => {
     directorSendAddr = composeSendAs.value;
   });
 
+  // Autocomplete for recipient field
+  composeTo.addEventListener('input', ()=>{
+    const value = composeTo.value;
+    const lastComma = value.lastIndexOf(',');
+    const currentInput = lastComma >= 0 ? value.substring(lastComma + 1).trim() : value.trim();
+    
+    if(currentInput.length >= 2){
+      const suggestions = showContactSuggestions(currentInput);
+      if(suggestions.length > 0){
+        composeSuggestions.innerHTML = suggestions.map(s => `<div data-email="${s}">${s}</div>`).join('');
+        composeSuggestions.style.display = 'block';
+      } else {
+        composeSuggestions.style.display = 'none';
+      }
+    } else {
+      composeSuggestions.style.display = 'none';
+    }
+  });
+
+  composeSuggestions.addEventListener('click', (e)=>{
+    if(e.target.dataset.email){
+      const value = composeTo.value;
+      const lastComma = value.lastIndexOf(',');
+      if(lastComma >= 0){
+        composeTo.value = value.substring(0, lastComma + 1) + ' ' + e.target.dataset.email;
+      } else {
+        composeTo.value = e.target.dataset.email;
+      }
+      composeSuggestions.style.display = 'none';
+      composeTo.focus();
+    }
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e)=>{
+    if(!composeTo.contains(e.target) && !composeSuggestions.contains(e.target)){
+      composeSuggestions.style.display = 'none';
+    }
+  });
+
   composeBtn.addEventListener('click', ()=> { 
     updateSendAsOptions();
     composeModal.style.display = 'block'; 
@@ -201,6 +244,52 @@ document.addEventListener('includesLoaded', () => {
   });
 
   function clearCompose(){ composeTo.value=''; composeSubject.value=''; composeBody.value=''; }
+
+  // Contacts autocomplete helpers
+  function saveContact(email){
+    if(email && isValidEmail(email)){
+      contactsList.add(email);
+      try {
+        localStorage.setItem('emailContacts', JSON.stringify([...contactsList]));
+      } catch(e){ console.warn('Failed to save contacts', e); }
+    }
+  }
+
+  function loadContacts(){
+    try {
+      const saved = localStorage.getItem('emailContacts');
+      if(saved){
+        const contacts = JSON.parse(saved);
+        contacts.forEach(c => contactsList.add(c));
+      }
+    } catch(e){ console.warn('Failed to load contacts', e); }
+  }
+
+  function showContactSuggestions(input){
+    const query = input.toLowerCase();
+    const suggestions = [...contactsList].filter(c => c.toLowerCase().includes(query));
+    return suggestions.slice(0, 10); // Limit to 10 suggestions
+  }
+
+  // Get character profile image
+  async function getCharacterImage(email){
+    // Check cache first
+    if(charactersCache[email]) return charactersCache[email];
+    
+    try {
+      const charsSnap = await getDocs(collection(db, 'characters'));
+      charsSnap.forEach(snap => {
+        const ch = snap.data();
+        if(ch.name){
+          const charEmail = emailFromName(ch.name);
+          const image = ch.image || ch.photo || ch.photoUrl || null;
+          charactersCache[charEmail] = image;
+        }
+      });
+    } catch(e){ console.warn('Failed to fetch character images', e); }
+    
+    return charactersCache[email] || null;
+  }
 
   async function sendMessage(status='sent'){
     const toRaw = (composeTo.value||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -329,12 +418,23 @@ document.addEventListener('includesLoaded', () => {
 
     messagesContainer.innerHTML = '';
     list.sort((a,b)=> (b.ts||0) - (a.ts||0));
-    list.forEach(m => {
+    list.forEach(async (m) => {
       const el = document.createElement('div');
       // Check if message is unread: neither m.read nor in locallyMarkedRead Set
       const isUnread = !m.read && !locallyMarkedRead.has(m.id) && (m.recipients||[]).includes(myAddress);
       el.className = 'message-item'+ (isUnread ? ' unread' : '');
-      el.innerHTML = `<div style="width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));display:flex;align-items:center;justify-content:center;color:#081413;font-weight:700">${(m.sender||'').charAt(0)||''}</div>
+      
+      // Save contacts for autocomplete
+      if(m.sender) saveContact(m.sender);
+      if(m.recipients) m.recipients.forEach(r => saveContact(r));
+      
+      // Try to get profile picture
+      const profileImage = await getCharacterImage(m.sender);
+      const avatarHtml = profileImage && !profileImage.includes('placeholder') 
+        ? `<img src="${profileImage}" style="width:44px;height:44px;border-radius:6px;object-fit:cover" alt="Profile">`
+        : `<div style="width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));display:flex;align-items:center;justify-content:center;color:#081413;font-weight:700">${(m.sender||'').charAt(0)||''}</div>`;
+      
+      el.innerHTML = `${avatarHtml}
         <div class="meta">
           <div style="display:flex;justify-content:space-between;align-items:center"><div class="subject">${m.subject}</div><div style="font-size:.85rem;color:var(--text-light);opacity:.8">${fmtDate(m.ts)}</div></div>
           <div style="margin-top:.25rem"><div style="color:var(--text-light);opacity:.9">${m.sender}</div><div class="snippet">${(m.body||'').slice(0,120)}</div></div>
@@ -379,6 +479,11 @@ document.addEventListener('includesLoaded', () => {
     emailsUnsubscribe = onSnapshot(q, (snapshot) => {
       allMessages = [];
       snapshot.forEach(s => { allMessages.push({ id: s.id, ...s.data() }); });
+      
+      // Preload character images for all senders
+      const senders = [...new Set(allMessages.map(m => m.sender).filter(Boolean))];
+      senders.forEach(sender => getCharacterImage(sender));
+      
       renderList();
     }, (err) => { console.warn('emails listener error', err); });
   }
@@ -396,6 +501,9 @@ document.addEventListener('includesLoaded', () => {
   // Auth and address detection
   onAuthStateChanged(auth, async (user) => {
     currentUser = user; // Store current user for UID in emails
+    // Load contacts from localStorage
+    loadContacts();
+    
     // Use selectedCharacter if present, otherwise fallback to user email
     let selected = null;
     try { selected = JSON.parse(localStorage.getItem('selectedCharacter')); } catch(e){ selected = null; }
