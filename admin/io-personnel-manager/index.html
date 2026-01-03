@@ -178,7 +178,7 @@
         </div>
         <div>
           <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Class</label>
-          <input id="pidClassInput" class="modal-detail-input" placeholder="e.g., Administrative">
+          <input id="pidClassInput" class="modal-detail-input" placeholder="e.g., A" maxlength="1">
         </div>
 
         <div id="pidFeedback" style="display:none;"></div>
@@ -229,7 +229,7 @@
 
       <div>
         <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Personnel Class</label>
-        <input id="editClass" class="modal-detail-input" placeholder="e.g., Administrative, O5-Council">
+        <input id="editClass" class="modal-detail-input" placeholder="e.g., A" maxlength="1">
       </div>
 
       <div style="margin-top:1.5rem;">
@@ -419,7 +419,7 @@
           await updateDoc(doc(db, 'characters', charDocId), updateData);
 
           try {
-            await updateDoc(doc(db, 'personnel', currentEditingPID), {
+            await setDoc(doc(db, 'personnel', currentEditingPID), {
               name,
               clearance: clearance !== '' ? Number(clearance) : undefined,
               department: dept,
