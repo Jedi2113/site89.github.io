@@ -1,28 +1,78 @@
 [
   {
-    "id": "navy-commendation",
-    "name": "Navy Commendation Medal",
-    "image": "/assets/img/awards/navy-commendation-medal.svg"
+    "id": "foundation-commendation",
+    "name": "Foundation Commendation Medal",
+    "image": "/assets/img/awards/foundation-commendation.svg"
   },
   {
-    "id": "navy-achievement",
-    "name": "Navy Achievement Medal",
-    "image": "/assets/img/awards/navy-achievement-medal.svg"
+    "id": "sealed-clearance",
+    "name": "Sealed Clearance Commendation",
+    "image": "/assets/img/awards/sealed-clearance.svg"
   },
   {
-    "id": "good-conduct",
-    "name": "Good Conduct Medal",
-    "image": "/assets/img/awards/good-conduct-medal.svg"
+    "id": "safe-containment",
+    "name": "Safe Containment Excellence",
+    "image": "/assets/img/awards/safe-containment.svg"
   },
   {
-    "id": "national-defense",
-    "name": "National Defense Service Medal",
-    "image": "/assets/img/awards/national-defense-medal.svg"
+    "id": "euclid-response",
+    "name": "Euclid Class Response Medal",
+    "image": "/assets/img/awards/euclid-response.svg"
   },
   {
-    "id": "meritorious-service",
-    "name": "Meritorious Service Medal",
-    "image": "/assets/img/awards/meritorious-service-medal.svg"
+    "id": "keter-threat",
+    "name": "Keter Threat Neutralization",
+    "image": "/assets/img/awards/keter-threat.svg"
+  },
+  {
+    "id": "anomaly-research",
+    "name": "Anomaly Research Achievement",
+    "image": "/assets/img/awards/anomaly-research.svg"
+  },
+  {
+    "id": "containment-protocol",
+    "name": "Containment Protocol Excellence",
+    "image": "/assets/img/awards/containment-protocol.svg"
+  },
+  {
+    "id": "mtf-valor",
+    "name": "Mobile Task Force Valor",
+    "image": "/assets/img/awards/mtf-valor.svg"
+  },
+  {
+    "id": "breach-response",
+    "name": "Containment Breach Response",
+    "image": "/assets/img/awards/breach-response.svg"
+  },
+  {
+    "id": "personnel-safety",
+    "name": "Personnel Safety Excellence",
+    "image": "/assets/img/awards/personnel-safety.svg"
+  },
+  {
+    "id": "cross-department",
+    "name": "Cross-Department Cooperation",
+    "image": "/assets/img/awards/cross-department.svg"
+  },
+  {
+    "id": "reality-anomaly",
+    "name": "Reality Anomaly Response",
+    "image": "/assets/img/awards/reality-anomaly.svg"
+  },
+  {
+    "id": "scp-documentation",
+    "name": "SCP Documentation Excellence",
+    "image": "/assets/img/awards/scp-documentation.svg"
+  },
+  {
+    "id": "field-agent-bravery",
+    "name": "Field Agent Bravery Medal",
+    "image": "/assets/img/awards/field-agent-bravery.svg"
+  },
+  {
+    "id": "security-clearance",
+    "name": "Security Clearance Excellence",
+    "image": "/assets/img/awards/security-clearance.svg"
   },
   {
     "id": "employee-month",
