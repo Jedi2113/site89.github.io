@@ -105,12 +105,24 @@
       if (!app) return NaN;
 
       // Import Firebase modules dynamically
-      const { getAuth } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js");
+      const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js");
       const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js");
       
       // Get the current auth state
       const auth = getAuth(app);
-      const user = auth.currentUser;
+      
+      // Wait for auth state to be initialized
+      const user = await new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          unsubscribe();
+          resolve(user);
+        });
+        // Timeout after 3 seconds to prevent hanging
+        setTimeout(() => {
+          unsubscribe();
+          resolve(null);
+        }, 3000);
+      });
       
       if (!user) {
         // Not authenticated - redirect to login
