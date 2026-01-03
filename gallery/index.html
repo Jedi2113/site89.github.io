@@ -51,6 +51,14 @@
     .auth-required i { font-size: 3rem; opacity: 0.5; margin-bottom: 1rem; display: block; }
 
     .empty-gallery { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-light); opacity: 0.7; }
+
+    .photo-expand-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
+    .photo-expand-modal.active { display: flex; }
+    .photo-expand-content { position: relative; max-width: 90%; max-height: 90vh; }
+    .photo-expand-img { width: 100%; height: auto; max-height: 80vh; border-radius: 8px; }
+    .photo-expand-close { position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
+    .photo-expand-close:hover { transform: scale(1.2); }
+    .photo-expand-caption { margin-top: 1rem; text-align: center; color: var(--text-light); padding: 1rem; background: var(--bg-card); border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -101,10 +109,16 @@
     </div>
   </div>
 
-  <div data-include="/components/footer.html"></div>
+  <!-- Photo Expand Modal -->
+  <div id="photoExpandModal" class="photo-expand-modal">
+    <div class="photo-expand-content">
+      <button class="photo-expand-close" onclick="closePhotoExpand()">&times;</button>
+      <img id="expandedPhotoImg" class="photo-expand-img" src="" alt="Expanded photo">
+      <div id="expandedPhotoCaption" class="photo-expand-caption"></div>
+    </div>
+  </div>
 
-  <script src="/assets/js/include.js"></script>
-  <script type="module" src="/assets/js/auth.js"></script>
+  <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
@@ -120,11 +134,25 @@
     const galleryContent = document.getElementById('galleryContent');
     const galleryGrid = document.getElementById('galleryGrid');
     let currentUser = null;
+    let currentUserClearance = 0;
 
     // Check authentication status
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       currentUser = user;
+      currentUserClearance = 0;
+      
       if (user) {
+        // Fetch user's clearance
+        try {
+          const charQuery = query(collection(db, 'characters'), where('linkedUID', '==', user.uid));
+          const charSnap = await getDocs(charQuery);
+          if (!charSnap.empty) {
+            currentUserClearance = charSnap.docs[0].data().clearance || 0;
+          }
+        } catch (err) {
+          console.error('Error fetching clearance:', err);
+        }
+        
         galleryContent.style.display = 'block';
         authRequired.style.display = 'none';
         loadGallery();
@@ -159,15 +187,17 @@
         galleryGrid.innerHTML = '';
         items.forEach(data => {
           const uploadDate = data.timestamp ? new Date(data.timestamp.toDate ? data.timestamp.toDate() : data.timestamp).toLocaleDateString() : 'Unknown';
+          const canDelete = currentUser && (currentUser.uid === data.uploaderId || currentUserClearance >= 5);
           
-          galleryGrid.innerHTML += `
-            <div class="gallery-item">
-              <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy">
-              <div class="gallery-caption">${data.caption || 'Untitled'}</div>
-              <div class="gallery-meta">By ${data.uploaderName || 'Anonymous'} • ${uploadDate}</div>
-              ${currentUser && currentUser.uid === data.uploaderId ? `<button class="gallery-delete" onclick="deleteImage('${data.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
-            </div>
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+          item.innerHTML = `
+            <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy" onclick="expandPhoto('${data.imageUrl}', '${(data.caption || 'Untitled').replace(/'/g, "\\'")}')", style="cursor: pointer;">
+            <div class="gallery-caption">${data.caption || 'Untitled'}</div>
+            <div class="gallery-meta">By ${data.uploaderName || 'Anonymous'} • ${uploadDate}</div>
+            ${canDelete ? `<button class="gallery-delete" onclick="deleteImage('${data.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
           `;
+          galleryGrid.appendChild(item);
         });
       } catch (err) {
         console.error('Error loading gallery:', err);
@@ -244,7 +274,28 @@
 
     // Close modal on escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeUploadModal();
+      if (e.key === 'Escape') {
+        closeUploadModal();
+        closePhotoExpand();
+      }
+    });
+
+    // Photo expansion functions
+    window.expandPhoto = function(imageUrl, caption) {
+      document.getElementById('expandedPhotoImg').src = imageUrl;
+      document.getElementById('expandedPhotoCaption').textContent = caption;
+      document.getElementById('photoExpandModal').classList.add('active');
+    };
+
+    window.closePhotoExpand = function() {
+      document.getElementById('photoExpandModal').classList.remove('active');
+    };
+
+    // Close photo modal on background click
+    document.getElementById('photoExpandModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('photoExpandModal')) {
+        closePhotoExpand();
+      }
     });
   </script>
 
