@@ -377,6 +377,11 @@
         <input id="editClass" class="modal-detail-input" placeholder="e.g., Administrative, O5-Council">
       </div>
 
+      <div style="margin-top:1.5rem;">
+        <label style="display:block;margin-bottom:0.5rem;color:var(--accent-mint);font-weight:600;">Awards & Commendations</label>
+        <div id="editAwardsContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem;"></div>
+      </div>
+
       <div id="editFeedback" style="display:none;"></div>
 
       <div class="modal-actions">
@@ -487,10 +492,12 @@
         // Get character data
         const chars = await getDocs(collection(db, 'characters'));
         let char = null;
+        let charDocId = null;
         
         chars.forEach(doc => {
           if (doc.data().pid === pid) {
             char = doc.data();
+            charDocId = doc.id;
           }
         });
 
@@ -504,6 +511,38 @@
         document.getElementById('editPhotoPreview').src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
         document.getElementById('editRank').value = char.rank || '';
         document.getElementById('editClass').value = char['class'] || '';
+        
+        // Load awards
+        const awardsRes = await fetch('/assets/data/awards.json');
+        const allAwards = await awardsRes.json();
+        const charAwards = char.awards || [];
+        const awardsContainer = document.getElementById('editAwardsContainer');
+        awardsContainer.innerHTML = '';
+        
+        allAwards.forEach(award => {
+          const isChecked = charAwards.includes(award.id);
+          const label = document.createElement('label');
+          label.style.display = 'flex';
+          label.style.alignItems = 'center';
+          label.style.gap = '0.5rem';
+          label.style.padding = '0.5rem';
+          label.style.border = '1px solid rgba(78,250,170,0.2)';
+          label.style.borderRadius = '6px';
+          label.style.cursor = 'pointer';
+          label.style.color = 'var(--text-light)';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = isChecked;
+          checkbox.dataset.awardId = award.id;
+          
+          const span = document.createElement('span');
+          span.textContent = award.name;
+          
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          awardsContainer.appendChild(label);
+        });
         
         editFeedback.style.display = 'none';
         editModal.classList.add('show');
@@ -534,6 +573,15 @@
       const rank = (document.getElementById('editRank').value || '').trim();
       const personClass = (document.getElementById('editClass').value || '').trim();
 
+      // Get selected awards
+      const awardCheckboxes = document.querySelectorAll('#editAwardsContainer input[type="checkbox"]');
+      const selectedAwards = [];
+      awardCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedAwards.push(checkbox.dataset.awardId);
+        }
+      });
+
       try {
         // Find and update character by PID
         const chars = await getDocs(collection(db, 'characters'));
@@ -555,6 +603,7 @@
         if (photoUrl) updateData.profileImage = photoUrl;
         if (rank) updateData.rank = rank;
         if (personClass) updateData['class'] = personClass;
+        updateData.awards = selectedAwards;
 
         await updateDoc(doc(db, 'characters', charDocId), updateData);
 

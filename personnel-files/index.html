@@ -208,6 +208,64 @@
       line-height: 1.6;
     }
 
+    .awards-section {
+      border-top: 1px solid var(--accent-teal);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+
+    .awards-section h3 {
+      margin-top: 0;
+      color: var(--accent-mint);
+      margin-bottom: 0.8rem;
+    }
+
+    .awards-display {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .award-ribbon {
+      position: relative;
+      width: 50px;
+      height: 80px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .award-ribbon:hover {
+      transform: scale(1.1);
+    }
+
+    .award-ribbon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .award-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: var(--accent-mint);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 100;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .award-ribbon:hover .award-tooltip {
+      opacity: 1;
+    }
+
     .empty-state {
       text-align: center;
       padding: 2rem;
@@ -267,6 +325,11 @@
       </div>
 
       <div id="modalBioSection" style="display:none;">
+        <div class="awards-section">
+          <h3>Awards & Commendations</h3>
+          <div class="awards-display" id="modalAwards"></div>
+        </div>
+
         <div style="border-top: 1px solid var(--accent-teal); padding-top: 1rem; margin-top: 1rem;">
           <h3 style="margin-top: 0; color: var(--accent-mint);">Biography</h3>
           <div class="modal-bio" id="modalBio"></div>
@@ -337,13 +400,42 @@
     }
 
     // Open modal with personnel details
-    window.openPersonnelModal = (char) => {
+    window.openPersonnelModal = async (char) => {
       document.getElementById("modalName").textContent = char.name || "Unknown";
       document.getElementById("modalRank").textContent = char.rank || "—";
       document.getElementById("modalDept").textContent = char.department || "—";
       document.getElementById("modalPID").textContent = maskPID(char.pid || '') || '—';
       document.getElementById("modalClearance").textContent = char.clearance || "—";
       document.getElementById("modalPhoto").src = char.profileImage || 'https://i.imgur.com/1xP4NEN.png';
+
+      // Load and display awards
+      const awardsContainer = document.getElementById("modalAwards");
+      awardsContainer.innerHTML = "";
+      const charAwards = char.awards || [];
+      
+      if (charAwards.length > 0) {
+        try {
+          const awardsRes = await fetch('/assets/data/awards.json');
+          const allAwards = await awardsRes.json();
+          const awardMap = {};
+          allAwards.forEach(a => awardMap[a.id] = a);
+          
+          charAwards.forEach(awardId => {
+            const award = awardMap[awardId];
+            if (award) {
+              const awardEl = document.createElement('div');
+              awardEl.className = 'award-ribbon';
+              awardEl.innerHTML = `
+                <img src="${award.image}" alt="${award.name}" onerror="this.src='https://via.placeholder.com/50x80?text=${encodeURIComponent(award.name)}'">
+                <div class="award-tooltip">${award.name}</div>
+              `;
+              awardsContainer.appendChild(awardEl);
+            }
+          });
+        } catch (err) {
+          console.warn('Error loading awards:', err);
+        }
+      }
 
       const bioSection = document.getElementById("modalBioSection");
       if (char.bio && char.bio.trim()) {

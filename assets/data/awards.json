@@ -1,0 +1,32 @@
+[
+  {
+    "id": "navy-commendation",
+    "name": "Navy Commendation Medal",
+    "image": "/assets/img/awards/navy-commendation-medal.svg"
+  },
+  {
+    "id": "navy-achievement",
+    "name": "Navy Achievement Medal",
+    "image": "/assets/img/awards/navy-achievement-medal.svg"
+  },
+  {
+    "id": "good-conduct",
+    "name": "Good Conduct Medal",
+    "image": "/assets/img/awards/good-conduct-medal.svg"
+  },
+  {
+    "id": "national-defense",
+    "name": "National Defense Service Medal",
+    "image": "/assets/img/awards/national-defense-medal.svg"
+  },
+  {
+    "id": "meritorious-service",
+    "name": "Meritorious Service Medal",
+    "image": "/assets/img/awards/meritorious-service-medal.svg"
+  },
+  {
+    "id": "employee-month",
+    "name": "Employee of the Month",
+    "image": "/assets/img/awards/employee-of-the-month.svg"
+  }
+]
