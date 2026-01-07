@@ -1116,7 +1116,7 @@
 
         currentStepDisplay.textContent = step;
         prevBtn.disabled = step === 1;
-        nextBtn.disabled = step === stepPages.length;
+        nextBtn.disabled = false; // Never disable the next button
 
         // Save step to cookie
         setCookie("orientationStep", step);

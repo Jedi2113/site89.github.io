@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleplay Rules — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .rules-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    
+    .rules-header { text-align: center; margin-bottom: 3rem; }
+    .rules-header h1 { color: var(--accent-mint); margin: 1rem 0 0.5rem 0; font-size: 2.5rem; }
+    .rules-header .date { color: var(--text-light); opacity: 0.8; font-size: 1rem; }
+
+    .rules-section { background: var(--bg-card); border: 1px solid rgba(78,250,170,0.1); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; }
+    .rules-section h2 { color: var(--accent-mint); margin: 0 0 1.5rem 0; padding-bottom: 0.8rem; border-bottom: 2px solid var(--accent-teal); font-size: 1.8rem; }
+    .rules-section p { color: var(--text-light); line-height: 1.8; margin: 1rem 0; font-size: 1.05rem; }
+    .rules-section ul { margin: 1.5rem 0; padding-left: 2.5rem; }
+    .rules-section li { color: var(--text-light); line-height: 1.8; margin-bottom: 1rem; }
+    .rules-section li strong { color: var(--accent-mint); }
+
+    .important-note { background: rgba(255,107,107,0.1); border-left: 4px solid #ff6b6b; padding: 1rem; border-radius: 4px; margin: 1.5rem 0; color: var(--text-light); }
+    .important-note strong { color: #ff6b6b; }
+
+    .rule-highlight { background: rgba(78,250,170,0.05); padding: 1.5rem; border-radius: 6px; margin: 1rem 0; border: 1px solid rgba(78,250,170,0.2); }
+    .rule-highlight strong { color: var(--accent-mint); }
+
+    @media (max-width: 768px) {
+      .page-hero .hero-title { font-size: 1.5rem; }
+      .rules-container { padding: 1rem; }
+      .rules-section { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Roleplay Rules</div>
+    <div class="hero-sub">Guidelines for maintaining immersion and fair gameplay on Site-89</div>
+  </section>
+
+  <section class="rules-container">
+    <div class="rules-header">
+      <h1>Site-89 Rules & Guidelines</h1>
+      <div class="date">Effective January 7, 2026</div>
+    </div>
+
+    <!-- Section 0: Foundation -->
+    <div class="rules-section">
+      <h2>Section 0: Discord Terms of Service & Community Guidelines</h2>
+      <p>This is our foundation rule—all other rules stem from Discord's Terms of Service and Community Guidelines. By participating in Site-89, you agree to follow Discord's TOS.</p>
+      
+      <ul>
+        <li>
+          <strong>You must be at least 13 years old.</strong>
+          This is required by Discord's Terms of Service. You must meet the minimum age requirement for Discord in your country. Claiming to be younger, even as a joke, will result in an immediate ban.
+        </li>
+        
+        <li>
+          <strong>Do not use self-bots, API exploits, or anything that harms Discord.</strong>
+          Using automated tools that violate Discord's TOS (self-bots, Nitro snipers, etc.) will result in a permanent ban. Note: Client modifications like Vencord and BetterDiscord are allowed.
+        </li>
+        
+        <li>
+          <div class="rule-highlight">
+            <strong>No organizing raids, doxxing, swatting, or sharing private information.</strong>
+            Any threat or action involving raiding, doxxing, swatting, or leaking private information (IP addresses, home addresses, phone numbers, full legal names, government IDs) will result in permanent removal. This includes sharing such information even to report it—use tickets instead.
+          </div>
+        </li>
+        
+        <li>
+          <strong>No malware, viruses, scams, or malicious links.</strong>
+          Sending malicious files or links (including IP grabbers) violates Discord TOS and will result in a permanent ban. Discussion of malware is allowed in appropriate channels without sharing actual malware or instructions to create it.
+        </li>
+
+        <li>
+          <strong>No recording voice channels without consent.</strong>
+          Recording VCs requires consent from everyone present, per California state law (where Discord is based). The only exception may be public Administration Board events—check with the host first.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="rules-section">
+      <h2>Section 1: Basic Roleplay Rules</h2>
+      
+      <ul>
+        <li>
+          <strong>Follow the Roleplay Guide at all times.</strong>
+          This is non-negotiable. The guide maintains immersion and ensures fair gameplay for all participants.
+        </li>
+        
+        <li>
+          <strong>Your skins must be appropriate to your character.</strong>
+          Your appearance must match your role and department. A Researcher cannot wear an elf costume, for example. Maintain visual consistency with your character's position.
+        </li>
+        
+        <li>
+          <strong>Do not metagame or powergame.</strong>
+          These behaviors break immersion and create unfair advantages. Always play within the boundaries set by the Roleplay Guide. If you're unsure, ask a Roleplay Administrator.
+        </li>
+        
+        <li>
+          <div class="rule-highlight">
+            <strong>Attacking or killing someone without valid reason is a bannable offense.</strong>
+            If you are attacked in roleplay, do not retaliate. Leave the area and report it to Internal Operations, the roleplay host, or a Roleplay Administrator with evidence (clip or screenshot).
+          </div>
+        </li>
+        
+        <li>
+          <div class="rule-highlight">
+            <strong>Interacting with anomalies without proper authorization is a bannable offense.</strong>
+            All anomaly interactions require valid in-character justification. Unauthorized or reckless engagement will result in severe disciplinary action.
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="rules-section">
+      <h2>Section 2: Content & Conduct Standards</h2>
+      
+      <ul>
+        <li>
+          <div class="rule-highlight">
+            <strong>Zero tolerance for NSFW, NSFL, or gore content.</strong>
+            No sexual content, sexually suggestive content, extreme violence, or disturbing material of any kind. This includes jokes, memes, conversations, pictures, cropped images, "bait" content, or anything that wouldn't be appropriate for all ages. Any violation results in immediate permanent ban.
+          </div>
+        </li>
+
+        <li>
+          <div class="rule-highlight">
+            <strong>No sexualization of minors under any circumstances.</strong>
+            Zero tolerance policy. This includes jokes, comments, or any media that sexualizes anyone under 18. This applies even if you yourself are a minor. Immediate permanent ban.
+          </div>
+        </li>
+        
+        <li>
+          <div class="rule-highlight">
+            <strong>No e-dating, flirting, or romantic advances.</strong>
+            Due to minors on the server, we prohibit all flirting, hitting on others, or romantic/sexual advances in any form (jokes included). In-character roleplay relationships are allowed but must remain completely non-sexual and appropriate. Do not come to the server looking for romantic connections.
+          </div>
+        </li>
+        
+        <li>
+          <strong>Be respectful to all members.</strong>
+          No trolling, toxicity, harassment, or deliberate rudeness. Do not cause arguments, rage-bait, or make others uncomfortable. If you're angry, step away. Discussions about sensitive topics should be moved to DMs or avoided entirely.
+        </li>
+
+        <li>
+          <div class="rule-highlight">
+            <strong>Zero tolerance for hate speech and discrimination.</strong>
+            No racism, xenophobia, sexism, homophobia, transphobia, queerphobia, ableism, death threats, or any discriminatory language. This includes jokes and "edgy" comments. Symbols of hate (swastikas, etc.) in profiles will result in immediate ban. Telling someone to harm themselves is also prohibited.
+          </div>
+        </li>
+        
+        <li>
+          <strong>Avoid controversial topics that create division.</strong>
+          Politics, religion, war, current events involving violence, detailed discussion of assault/trauma, and similar sensitive topics should be avoided. If drama arises from these discussions, moderative action will be taken. Characters based on real-world hate groups or extreme trauma should be avoided.
+        </li>
+
+        <li>
+          <strong>Stay in character during roleplay.</strong>
+          Do not break character or troll in roleplay channels. Casual/lighthearted moments are fine, but always maintain immersion and don't disrupt others' experiences.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="rules-section">
+      <h2>Section 3: Server Behavior & Communication</h2>
+      
+      <ul>
+        <li>
+          <strong>No spam or flooding in text or voice.</strong>
+          This includes excessive emotes, reactions, pings without reason, soundboard spam, screaming into mic, rapid join/leaving VCs, annoying TTS/voice changers, chat flooding, or message chaining. Creating numerous tickets or forum posts in quick succession also counts as spam.
+        </li>
+
+        <li>
+          <strong>Do not be annoying or disruptive.</strong>
+          If multiple people are clearly irritated by your behavior, you are the problem—not everyone else. Change topics or remove yourself from the situation. Causing drama and making members uncomfortable will result in punishment.
+        </li>
+
+        <li>
+          <strong>No loud or bright media.</strong>
+          Do not send ear-rape audio or rapidly flashing/bright media that could trigger photosensitivity or overstimulation issues.
+        </li>
+
+        <li>
+          <strong>No mini-modding.</strong>
+          Do not correct others' behavior, threaten punishments, or publicly disagree with moderation decisions when you are not staff. Use the report and ticket system instead. Witch-hunting members to get them punished is prohibited.
+        </li>
+
+        <li>
+          <strong>Do not bypass AutoMod.</strong>
+          If your message is blocked, there's a reason. Do not attempt to circumvent filters by changing letters or formatting (e.g., "restarted" instead of the slur). We have filters for the safety of all members.
+        </li>
+
+        <li>
+          <strong>English only.</strong>
+          This is an English-speaking server. We do not have moderation capabilities for other languages. You may use translation tools if needed, but all communication must be in English.
+        </li>
+
+        <li>
+          <strong>Keep your Discord profile appropriate.</strong>
+          Your entire Discord profile (username, display name, nickname, about me, profile picture, banner, status, pronouns, connections, rich presence, server tags) must follow all server rules and Discord TOS at all times while you're in the server. No NSFW/NSFL content, hate speech, slurs, or inappropriate content anywhere in your profile.
+        </li>
+
+        <li>
+          <strong>No impersonation.</strong>
+          Impersonating server staff, Discord staff, bots, or public figures will result in an immediate ban, joke or not. Other impersonations may be moderated at staff discretion.
+        </li>
+
+        <li>
+          <strong>No advertising.</strong>
+          Do not advertise servers, social media, games, or referral links in DMs or anywhere on the server. If someone specifically asks for your content, DM it to them privately—do not share it publicly. Unsolicited DM advertising will result in a temporary ban; repeat offenses lead to permanent removal.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="rules-section">
+      <h2>Section 4: Enforcement & Appeals</h2>
+      
+      <ul>
+        <li>
+          <strong>Do not exploit loopholes.</strong>
+          Intentionally bending or skirting the rules by exploiting loopholes will result in punishment. Not every rule can be perfectly defined—staff decisions should be respected even for situations not explicitly listed. If you disagree with a punishment, use the appeal process below.
+        </li>
+
+        <li>
+          <strong>Violations result in warnings, mutes, kicks, or permanent bans.</strong>
+          Severity of punishment depends on the rule broken and your history. Some rules have zero-tolerance policies with immediate permanent bans. Staff decisions cannot be appealed on the spot.
+        </li>
+      </ul>
+
+      <div class="rule-highlight" style="margin-top: 2rem;">
+        <strong>Your Right to Appeal & Report:</strong>
+        <ul style="margin-top: 1rem;">
+          <li><strong>To appeal a warning:</strong> Open a ticket and wait for a Server Administrator. The staff member who issued the warning cannot participate in the ticket unless they are a Server Admin handling it.</li>
+          
+          <li><strong>To appeal a mute or ban:</strong> Visit our Appeals Center and complete the corresponding form. All appeals are discussed and voted on by staff. The staff member who issued your punishment cannot vote on your appeal unless they personally agree to accept it.</li>
+          
+          <li><strong>To report unfair treatment by staff:</strong> Open a ticket and explain the issue. The reported staff member cannot participate unless they happen to answer first, then must pass it to the Admin Board. Reports are handled confidentially.</li>
+          
+          <li><strong>To report an Administrator:</strong> DM jedi21132@gmail.com directly. Your identity will remain confidential as long as the report is made in good faith.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="important-note" style="margin-top: 3rem;">
+      <strong>Final Note:</strong> These rules exist to create a safe, welcoming, and immersive roleplay environment for all members. Staff have final discretion in all matters. When in doubt, ask a staff member before acting. Ignorance of the rules is not an excuse for breaking them.
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>

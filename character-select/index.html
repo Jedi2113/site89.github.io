@@ -494,6 +494,20 @@
           characters.push({ id: docSnap.id, ...docSnap.data() });
         });
 
+        // Check if user has reached character limit (4 max)
+        const createCharBtn = document.getElementById("createCharBtn");
+        if (characters.length >= 4) {
+          createCharBtn.disabled = true;
+          createCharBtn.style.opacity = "0.5";
+          createCharBtn.style.cursor = "not-allowed";
+          createCharBtn.title = "Character limit reached (4 maximum)";
+        } else {
+          createCharBtn.disabled = false;
+          createCharBtn.style.opacity = "1";
+          createCharBtn.style.cursor = "pointer";
+          createCharBtn.title = "";
+        }
+
         // Sort by name
         characters.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
@@ -701,6 +715,9 @@
 
     // Create character button
     createCharBtn.addEventListener("click", () => {
+      if (createCharBtn.disabled) {
+        return; // Prevent opening form if disabled
+      }
       charCreationForm.classList.add("active");
       createCharBtn.style.display = "none";
       resetCharForm();
