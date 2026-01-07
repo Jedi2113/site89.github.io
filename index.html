@@ -361,6 +361,90 @@
       font-size: 1.5rem;
     }
 
+    /* Featured Article Window */
+    .featured-article-container {
+      position: absolute;
+      bottom: 12rem;
+      z-index: 10;
+      max-width: 450px;
+      width: 90%;
+      animation: slideUp 1s ease-out 0.3s backwards;
+    }
+
+    .featured-article-window {
+      background: rgba(26, 26, 28, 0.8);
+      border: 2px solid var(--accent-mint);
+      border-radius: 8px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .featured-article-window:hover {
+      box-shadow: 0 12px 48px rgba(78, 250, 170, 0.25);
+      border-color: var(--accent-teal);
+    }
+
+    .featured-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #06100e;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .featured-article-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-mint);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .featured-article-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .featured-article-excerpt {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .featured-article-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .featured-article-link:hover {
+      color: var(--accent-mint);
+      gap: 0.8rem;
+    }
+
+    .featured-article-container.hidden {
+      display: none;
+    }
+
     /* Social buttons in hero */
     .hero-social {
       position: absolute;
@@ -401,6 +485,17 @@
       from {
         opacity: 0;
         transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
       }
       to {
         opacity: 1;
@@ -781,6 +876,23 @@
       </div>
     </div>
 
+    <!-- Featured Article -->
+    <div id="featuredArticleContainer" class="featured-article-container hidden">
+      <div class="featured-article-window">
+        <div class="featured-badge">📰 Featured</div>
+        <h3 class="featured-article-title" id="featuredTitle"></h3>
+        <div class="featured-article-meta">
+          <span id="featuredCategory"></span>
+          <span id="featuredDate"></span>
+          <span id="featuredAuthor"></span>
+        </div>
+        <p class="featured-article-excerpt" id="featuredExcerpt"></p>
+        <a href="/newsletter/" class="featured-article-link">
+          Read Full Article <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
     <!-- Social buttons -->
     <div class="hero-social">
       <a href="https://www.instagram.com/site.89_rp/" target="_blank" title="Instagram">
@@ -947,6 +1059,9 @@
     // Load statistics
     async function loadStats() {
       try {
+        // Load featured article
+        loadFeaturedArticle();
+        
         const charactersSnap = await getDocs(collection(db, "characters"));
         document.getElementById("statPersonnel").textContent = charactersSnap.size;
       } catch (err) {
@@ -956,7 +1071,50 @@
 
     loadStats();
 
-    // Hours since Feb 1, 2024 (Hours in Development)
+    // Load Featured Article
+    async function loadFeaturedArticle() {
+      try {
+        const articlesSnap = await getDocs(collection(db, 'newsletter-articles'));
+        
+        // Find featured article
+        let featuredArticle = null;
+        articlesSnap.forEach(doc => {
+          const article = doc.data();
+          if (article.featured) {
+            featuredArticle = article;
+          }
+        });
+
+        if (featuredArticle) {
+          const container = document.getElementById('featuredArticleContainer');
+          const title = document.getElementById('featuredTitle');
+          const category = document.getElementById('featuredCategory');
+          const date = document.getElementById('featuredDate');
+          const author = document.getElementById('featuredAuthor');
+          const excerpt = document.getElementById('featuredExcerpt');
+
+          title.textContent = featuredArticle.title || 'Untitled';
+          category.textContent = `📚 ${featuredArticle.category || 'News'}`;
+          
+          // Format date
+          if (featuredArticle.createdAt) {
+            const articleDate = new Date(featuredArticle.createdAt.seconds * 1000);
+            date.textContent = `📅 ${articleDate.toLocaleDateString()}`;
+          }
+          
+          author.textContent = `✍️ ${featuredArticle.authorName || 'Anonymous'}`;
+
+          // Get first 100 chars of content as excerpt
+          const contentText = featuredArticle.content || '';
+          const cleanText = contentText.replace(/[#*_`]/g, '').trim();
+          excerpt.textContent = cleanText.substring(0, 100) + (cleanText.length > 100 ? '...' : '');
+
+          container.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Error loading featured article:', err);
+      }
+    }
     function updateHoursInDev(){
       const el = document.getElementById('statDepartments');
       if(!el) return;
