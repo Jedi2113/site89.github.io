@@ -81,7 +81,7 @@
     import { auth } from "/assets/js/auth.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-    // Access control: only allow when selectedCharacter.department contains 'DEO/IA'
+    // Access control: allow IA personnel and DEO Directors
     function checkAccess(){
       const accessDenied = document.getElementById('accessDenied');
       const portalContent = document.getElementById('portalContent');
@@ -93,7 +93,16 @@
         }
         const ch = JSON.parse(raw);
         const dept = ch && ch.department ? String(ch.department) : '';
-        if(dept.indexOf('DEO/IA') === -1){
+        const rank = ch && ch.rank ? String(ch.rank) : '';
+        
+        // Allow access for:
+        // 1. DEO/IA personnel
+        // 2. DEO Directors and Assistant Directors (leadership oversight)
+        const hasAccess = dept.indexOf('DEO/IA') !== -1 ||
+                         rank.indexOf('DEO Director') !== -1 ||
+                         rank.indexOf('DEO Assistant Director') !== -1;
+        
+        if(!hasAccess){
           window.location.replace('/departments/DEO/ia-portal/403/');
           return;
         }

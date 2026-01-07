@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site-89 Newsletter — Lore Updates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .newsletter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .newsletter-header h2 { color: var(--accent-mint); margin: 0; }
+    
+    .add-article-btn { padding: 0.8rem 1.5rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+    .add-article-btn:hover { background: var(--accent-teal); }
+    .add-article-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .article-card { background: var(--bg-card); border: 2px solid rgba(78,250,170,0.15); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; transition: all 0.3s ease; }
+    .article-card:hover { border-color: var(--accent-mint); box-shadow: 0 0 20px rgba(78,250,170,0.1); }
+    .article-card.featured { border-color: var(--accent-mint); box-shadow: 0 0 30px rgba(78,250,170,0.2); background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, var(--bg-card) 100%); }
+    
+    .article-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; gap: 1rem; }
+    .article-title { font-size: 1.8rem; font-weight: 700; color: var(--accent-mint); margin: 0; }
+    .article-meta { display: flex; gap: 1rem; margin: 0.5rem 0 1rem 0; flex-wrap: wrap; }
+    .meta-tag { padding: 0.4rem 0.8rem; background: rgba(78,250,170,0.1); border-radius: 4px; font-size: 0.85rem; color: var(--accent-teal); font-weight: 600; }
+    .featured-badge { padding: 0.4rem 0.8rem; background: var(--accent-mint); color: #06100e; border-radius: 4px; font-size: 0.85rem; font-weight: 700; }
+    
+    .article-content { color: var(--text-light); line-height: 1.8; margin: 1.5rem 0; }
+    .article-content p { margin-bottom: 1rem; }
+    .article-content h3 { color: var(--accent-teal); margin: 1.5rem 0 0.8rem 0; }
+    .article-content ul, .article-content ol { margin: 1rem 0; padding-left: 2rem; }
+    .article-content li { margin-bottom: 0.5rem; }
+
+    .article-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid rgba(78,250,170,0.1); }
+    .article-author { color: var(--accent-teal); font-weight: 600; }
+    .article-actions { display: flex; gap: 0.8rem; }
+    .action-btn { padding: 0.5rem 1rem; background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; }
+    .action-btn:hover { background: var(--accent-mint); color: #06100e; }
+    .action-btn.delete { border-color: #ff6b6b; color: #ff6b6b; }
+    .action-btn.delete:hover { background: #ff6b6b; color: white; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-box { background: var(--bg-card); border: 2px solid var(--accent-mint); border-radius: 8px; padding: 2rem; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-box h2 { color: var(--accent-mint); margin: 0 0 1.5rem 0; }
+    .modal-box label { display: block; color: var(--accent-teal); font-weight: 600; margin: 1rem 0 0.5rem 0; }
+    .modal-box input, .modal-box textarea, .modal-box select { width: 100%; padding: 0.8rem; background: var(--bg-soft); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
+    .modal-box textarea { min-height: 200px; font-family: var(--font-body); resize: vertical; }
+    .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus { outline: none; border-color: var(--accent-mint); }
+    .modal-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .modal-buttons button { flex: 1; padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .btn-save { background: var(--accent-mint); color: #06100e; }
+    .btn-cancel { background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); }
+
+    .no-articles { text-align: center; padding: 3rem; color: var(--text-light); opacity: 0.8; }
+    .access-notice { background: rgba(78,250,170,0.05); border: 1px solid rgba(78,250,170,0.2); border-radius: 6px; padding: 1rem; margin-bottom: 2rem; color: var(--text-light); }
+    .access-notice i { color: var(--accent-mint); margin-right: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .article-header { flex-direction: column; }
+      .article-footer { flex-direction: column; gap: 1rem; align-items: start; }
+      .article-actions { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Site-89 Newsletter</div>
+    <div class="hero-sub">Current lore updates and important announcements</div>
+  </section>
+
+  <section class="content">
+    <div class="newsletter-header">
+      <h2>Latest Updates</h2>
+      <button id="addArticleBtn" class="add-article-btn" style="display:none;">
+        <i class="fas fa-plus"></i> New Article
+      </button>
+    </div>
+
+    <div id="accessNotice" class="access-notice" style="display:none;">
+      <i class="fas fa-info-circle"></i>
+      <strong>For IO Personnel & Directors:</strong> You have permission to create and manage newsletter articles.
+    </div>
+
+    <div id="articlesContainer">
+      <div class="no-articles">
+        <i class="fas fa-newspaper" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+        <p>No articles published yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add/Edit Article Modal -->
+  <div id="articleModal" class="modal">
+    <div class="modal-box">
+      <h2 id="modalTitle">New Newsletter Article</h2>
+      
+      <label for="articleTitle">Title *</label>
+      <input type="text" id="articleTitle" placeholder="Enter article title">
+      
+      <label for="articleCategory">Category *</label>
+      <select id="articleCategory">
+        <option value="">-- Select Category --</option>
+        <option value="Lore Update">Lore Update</option>
+        <option value="Announcement">Announcement</option>
+        <option value="Event">Event</option>
+        <option value="Department News">Department News</option>
+        <option value="Personnel Update">Personnel Update</option>
+        <option value="Research">Research</option>
+        <option value="Operations">Operations</option>
+        <option value="Other">Other</option>
+      </select>
+      
+      <label for="articleContent">Content * (Markdown supported)</label>
+      <textarea id="articleContent" placeholder="Write your article content here. You can use markdown formatting."></textarea>
+      
+      <label>
+        <input type="checkbox" id="articleFeatured" style="width:auto;margin-right:0.5rem;">
+        Feature this article (appears prominently)
+      </label>
+      
+      <div class="modal-buttons">
+        <button class="btn-save" onclick="saveArticle()">Publish Article</button>
+        <button class="btn-cancel" onclick="closeArticleModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module">
+    import { app, auth } from "/assets/js/auth.js";
+    import { getFirestore, collection, query, getDocs, addDoc, doc, updateDoc, deleteDoc, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const db = getFirestore(app);
+    let currentUser = null;
+    let userCharacter = null;
+    let canManageArticles = false;
+    let editingArticleId = null;
+
+    // Check user permissions
+    async function checkPermissions() {
+      try {
+        const raw = localStorage.getItem('selectedCharacter');
+        if (!raw) return false;
+        
+        userCharacter = JSON.parse(raw);
+        const rank = userCharacter.rank || '';
+        const clearance = userCharacter.clearance || 0;
+        
+        // Allow IO Personnel (Level 4+) and all Directors to manage articles
+        canManageArticles = clearance >= 4 || 
+                           rank.includes('Director') || 
+                           rank.includes('Asst. Director') ||
+                           rank.includes('Assistant Director');
+        
+        if (canManageArticles) {
+          document.getElementById('addArticleBtn').style.display = 'inline-block';
+          document.getElementById('accessNotice').style.display = 'block';
+        }
+        
+        return canManageArticles;
+      } catch (err) {
+        console.error('Error checking permissions:', err);
+        return false;
+      }
+    }
+
+    // Load all articles
+    async function loadArticles() {
+      try {
+        const articlesQuery = query(collection(db, 'newsletter-articles'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(articlesQuery);
+        
+        const container = document.getElementById('articlesContainer');
+        
+        if (snapshot.empty) {
+          container.innerHTML = `
+            <div class="no-articles">
+              <i class="fas fa-newspaper" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+              <p>No articles published yet.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = '';
+        
+        snapshot.forEach(docSnap => {
+          const article = docSnap.data();
+          const articleId = docSnap.id;
+          
+          const date = article.createdAt ? new Date(article.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown Date';
+          const featuredClass = article.featured ? 'featured' : '';
+          const featuredBadge = article.featured ? '<div class="featured-badge">FEATURED</div>' : '';
+          
+          // Simple markdown to HTML conversion
+          let content = article.content || '';
+          content = content.replace(/\n\n/g, '</p><p>');
+          content = content.replace(/### (.*?)(\n|$)/g, '<h3>$1</h3>');
+          content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+          
+          const actionButtons = canManageArticles ? `
+            <div class="article-actions">
+              <button class="action-btn" onclick="editArticle('${articleId}')">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="action-btn delete" onclick="deleteArticle('${articleId}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          ` : '';
+          
+          const articleHTML = `
+            <div class="article-card ${featuredClass}">
+              <div class="article-header">
+                <div>
+                  <h3 class="article-title">${article.title || 'Untitled'}</h3>
+                  <div class="article-meta">
+                    <span class="meta-tag"><i class="fas fa-tag"></i> ${article.category || 'General'}</span>
+                    <span class="meta-tag"><i class="fas fa-calendar"></i> ${date}</span>
+                    ${featuredBadge}
+                  </div>
+                </div>
+              </div>
+              <div class="article-content">
+                <p>${content}</p>
+              </div>
+              <div class="article-footer">
+                <div class="article-author">
+                  <i class="fas fa-user"></i> ${article.authorName || 'Anonymous'}
+                </div>
+                ${actionButtons}
+              </div>
+            </div>
+          `;
+          
+          container.innerHTML += articleHTML;
+        });
+      } catch (err) {
+        console.error('Error loading articles:', err);
+      }
+    }
+
+    // Open modal for new article
+    window.openArticleModal = function() {
+      editingArticleId = null;
+      document.getElementById('modalTitle').textContent = 'New Newsletter Article';
+      document.getElementById('articleTitle').value = '';
+      document.getElementById('articleCategory').value = '';
+      document.getElementById('articleContent').value = '';
+      document.getElementById('articleFeatured').checked = false;
+      document.getElementById('articleModal').classList.add('active');
+    };
+
+    // Close modal
+    window.closeArticleModal = function() {
+      document.getElementById('articleModal').classList.remove('active');
+      editingArticleId = null;
+    };
+
+    // Save article
+    window.saveArticle = async function() {
+      const title = document.getElementById('articleTitle').value.trim();
+      const category = document.getElementById('articleCategory').value;
+      const content = document.getElementById('articleContent').value.trim();
+      const featured = document.getElementById('articleFeatured').checked;
+      
+      if (!title || !category || !content) {
+        alert('Please fill in all required fields (Title, Category, Content)');
+        return;
+      }
+      
+      try {
+        const articleData = {
+          title: title,
+          category: category,
+          content: content,
+          featured: featured,
+          authorName: userCharacter.name || 'Anonymous',
+          authorId: currentUser.uid,
+          updatedAt: serverTimestamp()
+        };
+        
+        if (editingArticleId) {
+          // Update existing article
+          await updateDoc(doc(db, 'newsletter-articles', editingArticleId), articleData);
+        } else {
+          // Create new article
+          articleData.createdAt = serverTimestamp();
+          await addDoc(collection(db, 'newsletter-articles'), articleData);
+        }
+        
+        closeArticleModal();
+        loadArticles();
+      } catch (err) {
+        alert('Error saving article: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    // Edit article
+    window.editArticle = async function(articleId) {
+      try {
+        const articleDoc = await getDocs(query(collection(db, 'newsletter-articles'), where('__name__', '==', articleId)));
+        
+        if (articleDoc.empty) {
+          alert('Article not found');
+          return;
+        }
+        
+        const article = articleDoc.docs[0].data();
+        editingArticleId = articleId;
+        
+        document.getElementById('modalTitle').textContent = 'Edit Newsletter Article';
+        document.getElementById('articleTitle').value = article.title || '';
+        document.getElementById('articleCategory').value = article.category || '';
+        document.getElementById('articleContent').value = article.content || '';
+        document.getElementById('articleFeatured').checked = article.featured || false;
+        document.getElementById('articleModal').classList.add('active');
+      } catch (err) {
+        alert('Error loading article: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    // Delete article
+    window.deleteArticle = async function(articleId) {
+      if (!confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        await deleteDoc(doc(db, 'newsletter-articles', articleId));
+        loadArticles();
+      } catch (err) {
+        alert('Error deleting article: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    // Wire up add button
+    document.getElementById('addArticleBtn').addEventListener('click', openArticleModal);
+
+    // Initialize
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        await checkPermissions();
+      }
+      loadArticles();
+    });
+  </script>
+</body>
+</html>

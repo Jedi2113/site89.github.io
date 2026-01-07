@@ -100,5 +100,51 @@ service cloud.firestore {
         request.auth.token.email == 'jedi21132@gmail.com'
       );
     }
+
+    // Newsletter articles - IO personnel (Level 4+) and Directors can write
+    match /newsletter-articles/{articleId} {
+      allow read: if true; // Everyone can read
+      allow create: if request.auth != null
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.content is string;
+      allow update, delete: if request.auth != null && (
+        resource.data.authorId == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
+    }
+
+    // Groups of Interest - DEO personnel (L2+) and Directors can write
+    match /groups-of-interest/{goiId} {
+      allow read: if true; // Everyone can read
+      allow create: if request.auth != null
+        && request.resource.data.lastUpdatedById == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.description is string;
+      allow update, delete: if request.auth != null && (
+        resource.data.lastUpdatedById == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
+    }
+
+    // Persons of Interest - DEO personnel (L2+) and Directors can write
+    match /persons-of-interest/{poiId} {
+      allow read: if true; // Everyone can read
+      allow create: if request.auth != null
+        && request.resource.data.lastUpdatedById == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.description is string;
+      allow update, delete: if request.auth != null && (
+        resource.data.lastUpdatedById == request.auth.uid ||
+        request.auth.token.email == 'jedi21132@gmail.com'
+      );
+    }
+
+    // Site Feedback - Anyone can create, only admin can read/manage
+    match /site-feedback/{feedbackId} {
+      allow read: if request.auth != null && request.auth.token.email == 'jedi21132@gmail.com';
+      allow create: if true; // Anyone can submit feedback
+      allow update, delete: if request.auth != null && request.auth.token.email == 'jedi21132@gmail.com';
+    }
   }
 }

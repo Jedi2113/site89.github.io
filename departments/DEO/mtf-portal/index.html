@@ -221,7 +221,7 @@
       event.target.classList.add('active');
     };
 
-    // Access control: only allow when selectedCharacter.department contains 'DEO/MTF'
+    // Access control: allow MTF personnel, DEO Directors, and IA personnel
     function checkAccess(){
       const accessDenied = document.getElementById('accessDenied');
       const portalContent = document.getElementById('portalContent');
@@ -233,7 +233,20 @@
         }
         const charData = JSON.parse(raw);
         const dept = charData && charData.department ? String(charData.department) : '';
-        if(dept.indexOf('DEO/MTF') === -1){
+        const rank = charData && charData.rank ? String(charData.rank) : '';
+        
+        // Allow access for:
+        // 1. DEO/MTF personnel
+        // 2. DEO/IA personnel (Intelligence Agency has oversight)
+        // 3. DEO Directors and Assistant Directors (leadership access)
+        // 4. Characters with "MTF" in their department (backwards compatibility)
+        const hasAccess = dept.indexOf('DEO/MTF') !== -1 || 
+                         dept.indexOf('DEO/IA') !== -1 ||
+                         dept.indexOf('MTF') !== -1 ||
+                         rank.indexOf('DEO Director') !== -1 ||
+                         rank.indexOf('DEO Assistant Director') !== -1;
+        
+        if(!hasAccess){
           window.location.replace('/departments/DEO/mtf-portal/403/');
           return;
         }
@@ -341,16 +354,21 @@
     // Load roster
     async function loadRoster() {
       try {
-        const chars = await getDocs(query(collection(db, 'characters'), where('department', '==', 'MTF')));
+        // Query for both 'MTF' and characters with 'DEO/MTF' in their department
+        const mtfQuery1 = await getDocs(query(collection(db, 'characters'), where('department', '==', 'MTF')));
+        const mtfQuery2 = await getDocs(query(collection(db, 'characters'), where('department', '==', 'DEO/MTF')));
+        
+        // Combine results
+        const allDocs = [...mtfQuery1.docs, ...mtfQuery2.docs];
         const tbody = document.getElementById('rosterBody');
 
-        if (chars.empty) {
+        if (allDocs.length === 0) {
           tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel found.</td></tr>';
           return;
         }
 
         tbody.innerHTML = '';
-        chars.forEach(doc => {
+        allDocs.forEach(doc => {
           const char = doc.data();
           const medalCount = char.medals && Array.isArray(char.medals) ? char.medals.length : 0;
           const medalDisplay = medalCount > 0 ? `<span style="padding:0.2rem 0.6rem;background:rgba(255,215,0,0.1);border-radius:4px;color:#ffd700;font-size:0.85rem;"><i class="fa-solid fa-medal" style="margin-right:0.3rem;"></i>${medalCount}</span>` : '—';

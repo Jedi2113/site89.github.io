@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persons of Interest — DEO — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .header-controls h2 { color: var(--accent-mint); margin: 0; }
+    .control-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+    
+    .add-btn { padding: 0.8rem 1.5rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+    .add-btn:hover { background: var(--accent-teal); }
+    .add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .filter-select { padding: 0.8rem 1rem; background: var(--bg-card); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-size: 0.9rem; }
+
+    .poi-card { background: var(--bg-card); border: 2px solid rgba(78,250,170,0.15); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; transition: all 0.3s ease; position: relative; }
+    .poi-card:hover { border-color: var(--accent-mint); box-shadow: 0 0 20px rgba(78,250,170,0.1); }
+    .poi-card.high-priority { border-left: 4px solid #ff6b6b; }
+    .poi-card.medium-priority { border-left: 4px solid #ffd700; }
+    .poi-card.low-priority { border-left: 4px solid #4efa7c; }
+    .poi-card.unknown-priority { border-left: 4px solid #888; }
+    
+    .poi-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+    .poi-title { font-size: 1.8rem; font-weight: 700; color: var(--accent-mint); margin: 0; }
+    .poi-designation { font-family: var(--font-mono); color: var(--accent-teal); font-size: 0.95rem; margin: 0.3rem 0; }
+    
+    .poi-meta { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+    .meta-tag { padding: 0.4rem 0.8rem; background: rgba(78,250,170,0.1); border-radius: 4px; font-size: 0.85rem; color: var(--accent-teal); font-weight: 600; }
+    .priority-level { padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; }
+    .priority-high { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+    .priority-medium { background: rgba(255,215,0,0.2); color: #ffd700; }
+    .priority-low { background: rgba(78,250,170,0.2); color: var(--accent-mint); }
+    .priority-unknown { background: rgba(136,136,136,0.2); color: #888; }
+    
+    .poi-description { color: var(--text-light); line-height: 1.8; margin: 1rem 0; }
+    .poi-section { margin: 1.5rem 0; }
+    .poi-section h4 { color: var(--accent-teal); margin: 0 0 0.8rem 0; font-size: 1.1rem; }
+    .poi-section p { color: var(--text-light); line-height: 1.6; }
+    .poi-section ul { margin: 0.5rem 0; padding-left: 2rem; }
+    .poi-section li { margin-bottom: 0.4rem; color: var(--text-light); }
+
+    .poi-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(78,250,170,0.1); }
+    .action-btn { padding: 0.5rem 1rem; background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; }
+    .action-btn:hover { background: var(--accent-mint); color: #06100e; }
+    .action-btn.delete { border-color: #ff6b6b; color: #ff6b6b; }
+    .action-btn.delete:hover { background: #ff6b6b; color: white; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-box { background: var(--bg-card); border: 2px solid var(--accent-mint); border-radius: 8px; padding: 2rem; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-box h2 { color: var(--accent-mint); margin: 0 0 1.5rem 0; }
+    .modal-box label { display: block; color: var(--accent-teal); font-weight: 600; margin: 1rem 0 0.5rem 0; }
+    .modal-box input, .modal-box textarea, .modal-box select { width: 100%; padding: 0.8rem; background: var(--bg-soft); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
+    .modal-box textarea { min-height: 150px; font-family: var(--font-body); resize: vertical; }
+    .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus { outline: none; border-color: var(--accent-mint); }
+    .modal-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .modal-buttons button { flex: 1; padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .btn-save { background: var(--accent-mint); color: #06100e; }
+    .btn-cancel { background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); }
+
+    .no-pois { text-align: center; padding: 3rem; color: var(--text-light); opacity: 0.8; }
+    .access-notice { background: rgba(78,250,170,0.05); border: 1px solid rgba(78,250,170,0.2); border-radius: 6px; padding: 1rem; margin-bottom: 2rem; color: var(--text-light); }
+    .access-notice i { color: var(--accent-mint); margin-right: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .poi-header { flex-direction: column; }
+      .header-controls { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Persons of Interest (POI)</div>
+    <div class="hero-sub">Individuals of significance monitored by DEO Intelligence</div>
+  </section>
+
+  <section class="content">
+    <div class="header-controls">
+      <h2>POI Database</h2>
+      <div class="control-group">
+        <select id="filterPriority" class="filter-select">
+          <option value="all">All Priorities</option>
+          <option value="High">High Priority</option>
+          <option value="Medium">Medium Priority</option>
+          <option value="Low">Low Priority</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+        <select id="filterStatus" class="filter-select">
+          <option value="all">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Contained">Contained</option>
+          <option value="Deceased">Deceased</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+        <button id="addPoiBtn" class="add-btn" style="display:none;">
+          <i class="fas fa-plus"></i> Add POI
+        </button>
+      </div>
+    </div>
+
+    <div id="accessNotice" class="access-notice" style="display:none;">
+      <i class="fas fa-info-circle"></i>
+      <strong>For DEO Personnel:</strong> You have permission to create and manage Persons of Interest entries.
+    </div>
+
+    <div id="poisContainer">
+      <div class="no-pois">
+        <i class="fas fa-user-secret" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+        <p>No Persons of Interest on record.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add/Edit POI Modal -->
+  <div id="poiModal" class="modal">
+    <div class="modal-box">
+      <h2 id="modalTitle">New Person of Interest</h2>
+      
+      <label for="poiName">Name / Alias *</label>
+      <input type="text" id="poiName" placeholder="e.g., John Doe / 'The Shadow'">
+      
+      <label for="poiDesignation">Official Designation</label>
+      <input type="text" id="poiDesignation" placeholder="e.g., POI-0042">
+      
+      <label for="poiPriority">Priority Level *</label>
+      <select id="poiPriority">
+        <option value="">-- Select Priority --</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+        <option value="Unknown">Unknown</option>
+      </select>
+      
+      <label for="poiStatus">Current Status *</label>
+      <select id="poiStatus">
+        <option value="">-- Select Status --</option>
+        <option value="Active">Active / At Large</option>
+        <option value="Contained">Contained</option>
+        <option value="Deceased">Deceased</option>
+        <option value="Unknown">Unknown</option>
+      </select>
+      
+      <label for="poiAffiliation">Known Affiliations</label>
+      <input type="text" id="poiAffiliation" placeholder="e.g., Chaos Insurgency, GOC">
+      
+      <label for="poiDescription">Description *</label>
+      <textarea id="poiDescription" placeholder="Physical description, background, and overview"></textarea>
+      
+      <label for="poiAbilities">Known Abilities / Capabilities</label>
+      <textarea id="poiAbilities" placeholder="Anomalous abilities, skills, or capabilities"></textarea>
+      
+      <label for="poiActivities">Known Activities & Sightings</label>
+      <textarea id="poiActivities" placeholder="Recent activities, sightings, or operations"></textarea>
+      
+      <label for="poiNotes">Intelligence Notes</label>
+      <textarea id="poiNotes" placeholder="Additional intelligence, observations, or updates"></textarea>
+      
+      <div class="modal-buttons">
+        <button class="btn-save" onclick="savePoi()">Save POI Entry</button>
+        <button class="btn-cancel" onclick="closePoiModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module">
+    import { app, auth } from "/assets/js/auth.js";
+    import { getFirestore, collection, query, getDocs, addDoc, doc, updateDoc, deleteDoc, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const db = getFirestore(app);
+    let currentUser = null;
+    let userCharacter = null;
+    let canManagePois = false;
+    let editingPoiId = null;
+
+    // Check user permissions
+    async function checkPermissions() {
+      try {
+        const raw = localStorage.getItem('selectedCharacter');
+        if (!raw) return false;
+        
+        userCharacter = JSON.parse(raw);
+        const dept = userCharacter.department || '';
+        const rank = userCharacter.rank || '';
+        const clearance = userCharacter.clearance || 0;
+        
+        // Allow DEO personnel (Level 2+) and Directors to manage POIs
+        canManagePois = (dept.includes('DEO') && clearance >= 2) || 
+                       rank.includes('Director') ||
+                       rank.includes('Assistant Director');
+        
+        if (canManagePois) {
+          document.getElementById('addPoiBtn').style.display = 'inline-block';
+          document.getElementById('accessNotice').style.display = 'block';
+        }
+        
+        return canManagePois;
+      } catch (err) {
+        console.error('Error checking permissions:', err);
+        return false;
+      }
+    }
+
+    // Load all POIs
+    async function loadPois(filterPriority = 'all', filterStatus = 'all') {
+      try {
+        let poisQuery = query(collection(db, 'persons-of-interest'), orderBy('name', 'asc'));
+        const snapshot = await getDocs(poisQuery);
+        
+        const container = document.getElementById('poisContainer');
+        
+        if (snapshot.empty) {
+          container.innerHTML = `
+            <div class="no-pois">
+              <i class="fas fa-user-secret" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+              <p>No Persons of Interest on record.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = '';
+        let visibleCount = 0;
+        
+        snapshot.forEach(docSnap => {
+          const poi = docSnap.data();
+          const poiId = docSnap.id;
+          
+          // Apply filters
+          if (filterPriority !== 'all' && poi.priority !== filterPriority) return;
+          if (filterStatus !== 'all' && poi.status !== filterStatus) return;
+          
+          visibleCount++;
+          
+          const priorityClass = `${(poi.priority || 'unknown').toLowerCase()}-priority`;
+          const priorityTagClass = `priority-${(poi.priority || 'unknown').toLowerCase()}`;
+          
+          const actionButtons = canManagePois ? `
+            <div class="poi-actions">
+              <button class="action-btn" onclick="editPoi('${poiId}')">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="action-btn delete" onclick="deletePoi('${poiId}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          ` : '';
+          
+          const poiHTML = `
+            <div class="poi-card ${priorityClass}">
+              <div class="poi-header">
+                <div>
+                  <h3 class="poi-title">${poi.name || 'Unknown Individual'}</h3>
+                  ${poi.designation ? `<div class="poi-designation">${poi.designation}</div>` : ''}
+                </div>
+              </div>
+              <div class="poi-meta">
+                <span class="priority-level ${priorityTagClass}">Priority: ${poi.priority || 'Unknown'}</span>
+                <span class="meta-tag">Status: ${poi.status || 'Unknown'}</span>
+                ${poi.affiliation ? `<span class="meta-tag">Affiliated: ${poi.affiliation}</span>` : ''}
+              </div>
+              <div class="poi-description">${poi.description || 'No description available.'}</div>
+              ${poi.abilities ? `
+                <div class="poi-section">
+                  <h4>Known Abilities / Capabilities</h4>
+                  <p>${poi.abilities}</p>
+                </div>
+              ` : ''}
+              ${poi.activities ? `
+                <div class="poi-section">
+                  <h4>Known Activities & Sightings</h4>
+                  <p>${poi.activities}</p>
+                </div>
+              ` : ''}
+              ${poi.notes ? `
+                <div class="poi-section">
+                  <h4>Intelligence Notes</h4>
+                  <p>${poi.notes}</p>
+                </div>
+              ` : ''}
+              ${actionButtons}
+            </div>
+          `;
+          
+          container.innerHTML += poiHTML;
+        });
+        
+        if (visibleCount === 0) {
+          container.innerHTML = `
+            <div class="no-pois">
+              <i class="fas fa-filter" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+              <p>No Persons of Interest match the selected filters.</p>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error('Error loading POIs:', err);
+      }
+    }
+
+    // Modal functions
+    window.openPoiModal = function() {
+      editingPoiId = null;
+      document.getElementById('modalTitle').textContent = 'New Person of Interest';
+      document.getElementById('poiName').value = '';
+      document.getElementById('poiDesignation').value = '';
+      document.getElementById('poiPriority').value = '';
+      document.getElementById('poiStatus').value = '';
+      document.getElementById('poiAffiliation').value = '';
+      document.getElementById('poiDescription').value = '';
+      document.getElementById('poiAbilities').value = '';
+      document.getElementById('poiActivities').value = '';
+      document.getElementById('poiNotes').value = '';
+      document.getElementById('poiModal').classList.add('active');
+    };
+
+    window.closePoiModal = function() {
+      document.getElementById('poiModal').classList.remove('active');
+      editingPoiId = null;
+    };
+
+    window.savePoi = async function() {
+      const name = document.getElementById('poiName').value.trim();
+      const designation = document.getElementById('poiDesignation').value.trim();
+      const priority = document.getElementById('poiPriority').value;
+      const status = document.getElementById('poiStatus').value;
+      const affiliation = document.getElementById('poiAffiliation').value.trim();
+      const description = document.getElementById('poiDescription').value.trim();
+      const abilities = document.getElementById('poiAbilities').value.trim();
+      const activities = document.getElementById('poiActivities').value.trim();
+      const notes = document.getElementById('poiNotes').value.trim();
+      
+      if (!name || !priority || !status || !description) {
+        alert('Please fill in all required fields (Name, Priority, Status, Description)');
+        return;
+      }
+      
+      try {
+        const poiData = {
+          name: name,
+          designation: designation,
+          priority: priority,
+          status: status,
+          affiliation: affiliation,
+          description: description,
+          abilities: abilities,
+          activities: activities,
+          notes: notes,
+          lastUpdatedBy: userCharacter.name || 'Unknown',
+          lastUpdatedById: currentUser.uid,
+          updatedAt: serverTimestamp()
+        };
+        
+        if (editingPoiId) {
+          await updateDoc(doc(db, 'persons-of-interest', editingPoiId), poiData);
+        } else {
+          poiData.createdAt = serverTimestamp();
+          poiData.createdBy = userCharacter.name || 'Unknown';
+          await addDoc(collection(db, 'persons-of-interest'), poiData);
+        }
+        
+        closePoiModal();
+        loadPois();
+      } catch (err) {
+        alert('Error saving POI: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    window.editPoi = async function(poiId) {
+      try {
+        const snapshot = await getDocs(query(collection(db, 'persons-of-interest'), where('__name__', '==', poiId)));
+        
+        if (snapshot.empty) {
+          alert('POI not found');
+          return;
+        }
+        
+        const poi = snapshot.docs[0].data();
+        editingPoiId = poiId;
+        
+        document.getElementById('modalTitle').textContent = 'Edit Person of Interest';
+        document.getElementById('poiName').value = poi.name || '';
+        document.getElementById('poiDesignation').value = poi.designation || '';
+        document.getElementById('poiPriority').value = poi.priority || '';
+        document.getElementById('poiStatus').value = poi.status || '';
+        document.getElementById('poiAffiliation').value = poi.affiliation || '';
+        document.getElementById('poiDescription').value = poi.description || '';
+        document.getElementById('poiAbilities').value = poi.abilities || '';
+        document.getElementById('poiActivities').value = poi.activities || '';
+        document.getElementById('poiNotes').value = poi.notes || '';
+        document.getElementById('poiModal').classList.add('active');
+      } catch (err) {
+        alert('Error loading POI: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    window.deletePoi = async function(poiId) {
+      if (!confirm('Are you sure you want to delete this Person of Interest? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        await deleteDoc(doc(db, 'persons-of-interest', poiId));
+        loadPois();
+      } catch (err) {
+        alert('Error deleting POI: ' + err.message);
+        console.error(err);
+      }
+    };
+
+    // Wire up event listeners
+    document.getElementById('addPoiBtn').addEventListener('click', openPoiModal);
+    document.getElementById('filterPriority').addEventListener('change', (e) => {
+      const priority = e.target.value;
+      const status = document.getElementById('filterStatus').value;
+      loadPois(priority, status);
+    });
+    document.getElementById('filterStatus').addEventListener('change', (e) => {
+      const status = e.target.value;
+      const priority = document.getElementById('filterPriority').value;
+      loadPois(priority, status);
+    });
+
+    // Initialize
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        await checkPermissions();
+      }
+      loadPois();
+    });
+  </script>
+</body>
+</html>

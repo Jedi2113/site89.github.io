@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
+    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+
+    .feedback-container { max-width: 700px; margin: 0 auto; }
+    
+    .info-box { background: rgba(78,250,170,0.05); border: 1px solid rgba(78,250,170,0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+    .info-box h3 { color: var(--accent-mint); margin: 0 0 1rem 0; font-size: 1.2rem; }
+    .info-box p { color: var(--text-light); line-height: 1.6; margin-bottom: 0.8rem; }
+    .info-box ul { margin: 0.5rem 0; padding-left: 2rem; color: var(--text-light); }
+    .info-box li { margin-bottom: 0.5rem; }
+
+    .feedback-form { background: var(--bg-card); border: 2px solid rgba(78,250,170,0.15); border-radius: 8px; padding: 2rem; }
+    .feedback-form h2 { color: var(--accent-mint); margin: 0 0 1.5rem 0; }
+    
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; color: var(--accent-teal); font-weight: 600; margin-bottom: 0.5rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; background: var(--bg-soft); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
+    .form-group textarea { min-height: 200px; resize: vertical; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent-mint); }
+    .form-group .char-count { text-align: right; font-size: 0.85rem; color: var(--text-light); opacity: 0.7; margin-top: 0.3rem; }
+
+    .submit-btn { width: 100%; padding: 1rem; background: var(--accent-mint); color: #06100e; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 1rem; transition: all 0.2s ease; }
+    .submit-btn:hover { background: var(--accent-teal); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-message { background: rgba(78,250,170,0.1); border: 2px solid var(--accent-mint); border-radius: 8px; padding: 2rem; text-align: center; display: none; }
+    .success-message.show { display: block; }
+    .success-message i { font-size: 3rem; color: var(--accent-mint); margin-bottom: 1rem; }
+    .success-message h3 { color: var(--accent-mint); margin: 0 0 0.5rem 0; }
+    .success-message p { color: var(--text-light); }
+
+    .category-info { background: rgba(78,250,170,0.03); border-left: 3px solid var(--accent-teal); padding: 1rem; border-radius: 4px; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light); opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <section class="page-hero">
+    <div class="hero-title">Submit Feedback</div>
+    <div class="hero-sub">Help us improve Site-89 with your suggestions and bug reports</div>
+  </section>
+
+  <section class="content">
+    <div class="feedback-container">
+      <div class="info-box">
+        <h3><i class="fas fa-info-circle"></i> About Feedback</h3>
+        <p>Your feedback helps us improve the Site-89 experience. Use this form to:</p>
+        <ul>
+          <li><strong>Report bugs:</strong> Technical issues, broken features, or errors</li>
+          <li><strong>Suggest features:</strong> New ideas and enhancements</li>
+          <li><strong>Provide general feedback:</strong> Thoughts on site design, usability, or content</li>
+          <li><strong>Report security issues:</strong> Potential vulnerabilities or access problems</li>
+        </ul>
+        <p style="margin-bottom:0;"><strong>Privacy:</strong> All feedback is submitted privately and securely. Only site administrators can view your submissions.</p>
+      </div>
+
+      <div id="feedbackForm" class="feedback-form">
+        <h2>Submit Your Feedback</h2>
+        
+        <div class="form-group">
+          <label for="feedbackCategory">Category *</label>
+          <select id="feedbackCategory">
+            <option value="">-- Select a category --</option>
+            <option value="bug">🐛 Bug Report</option>
+            <option value="feature">💡 Feature Request</option>
+            <option value="improvement">✨ Improvement Suggestion</option>
+            <option value="security">🔒 Security Issue</option>
+            <option value="content">📝 Content Issue</option>
+            <option value="ux">🎨 UI/UX Feedback</option>
+            <option value="other">📋 Other</option>
+          </select>
+          <div id="categoryInfo" class="category-info" style="display:none;"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="feedbackTitle">Title *</label>
+          <input type="text" id="feedbackTitle" placeholder="Brief summary of your feedback" maxlength="100">
+          <div class="char-count"><span id="titleCount">0</span>/100</div>
+        </div>
+
+        <div class="form-group">
+          <label for="feedbackDescription">Description *</label>
+          <textarea id="feedbackDescription" placeholder="Provide detailed information about your feedback. For bugs, please include steps to reproduce."></textarea>
+          <div class="char-count"><span id="descCount">0</span> characters</div>
+        </div>
+
+        <div class="form-group">
+          <label for="feedbackPage">Page/Feature (optional)</label>
+          <input type="text" id="feedbackPage" placeholder="Which page or feature does this relate to?">
+        </div>
+
+        <div class="form-group">
+          <label for="feedbackContact">Contact Info (optional)</label>
+          <input type="text" id="feedbackContact" placeholder="Email or Discord username if you'd like a response">
+        </div>
+
+        <button id="submitBtn" class="submit-btn" onclick="submitFeedback()">
+          <i class="fas fa-paper-plane"></i> Submit Feedback
+        </button>
+      </div>
+
+      <div id="successMessage" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <h3>Feedback Submitted!</h3>
+        <p>Thank you for your feedback. We've received your submission and will review it shortly.</p>
+        <button class="submit-btn" onclick="resetForm()" style="margin-top:1.5rem;">Submit Another</button>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module">
+    import { app, auth } from "/assets/js/auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const db = getFirestore(app);
+    let currentUser = null;
+    let userCharacter = null;
+
+    // Category information
+    const categoryInfo = {
+      'bug': 'Report technical issues, errors, or broken features. Please include steps to reproduce the issue.',
+      'feature': 'Suggest new features or functionality you\'d like to see added to the site.',
+      'improvement': 'Suggest enhancements to existing features or content.',
+      'security': 'Report potential security vulnerabilities or access control issues. These are handled with high priority.',
+      'content': 'Report issues with lore, documentation, or content accuracy.',
+      'ux': 'Provide feedback on design, user experience, or accessibility.',
+      'other': 'General feedback or comments that don\'t fit other categories.'
+    };
+
+    // Update category info when selection changes
+    document.getElementById('feedbackCategory').addEventListener('change', (e) => {
+      const infoDiv = document.getElementById('categoryInfo');
+      if (e.target.value && categoryInfo[e.target.value]) {
+        infoDiv.textContent = categoryInfo[e.target.value];
+        infoDiv.style.display = 'block';
+      } else {
+        infoDiv.style.display = 'none';
+      }
+    });
+
+    // Character counters
+    document.getElementById('feedbackTitle').addEventListener('input', (e) => {
+      document.getElementById('titleCount').textContent = e.target.value.length;
+    });
+    document.getElementById('feedbackDescription').addEventListener('input', (e) => {
+      document.getElementById('descCount').textContent = e.target.value.length;
+    });
+
+    // Get user info
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        try {
+          const raw = localStorage.getItem('selectedCharacter');
+          if (raw) {
+            userCharacter = JSON.parse(raw);
+          }
+        } catch (err) {
+          console.error('Error getting character:', err);
+        }
+      }
+    });
+
+    // Submit feedback
+    window.submitFeedback = async function() {
+      const category = document.getElementById('feedbackCategory').value;
+      const title = document.getElementById('feedbackTitle').value.trim();
+      const description = document.getElementById('feedbackDescription').value.trim();
+      const page = document.getElementById('feedbackPage').value.trim();
+      const contact = document.getElementById('feedbackContact').value.trim();
+
+      // Validation
+      if (!category) {
+        alert('Please select a category');
+        return;
+      }
+      if (!title) {
+        alert('Please enter a title');
+        return;
+      }
+      if (!description) {
+        alert('Please provide a description');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      try {
+        const feedbackData = {
+          category: category,
+          title: title,
+          description: description,
+          page: page || 'Not specified',
+          contact: contact || 'None provided',
+          submittedAt: serverTimestamp(),
+          status: 'new',
+          // User information
+          userId: currentUser ? currentUser.uid : 'anonymous',
+          userEmail: currentUser ? currentUser.email : 'anonymous',
+          characterName: userCharacter ? userCharacter.name : 'No character selected',
+          characterId: userCharacter ? userCharacter.id : null,
+          // Browser info for debugging
+          userAgent: navigator.userAgent,
+          currentUrl: window.location.href,
+          screenSize: `${window.screen.width}x${window.screen.height}`
+        };
+
+        // Submit to Firebase
+        const docRef = await addDoc(collection(db, 'site-feedback'), feedbackData);
+
+        // Also try to create a GitHub issue via API (optional, will fail gracefully if not configured)
+        try {
+          await createGitHubIssue(feedbackData, docRef.id);
+        } catch (err) {
+          console.log('GitHub issue creation skipped or failed:', err);
+        }
+
+        // Show success message
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('successMessage').classList.add('show');
+
+      } catch (err) {
+        alert('Error submitting feedback: ' + err.message);
+        console.error(err);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+      }
+    };
+
+    // Create GitHub issue (requires GitHub Actions or backend)
+    async function createGitHubIssue(feedbackData, docId) {
+      // This function creates a formatted GitHub issue via a webhook or GitHub Actions
+      // For now, we'll just log it - you can set up a GitHub Actions workflow
+      // that monitors the Firebase collection and creates issues automatically
+      
+      const issueBody = `
+**Category:** ${feedbackData.category}
+**Feedback ID:** ${docId}
+**Submitted:** ${new Date().toISOString()}
+
+---
+
+**Title:** ${feedbackData.title}
+
+**Description:**
+${feedbackData.description}
+
+**Page/Feature:** ${feedbackData.page}
+**Contact Info:** ${feedbackData.contact}
+
+---
+
+**User Info:**
+- User ID: ${feedbackData.userId}
+- Character: ${feedbackData.characterName}
+- Current URL: ${feedbackData.currentUrl}
+- Browser: ${feedbackData.userAgent}
+
+---
+*This issue was automatically created from Site-89 feedback system*
+      `;
+
+      console.log('GitHub Issue Format:', issueBody);
+      
+      // Note: To actually create GitHub issues, you'll need to:
+      // 1. Set up a GitHub Personal Access Token
+      // 2. Store it securely in Firebase Functions or GitHub Actions
+      // 3. Call the GitHub API to create issues
+      // 
+      // For now, all feedback is stored in Firebase under 'site-feedback' collection
+      // which only you (jedi21132@gmail.com) can access via Firebase Console
+    }
+
+    // Reset form
+    window.resetForm = function() {
+      document.getElementById('feedbackCategory').value = '';
+      document.getElementById('feedbackTitle').value = '';
+      document.getElementById('feedbackDescription').value = '';
+      document.getElementById('feedbackPage').value = '';
+      document.getElementById('feedbackContact').value = '';
+      document.getElementById('titleCount').textContent = '0';
+      document.getElementById('descCount').textContent = '0';
+      document.getElementById('categoryInfo').style.display = 'none';
+      document.getElementById('feedbackForm').style.display = 'block';
+      document.getElementById('successMessage').classList.remove('show');
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+    };
+  </script>
+</body>
+</html>
