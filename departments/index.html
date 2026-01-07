@@ -45,6 +45,41 @@
       filter: invert(1) brightness(1.1);
     }
 
+    /* Light mode department panel styling */
+    html[data-theme="light"] .department-panel {
+      background: #FFFFFF;
+      border-color: #D0D0D0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="light"] .department-panel:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    html[data-theme="light"] .dept-title {
+      color: #1E9B8A;
+    }
+
+    html[data-theme="light"] .dept-description {
+      color: #555555;
+    }
+
+    html[data-theme="light"] .dept-image {
+      filter: none;
+    }
+
+    html[data-theme="light"] .page-hero {
+      background: radial-gradient(circle at top left, rgba(30, 155, 138, 0.05), transparent);
+    }
+
+    html[data-theme="light"] .page-hero .hero-title {
+      color: #1E9B8A;
+    }
+
+    html[data-theme="light"] .page-hero .hero-sub {
+      color: #555555;
+    }
+
     @media (max-width: 840px) {
       .department-panel { flex-direction: column; }
       .dept-image { width: 100%; height: 220px; }

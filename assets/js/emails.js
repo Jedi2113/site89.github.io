@@ -1,13 +1,13 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import { getFirestore, collection, query, where, orderBy, getDocs, onSnapshot, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-// Helper: Build character email address from name: lastname.firstname@site89.org
+// Helper: Build character email address from name: lastname.firstname@site89.org (always lowercase)
 function emailFromName(name){
   if(!name) return '';
   const parts = name.trim().split(/\s+/);
   const first = parts[0] ? parts[0].toLowerCase().replace(/[^a-z]/g,'') : '';
   const last = parts.length>1 ? parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'') : first;
-  return `${last}.${first}@site89.org`;
+  return `${last}.${first}@site89.org`.toLowerCase();
 }
 
 // Helper: Get divisions a character can send from (clearance 5+ for their division)
@@ -56,9 +56,11 @@ function isValidEmail(email){
 // Helper: Expand mailing lists (e.g., "SD@site89.org" → all characters with "SD/" in dept)
 async function expandMailingLists(recipients, db){
   const expanded = [];
+  // Normalize all recipients to lowercase for case-insensitive handling
+  const normalizedRecipients = recipients.map(r => r.toLowerCase());
   // Match division addresses (case-insensitive): bod@, io@, sd@, scd@, deo@, mtf@, ia@ followed by site89.org
-  const mailingLists = recipients.filter(r => /^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
-  const personalEmails = recipients.filter(r => !/^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
+  const mailingLists = normalizedRecipients.filter(r => /^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
+  const personalEmails = normalizedRecipients.filter(r => !/^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
   
   console.log('Mailing lists detected:', mailingLists);
   console.log('Personal emails:', personalEmails);
@@ -114,47 +116,110 @@ document.addEventListener('includesLoaded', () => {
   const messagesContainer = document.getElementById('messagesContainer');
   const folderEls = Array.from(document.querySelectorAll('.folder'));
   const composeBtn = document.getElementById('composeBtn');
-  const composeModal = document.getElementById('composeModal');
+  const composeArea = document.getElementById('composeArea');
   const composeClose = document.getElementById('composeClose');
   const sendBtn = document.getElementById('sendBtn');
   const saveDraftBtn = document.getElementById('saveDraftBtn');
   const composeTo = document.getElementById('composeTo');
   const composeSubject = document.getElementById('composeSubject');
   const composeBody = document.getElementById('composeBody');
-  const mailSearch = document.getElementById('mailSearch');
-  const mailSubject = document.getElementById('mailSubject');
-  const mailContent = document.getElementById('mailContent');
-  const mailSender = document.getElementById('mailSender');
-  const mailMeta = document.getElementById('mailMeta');
+  const globalMailSearch = document.getElementById('globalMailSearch');
+  const mailContentWrapper = document.getElementById('mailContentWrapper');
   const btnReply = document.getElementById('btnReply');
   const btnForward = document.getElementById('btnForward');
   const btnDelete = document.getElementById('btnDelete');
   const composeSendAs = document.getElementById('composeSendAs');
   const composeSuggestions = document.getElementById('composeSuggestions');
+  const folderTitle = document.getElementById('folderTitle');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const mailApp = document.querySelector('.mail-app');
 
   let currentFolder = 'inbox';
   let myAddress = '';
-  let currentUser = null; // Store current user for emails
+  let currentUser = null;
   let currentMessage = null;
+  let selectedMessageId = null;
   let allMessages = [];
-  let emailsUnsubscribe = null; // for real-time listener
-  let directorDivisions = []; // Current character's director divisions
-  let directorSendAddr = ''; // Currently selected send-as address
-  let locallyMarkedRead = new Set(); // Track messages we've marked as read locally
-  let contactsList = new Set(); // Track known email addresses for autocomplete
-  let charactersCache = {}; // Cache character data for profile pictures
+  let emailsUnsubscribe = null;
+  let directorDivisions = [];
+  let directorSendAddr = '';
+  let locallyMarkedRead = new Set();
+  let contactsList = new Set();
+  let charactersCache = {};
+  let tinyMCEInstance = null;
+  let isMobile = window.innerWidth <= 768;
 
   function isValidEmail(e){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  }
+  
+  // Track mobile state
+  window.addEventListener('resize', () => {
+    isMobile = window.innerWidth <= 768;
+  });
+  
+  // Handle mobile back navigation
+  function setupMobileNavigation(){
+    if(!isMobile) return;
+    
+    const toolbar = document.querySelector('.mail-view-toolbar');
+    if(toolbar){
+      toolbar.addEventListener('click', (e) => {
+        if(e.target === toolbar || e.target.textContent === '←'){
+          if(mailApp) mailApp.classList.remove('viewing-message');
+          selectedMessageId = null;
+          currentMessage = null;
+          renderList();
+        }
+      });
+    }
+  }
+  
+  // Initialize TinyMCE
+  function initTinyMCE(){
+    if(tinyMCEInstance) return;
+    
+    tinymce.init({
+      selector: '#composeBody',
+      height: 400,
+      menubar: false,
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | removeformat | help',
+      content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 14px; color: #e0e0e0; background-color: #1a1a1a; }',
+      setup: function(editor) {
+        tinyMCEInstance = editor;
+      }
+    });
   }
 
   function setActiveFolder(name){
     folderEls.forEach(f => f.classList.toggle('active', f.dataset.folder === name));
     currentFolder = name;
+    const folderNames = {
+      'inbox': 'Inbox',
+      'drafts': 'Drafts',
+      'sent': 'Sent',
+      'trash': 'Trash'
+    };
+    if(folderTitle) folderTitle.textContent = folderNames[name] || name;
     renderList();
   }
 
   folderEls.forEach(f => f.addEventListener('click', ()=> setActiveFolder(f.dataset.folder)));
+  
+  if(refreshBtn){
+    refreshBtn.addEventListener('click', ()=> {
+      renderList();
+    });
+  }
 
   // Update Send As dropdown when compose opens
   function updateSendAsOptions(){
@@ -224,20 +289,42 @@ document.addEventListener('includesLoaded', () => {
 
   composeBtn.addEventListener('click', ()=> { 
     updateSendAsOptions();
-    composeModal.style.display = 'block'; 
-    composeTo.focus(); 
+    mailContentWrapper.style.display = 'none';
+    composeArea.classList.add('active');
+    
+    // On mobile, switch to compose view
+    if(isMobile && mailApp){
+      mailApp.classList.add('viewing-message');
+    }
+    
+    composeTo.focus();
+    // Initialize TinyMCE on first open
+    if(!tinyMCEInstance){
+      initTinyMCE();
+    }
   });
+  
   composeClose.addEventListener('click', ()=> { 
-    composeModal.style.display = 'none'; 
+    composeArea.classList.remove('active');
+    mailContentWrapper.style.display = '';
     clearCompose();
     directorSendAddr = '';
     composeSendAs.value = '';
+    
+    // On mobile, go back to list view
+    if(isMobile && mailApp){
+      mailApp.classList.remove('viewing-message');
+    }
   });
-
+  
   function clearCompose(){ 
     composeTo.value=''; 
-    composeSubject.value=''; 
-    composeBody.value=''; 
+    composeSubject.value='';
+    if(tinyMCEInstance){
+      tinyMCEInstance.setContent('');
+    } else {
+      composeBody.value='';
+    }
   }
 
   // Contacts autocomplete helpers
@@ -268,15 +355,17 @@ document.addEventListener('includesLoaded', () => {
 
   // Get character profile image
   async function getCharacterImage(email){
+    // Normalize email to lowercase for case-insensitive lookup
+    const normalizedEmail = email ? email.toLowerCase() : '';
     // Check cache first
-    if(charactersCache[email]) return charactersCache[email];
+    if(charactersCache[normalizedEmail]) return charactersCache[normalizedEmail];
     
     try {
       const charsSnap = await getDocs(collection(db, 'characters'));
       charsSnap.forEach(snap => {
         const ch = snap.data();
         if(ch.name){
-          const charEmail = emailFromName(ch.name);
+          const charEmail = emailFromName(ch.name).toLowerCase();
           const image = ch.image || ch.photo || ch.photoUrl || ch.photoURL || ch.profileImage || ch.avatar || ch.picture || null;
           charactersCache[charEmail] = image;
         }
@@ -285,7 +374,7 @@ document.addEventListener('includesLoaded', () => {
       console.error('Failed to fetch character images:', e); 
     }
     
-    return charactersCache[email] || null;
+    return charactersCache[normalizedEmail] || null;
   }
 
   async function sendMessage(status='sent'){
@@ -308,8 +397,8 @@ document.addEventListener('includesLoaded', () => {
       }
     }
     
-    // Determine sender: use selected director address or personal address
-    let sender = directorSendAddr || myAddress;
+    // Determine sender: use selected director address or personal address (normalized to lowercase)
+    let sender = (directorSendAddr || myAddress).toLowerCase();
     if(!sender) return alert('No sender address set. Select a character or sign in.');
     
     // Validate director is allowed to send from chosen address
@@ -326,12 +415,24 @@ document.addEventListener('includesLoaded', () => {
       recipients = await expandMailingLists(toRaw, db);
     } catch(e){ console.warn('Mailing list expansion error', e); recipients = toRaw; }
 
+    // Normalize all recipients to lowercase for case-insensitive matching
+    recipients = recipients.map(r => r.toLowerCase());
+    
+    // Get email body from TinyMCE or textarea
+    let emailBody = '';
+    if(tinyMCEInstance){
+      emailBody = tinyMCEInstance.getContent();
+    } else {
+      emailBody = composeBody.value || '';
+    }
+
     const payload = {
       sender: sender,
       senderEmail: currentUser ? currentUser.email : '',
       recipients: recipients,
       subject: composeSubject.value || '(no subject)',
-      body: composeBody.value || '',
+      body: emailBody,
+      isHTML: !!tinyMCEInstance, // Track if email is HTML
       status: status, // 'sent' or 'draft'
       folder: status === 'draft' ? 'drafts' : '',
       ts: serverTimestamp()
@@ -343,17 +444,25 @@ document.addEventListener('includesLoaded', () => {
       console.error('send failed', e); alert('Failed to send message');
     } finally {
       sendBtn.disabled = false; saveDraftBtn.disabled = false;
-      composeModal.style.display = 'none';
+      composeArea.classList.remove('active');
+      mailContentWrapper.style.display = '';
       clearCompose();
       directorSendAddr = '';
       composeSendAs.value = '';
+      
+      // On mobile, go back to list view
+      if(isMobile && mailApp){
+        mailApp.classList.remove('viewing-message');
+      }
     }
   }
 
   sendBtn.addEventListener('click', ()=> sendMessage('sent'));
   saveDraftBtn.addEventListener('click', ()=> sendMessage('draft'));
 
-  mailSearch.addEventListener('input', ()=> renderList());
+  if(globalMailSearch){
+    globalMailSearch.addEventListener('input', ()=> renderList());
+  }
 
   btnDelete.addEventListener('click', async ()=>{
     if(!currentMessage) return;
@@ -363,39 +472,75 @@ document.addEventListener('includesLoaded', () => {
       } else {
         await updateDoc(doc(db,'emails',currentMessage.id), { folder: 'trash' });
       }
-      currentMessage = null; mailSubject.textContent='Select a message'; mailContent.textContent='';
+      currentMessage = null; 
+      selectedMessageId = null;
+      showEmptyState();
     } catch(e){ console.warn('delete failed', e); alert('Could not delete message'); }
   });
 
   btnReply.addEventListener('click', ()=>{
     if(!currentMessage) return;
-    composeModal.style.display='block';
+    mailContentWrapper.style.display = 'none';
+    composeArea.classList.add('active');
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote: ---\n${currentMessage.body}`;
+    
+    // Initialize TinyMCE if needed
+    if(!tinyMCEInstance){
+      initTinyMCE();
+      setTimeout(() => {
+        if(tinyMCEInstance){
+          const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+          tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
+        }
+      }, 500);
+    } else {
+      const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+      tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
+    }
   });
 
   btnForward.addEventListener('click', ()=>{
     if(!currentMessage) return;
-    composeModal.style.display='block';
+    mailContentWrapper.style.display = 'none';
+    composeArea.classList.add('active');
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
-    composeBody.value = `\n\n--- Forwarded message ---\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\n\n${currentMessage.body}`;
+    
+    // Initialize TinyMCE if needed
+    if(!tinyMCEInstance){
+      initTinyMCE();
+      setTimeout(() => {
+        if(tinyMCEInstance){
+          const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+          tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
+        }
+      }, 500);
+    } else {
+      const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+      tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
+    }
   });
 
   // Render list depending on folder
   function renderList(){
-    const q = (mailSearch.value||'').toLowerCase();
+    const q = globalMailSearch ? (globalMailSearch.value||'').toLowerCase() : '';
+    const myAddressLower = myAddress.toLowerCase();
     const list = allMessages.filter(m => {
-      if (currentFolder === 'inbox') return (m.recipients || []).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft';
-      if (currentFolder === 'drafts') return m.status === 'draft' && m.sender === myAddress;
-      if (currentFolder === 'sent') return m.sender === myAddress && m.folder !== 'trash' && m.status !== 'draft';
-      if (currentFolder === 'trash') return m.folder === 'trash' && (m.sender === myAddress || (m.recipients || []).includes(myAddress));
+      const recipientsLower = (m.recipients || []).map(r => r.toLowerCase());
+      const senderLower = (m.sender || '').toLowerCase();
+      if (currentFolder === 'inbox') return recipientsLower.includes(myAddressLower) && m.folder !== 'trash' && m.status !== 'draft';
+      if (currentFolder === 'drafts') return m.status === 'draft' && senderLower === myAddressLower;
+      if (currentFolder === 'sent') return senderLower === myAddressLower && m.folder !== 'trash' && m.status !== 'draft';
+      if (currentFolder === 'trash') return m.folder === 'trash' && (senderLower === myAddressLower || recipientsLower.includes(myAddressLower));
       return false;
     }).filter(m => (m.subject||'').toLowerCase().includes(q) || (m.body||'').toLowerCase().includes(q) || (m.sender||'').toLowerCase().includes(q));
 
     // counts and unread badge on navbar
-    const inboxMsgs = allMessages.filter(m => (m.recipients||[]).includes(myAddress) && m.folder !== 'trash' && m.status !== 'draft');
+    const inboxMsgs = allMessages.filter(m => {
+      const recipientsLower = (m.recipients || []).map(r => r.toLowerCase());
+      return recipientsLower.includes(myAddressLower) && m.folder !== 'trash' && m.status !== 'draft';
+    });
     // Count unread: neither m.read nor in locallyMarkedRead
     const unreadCount = inboxMsgs.filter(m => !m.read && !locallyMarkedRead.has(m.id)).length;
     document.getElementById('countInbox').textContent = inboxMsgs.length;
@@ -409,17 +554,23 @@ document.addEventListener('includesLoaded', () => {
         navMailBadge.style.display = 'none';
       }
     }
-    document.getElementById('countDrafts').textContent = allMessages.filter(m => m.status === 'draft' && m.sender === myAddress).length;
-    document.getElementById('countSent').textContent = allMessages.filter(m => m.sender === myAddress && m.folder !== 'trash').length;
-    document.getElementById('countTrash').textContent = allMessages.filter(m => m.folder === 'trash' && (m.sender === myAddress || (m.recipients||[]).includes(myAddress))).length;
+    document.getElementById('countDrafts').textContent = allMessages.filter(m => m.status === 'draft' && (m.sender || '').toLowerCase() === myAddressLower).length;
+    document.getElementById('countSent').textContent = allMessages.filter(m => (m.sender || '').toLowerCase() === myAddressLower && m.folder !== 'trash').length;
+    document.getElementById('countTrash').textContent = allMessages.filter(m => {
+      const recipientsLower = (m.recipients || []).map(r => r.toLowerCase());
+      const senderLower = (m.sender || '').toLowerCase();
+      return m.folder === 'trash' && (senderLower === myAddressLower || recipientsLower.includes(myAddressLower));
+    }).length;
 
     messagesContainer.innerHTML = '';
     list.sort((a,b)=> (b.ts||0) - (a.ts||0));
     list.forEach(async (m) => {
       const el = document.createElement('div');
-      // Check if message is unread: neither m.read nor in locallyMarkedRead Set
-      const isUnread = !m.read && !locallyMarkedRead.has(m.id) && (m.recipients||[]).includes(myAddress);
-      el.className = 'message-item'+ (isUnread ? ' unread' : '');
+      // Check if message is unread: neither m.read nor in locallyMarkedRead Set (case-insensitive)
+      const recipientsLower = (m.recipients || []).map(r => r.toLowerCase());
+      const isUnread = !m.read && !locallyMarkedRead.has(m.id) && recipientsLower.includes(myAddressLower);
+      const isSelected = selectedMessageId === m.id;
+      el.className = 'message-item'+ (isUnread ? ' unread' : '') + (isSelected ? ' selected' : '');
       
       // Save contacts for autocomplete
       if(m.sender) saveContact(m.sender);
@@ -428,29 +579,114 @@ document.addEventListener('includesLoaded', () => {
       // Try to get profile picture
       const profileImage = await getCharacterImage(m.sender);
       const avatarHtml = profileImage && !profileImage.includes('placeholder') 
-        ? `<img src="${profileImage}" style="width:44px;height:44px;border-radius:6px;object-fit:cover" alt="Profile">`
-        : `<div style="width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));display:flex;align-items:center;justify-content:center;color:#081413;font-weight:700">${(m.sender||'').charAt(0)||''}</div>`;
+        ? `<div class="message-avatar"><img src="${profileImage}" alt="Profile"></div>`
+        : `<div class="message-avatar">${(m.sender||'').charAt(0).toUpperCase()||'?'}</div>`;
+      
+      // Get time display (relative for recent, date for older)
+      const timeDisplay = formatMessageTime(m.ts);
+      
+      // Strip HTML tags for snippet if isHTML
+      let snippet = m.body || '';
+      if(m.isHTML){
+        snippet = snippet.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+      snippet = snippet.slice(0,100);
       
       el.innerHTML = `${avatarHtml}
-        <div class="meta">
-          <div style="display:flex;justify-content:space-between;align-items:center"><div class="subject">${m.subject}</div><div style="font-size:.85rem;color:var(--text-light);opacity:.8">${fmtDate(m.ts)}</div></div>
-          <div style="margin-top:.25rem"><div style="color:var(--text-light);opacity:.9">${m.sender}</div><div class="snippet">${(m.body||'').slice(0,120)}</div></div>
+        <div class="message-meta">
+          <div class="message-header">
+            <div class="message-sender">${m.sender}</div>
+            <div class="message-time">${timeDisplay}</div>
+          </div>
+          <div class="message-subject">${m.subject}</div>
+          <div class="message-snippet">${snippet}</div>
         </div>`;
       el.addEventListener('click', ()=> openMessage(m));
       messagesContainer.appendChild(el);
     });
+    
+    if(list.length === 0){
+      messagesContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-light);opacity:0.5">No messages in this folder</div>';
+    }
+  }
+  
+  // Format message time (relative for recent, date for older)
+  function formatMessageTime(ts){
+    if(!ts) return '';
+    const date = ts && typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if(diffMins < 1) return 'Just now';
+    if(diffMins < 60) return `${diffMins}m ago`;
+    if(diffHours < 24) return `${diffHours}h ago`;
+    if(diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString();
+  }
+  
+  function showEmptyState(){
+    mailContentWrapper.innerHTML = `
+      <div class="mail-empty-state">
+        <i class="fas fa-envelope-open"></i>
+        <h3>No message selected</h3>
+        <p>Select a message from the list to read its contents</p>
+      </div>
+    `;
   }
 
   async function openMessage(m){
     currentMessage = m;
-    mailSubject.textContent = m.subject;
-    mailContent.textContent = m.body;
-    mailSender.textContent = `${m.sender} → ${ (m.recipients||[]).join(', ') }`;
-    mailMeta.textContent = fmtDate(m.ts);
-    const md = document.getElementById('mailDate'); if(md) md.textContent = fmtDate(m.ts);
+    selectedMessageId = m.id;
+    
+    // On mobile, switch to message view
+    if(isMobile && mailApp){
+      mailApp.classList.add('viewing-message');
+    }
+    
+    // Re-render list to show selected state
+    renderList();
+    
+    // Try to get profile picture
+    const profileImage = await getCharacterImage(m.sender);
+    const avatarHtml = profileImage && !profileImage.includes('placeholder') 
+      ? `<div class="mail-sender-avatar"><img src="${profileImage}" alt="Profile"></div>`
+      : `<div class="mail-sender-avatar">${(m.sender||'').charAt(0).toUpperCase()||'?'}</div>`;
+    
+    // Format body content (handle HTML vs plain text)
+    const bodyContent = m.isHTML ? m.body : `<pre style="white-space:pre-wrap;font-family:inherit;margin:0">${m.body || ''}</pre>`;
+    
+    mailContentWrapper.innerHTML = `
+      <div class="mail-message-header">
+        <h1 class="mail-subject">${m.subject || '(no subject)'}</h1>
+        
+        <div class="mail-sender-info">
+          ${avatarHtml}
+          <div class="mail-sender-details">
+            <div class="mail-sender-name">${m.sender}</div>
+            <div class="mail-sender-email">${m.sender}</div>
+          </div>
+          <div class="mail-date">${fmtDate(m.ts)}</div>
+        </div>
+        
+        <div class="mail-recipients">
+          <div class="mail-recipients-label">To:</div>
+          <div class="mail-recipients-list">${(m.recipients || []).join(', ')}</div>
+        </div>
+      </div>
+      
+      <div class="mail-body">
+        ${bodyContent}
+      </div>
+    `;
 
-    // mark read if I'm recipient and not already read or locally marked
-    if ((m.recipients||[]).includes(myAddress) && !m.read && !locallyMarkedRead.has(m.id)){
+    // mark read if I'm recipient and not already read or locally marked (case-insensitive)
+    const recipientsLower = (m.recipients || []).map(r => r.toLowerCase());
+    const myAddressLower = myAddress.toLowerCase();
+    if (recipientsLower.includes(myAddressLower) && !m.read && !locallyMarkedRead.has(m.id)){
       // Immediately add to locally marked set for optimistic UI update
       locallyMarkedRead.add(m.id);
       // Re-render to update UI immediately
@@ -517,17 +753,19 @@ document.addEventListener('includesLoaded', () => {
       directorDivisions = [];
     }
 
-    myAddressEl.innerHTML = `Signed in as — <strong>${myAddress || 'anonymous'}</strong>`;
+    myAddressEl.textContent = myAddress || 'Not signed in';
 
     if(!myAddress){
       // no identity; show notice and stop any active listener
-      messagesContainer.innerHTML = '<div style="padding:1rem;color:var(--text-light);opacity:.9">Select a character from your account first to use Mail.</div>';
+      messagesContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-light);opacity:0.7">Select a character from your account first to use Mail.</div>';
+      showEmptyState();
       if (emailsUnsubscribe){ emailsUnsubscribe(); emailsUnsubscribe = null; }
       return;
     }
 
     await ensureSampleData();
     startRealtimeMessages();
+    setupMobileNavigation();
   });
 
 });

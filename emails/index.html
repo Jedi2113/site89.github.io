@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Site-89 Mail — Inbox</title>
   <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- TinyMCE -->
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
   
   <!-- Theme System -->
   <script type="module">
@@ -14,45 +18,684 @@
   
   <script type="module" src="/assets/js/auth.js"></script>
   <style>
-    /* Outlook-like layout */
-    html, body { height: 100%; }
-    body { min-height: 100vh; display:flex; flex-direction:column; }
-    main.content { flex: 1 0 auto; display:flex; flex-direction:column; }
+    /* Full-page Outlook-style layout */
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      padding: 0; 
+      overflow: hidden; 
+    }
+    
+    body { 
+      display: flex; 
+      flex-direction: column; 
+      background: #0a0a0b;
+    }
+    
+    /* Hide footer for full-page email experience */
+    body > [data-include*="footer"] {
+      display: none;
+    }
+    
+    /* Main layout */
+    main.content { 
+      flex: 1; 
+      display: flex; 
+      overflow: hidden;
+      background: #0a0a0b;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      max-width: 100%;
+    }
 
-    .mail-app { display:flex; gap:1rem; padding:1rem; height: 100%; align-items:stretch; }
-    .mail-left { width:420px; display:flex; flex-direction:column; gap:1rem; flex: 0 0 420px; }
-    .mail-sidebar { width:100%; background:var(--bg-panel); border-radius:8px; padding:1rem; display:flex; flex-direction:column; }
-    .mail-folders { margin-top:1rem; display:flex; flex-direction:column; gap:.5rem }
-    .folder { display:flex; justify-content:space-between; align-items:center; padding:.5rem; border-radius:6px; cursor:pointer }
-    .folder.active { background: linear-gradient(90deg,var(--accent-mint),var(--accent-teal)); color:#081413; font-weight:700 }
-    .compose-btn { display:block; width:100%; padding:.6rem .8rem; border-radius:6px; background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal)); color:#081413; font-weight:700; border:none; cursor:pointer }
+    .mail-app { 
+      display: flex; 
+      width: 100%; 
+      height: 100%; 
+      overflow: hidden;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Left sidebar - folders */
+    .mail-sidebar { 
+      width: 260px;
+      background: var(--bg-panel);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex; 
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    
+    .compose-btn { 
+      margin: 1rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 4px;
+      background: linear-gradient(90deg,var(--accent-mint),var(--accent-teal));
+      color: #081413;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+    
+    .compose-btn:hover {
+      transform: translateY(-1px);
+    }
+    
+    .mail-folders { 
+      padding: 0.5rem;
+      display: flex; 
+      flex-direction: column;
+    }
+    
+    .folder { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 0.6rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      transition: background 0.15s;
+      margin-bottom: 0.15rem;
+    }
+    
+    .folder:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .folder.active { 
+      background: rgba(78,250,170,0.12);
+      color: var(--accent-mint);
+      font-weight: 600;
+    }
+    
+    .folder i {
+      width: 20px;
+      margin-right: 0.5rem;
+    }
+    
+    .folder-name {
+      flex: 1;
+    }
+    
+    .folder-count {
+      background: rgba(255,255,255,0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .folder.active .folder-count {
+      background: var(--accent-mint);
+      color: #081413;
+      font-weight: 700;
+    }
 
-    .mail-list { width:100%; background:var(--bg-panel); border-radius:8px; overflow:auto; flex:1 1 auto; }
-    .mail-list .search { padding: .8rem; border-bottom:1px solid rgba(255,255,255,0.02); }
-    .message-item { padding:.8rem .9rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; gap:.6rem; align-items:flex-start; cursor:pointer; transition: background-color 0.2s; }
-    .message-item:hover { background: rgba(255,255,255,0.03); }
-    .message-item.unread { background: rgba(78,250,170,0.08); border-left: 3px solid var(--accent-mint); padding-left: calc(.9rem - 3px); }
-    .message-item.unread .subject { color: var(--accent-mint); font-weight: 700; }
-    .message-item .meta { flex:1; }
-    .message-item .subject { font-weight:700; }
-    .message-item .snippet { color:var(--text-light); opacity:.86; font-size:0.95rem }
+    /* Message list */
+    .mail-list { 
+      width: 380px;
+      background: var(--bg-panel);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    
+    .mail-list-header {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    
+    .mail-list-header h2 {
+      margin: 0 0 0.8rem 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    
+    .mail-list-search {
+      margin-bottom: 0.8rem;
+    }
+    
+    .mail-list-search input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .mail-list-search input:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+    }
+    
+    .mail-list-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .mail-list-controls button {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-light);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    
+    .messages-container-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    .message-item { 
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      display: flex;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.1s;
+      position: relative;
+    }
+    
+    .message-item:hover { 
+      background: rgba(255,255,255,0.04);
+    }
+    
+    .message-item.selected {
+      background: rgba(78,250,170,0.08);
+      border-left: 3px solid var(--accent-mint);
+      padding-left: calc(1rem - 3px);
+    }
+    
+    .message-item.unread { 
+      background: rgba(78,250,170,0.05);
+    }
+    
+    .message-item.unread .subject { 
+      color: var(--accent-mint);
+      font-weight: 700;
+    }
+    
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #081413;
+      font-weight: 700;
+      font-size: 1rem;
+      overflow: hidden;
+    }
+    
+    .message-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .message-meta { 
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.3rem;
+    }
+    
+    .message-sender {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .message-time {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      opacity: 0.6;
+      white-space: nowrap;
+      margin-left: 0.5rem;
+    }
+    
+    .message-subject { 
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .message-snippet { 
+      color: var(--text-light);
+      opacity: 0.7;
+      font-size: 0.8rem;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
-    .mail-main { flex:1 1 auto; display:flex; align-items:stretch; }
-    .mail-view { flex:1 1 0; background:var(--bg-panel); border-radius:8px; padding:1rem; display:flex; flex-direction:column; overflow:auto; min-width:560px; max-width:1200px; margin:0 auto; }
-    .mail-view .controls { display:flex; gap:.5rem; margin-bottom:1rem }
-    .mail-view .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.6rem }
-    .mail-view .content { background:rgba(255,255,255,0.02); padding:1rem; border-radius:8px; flex:1; overflow:auto }
+    /* Mail viewer */
+    .mail-main { 
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0f0f10;
+    }
+    
+    .mail-view { 
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .mail-view-toolbar {
+      padding: 0.8rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      background: var(--bg-panel);
+      flex-shrink: 0;
+    }
+    
+    .mail-view-toolbar button {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-light);
+      padding: 0.5rem 0.9rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s;
+    }
+    
+    .mail-view-toolbar button:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .mail-view-toolbar button i {
+      font-size: 0.9rem;
+    }
+    
+    .mail-content-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    
+    .mail-message-header {
+      background: var(--bg-panel);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .mail-subject {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+    
+    .mail-sender-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .mail-sender-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #081413;
+      font-weight: 700;
+      font-size: 1.2rem;
+      overflow: hidden;
+    }
+    
+    .mail-sender-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .mail-sender-details {
+      flex: 1;
+    }
+    
+    .mail-sender-name {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+    
+    .mail-sender-email {
+      color: var(--text-light);
+      opacity: 0.7;
+      font-size: 0.85rem;
+    }
+    
+    .mail-date {
+      color: var(--text-light);
+      opacity: 0.6;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+    
+    .mail-recipients {
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .mail-recipients-label {
+      color: var(--text-light);
+      opacity: 0.6;
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .mail-recipients-list {
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+    
+    .mail-body {
+      background: var(--bg-panel);
+      border-radius: 6px;
+      padding: 1.5rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      min-height: 200px;
+    }
+    
+    .mail-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-light);
+      opacity: 0.5;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .mail-empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+    
+    .mail-empty-state h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.2rem;
+    }
+    
+    .mail-empty-state p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
 
-    /* Compose modal */
-    .compose-modal { position:fixed; left:24px; bottom:24px; right:auto; width:640px; background:var(--bg-card); border:1px solid rgba(78,250,170,0.04); border-radius:8px; box-shadow: 0 12px 36px rgba(0,0,0,0.5); z-index:5000; }
-    .compose-modal header { padding:0.8rem 1rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; justify-content:space-between }
-    .compose-modal .body { padding:1rem }
-    .compose-modal input, .compose-modal textarea { width:100%; padding:.6rem; margin-bottom:.6rem; border-radius:6px; border:1px solid #333; background:#111; color:var(--text-light) }
-    .compose-suggestions { position:absolute; background:var(--bg-card); border:1px solid rgba(78,250,170,0.2); border-radius:6px; max-height:200px; overflow-y:auto; z-index:1000; width:calc(100% - 2rem); display:none; }
-    .compose-suggestions div { padding:.5rem .8rem; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.05); }
-    .compose-suggestions div:hover { background:rgba(78,250,170,0.1); }
+    /* Compose area - inline in reading pane */
+    .compose-area { 
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .compose-area.active {
+      display: flex;
+    }
+    
+    .compose-inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .compose-header { 
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-panel);
+      flex-shrink: 0;
+    }
+    
+    .compose-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    
+    .compose-body { 
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      background: #0f0f10;
+    }
+    
+    .compose-field {
+      margin-bottom: 1rem;
+    }
+    
+    .compose-field label {
+      display: block;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      opacity: 0.8;
+    }
+    
+    .compose-area input, .compose-area select { 
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.3);
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .compose-area input:focus, .compose-area select:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+    }
+    
+    .compose-field-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .compose-field-row .compose-field {
+      flex: 1;
+    }
+    
+    .compose-editor {
+      flex: 1;
+      min-height: 300px;
+      margin-bottom: 1rem;
+    }
+    
+    .compose-suggestions { 
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.2);
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+    }
+    
+    .compose-suggestions div { 
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+    
+    .compose-suggestions div:hover { 
+      background: rgba(78,250,170,0.1);
+    }
+    
+    .compose-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      background: var(--bg-panel);
+      flex-shrink: 0;
+    }
+    
+    .compose-footer button {
+      padding: 0.6rem 1.5rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: transform 0.1s;
+    }
+    
+    .compose-footer button:hover {
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-light);
+      border: 1px solid rgba(255,255,255,0.15) !important;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(90deg,var(--accent-mint),var(--accent-teal));
+      color: #081413;
+    }
 
-    @media (max-width: 1000px){ .mail-list{display:none} .mail-sidebar{display:none} .mail-left{display:none} .mail-app{padding:.6rem} .compose-modal{left:8px;right:8px;width:auto} .mail-view{min-width:unset} }
+    /* Responsive Design */
+    @media (max-width: 1400px) { 
+      .mail-list { width: 340px; }
+    }
+    
+    @media (max-width: 1200px) { 
+      .mail-list { width: 320px; }
+      .mail-sidebar { width: 240px; }
+    }
+    
+    @media (max-width: 1000px) { 
+      .mail-sidebar { width: 220px; }
+      .mail-list { width: 300px; }
+      .compose-modal { padding: 1rem; }
+    }
+    
+    @media (max-width: 768px) {
+      .mail-sidebar { display: none; }
+      .mail-list { 
+        width: 100%; 
+        border-right: none;
+        display: flex;
+      }
+      .mail-main { display: none; }
+      
+      /* When viewing a message on mobile */
+      .mail-app.viewing-message .mail-list { display: none; }
+      .mail-app.viewing-message .mail-main { 
+        display: flex; 
+        width: 100%;
+      }
+      
+      /* Add back button on mobile */
+      .mail-view-toolbar::before {
+        content: '←';
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        padding: 0.5rem;
+        display: inline-block;
+      }
+
+    }
+    
+    @media (max-width: 480px) {
+      .message-item {
+        padding: 0.8rem;
+      }
+      
+      .message-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+      
+      .mail-list-header h2 {
+        font-size: 1.1rem;
+      }
+      
+      .folder {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.6rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -61,71 +704,131 @@
 
   <main class="content">
     <section class="mail-app">
-      <div class="mail-left">
-        <aside class="mail-sidebar">
-          <button class="compose-btn" id="composeBtn">Compose</button>
-          <div class="mail-info" style="margin-top:.8rem;font-size:.95rem;color:var(--text-light);opacity:.9" id="myAddress">Signed in as — <em>loading…</em></div>
+      <!-- Left Sidebar - Folders -->
+      <aside class="mail-sidebar">
+        <button class="compose-btn" id="composeBtn">
+          <i class="fas fa-pen"></i>
+          New Message
+        </button>
 
-          <div class="mail-folders" id="folderList">
-            <div class="folder active" data-folder="inbox">Inbox <span id="countInbox">0</span></div>
-            <div class="folder" data-folder="drafts">Drafts <span id="countDrafts">0</span></div>
-            <div class="folder" data-folder="sent">Sent <span id="countSent">0</span></div>
-            <div class="folder" data-folder="trash">Trash <span id="countTrash">0</span></div>
+        <div class="mail-folders" id="folderList">
+          <div class="folder active" data-folder="inbox">
+            <span><i class="fas fa-inbox"></i><span class="folder-name">Inbox</span></span>
+            <span class="folder-count" id="countInbox">0</span>
           </div>
-        </aside>
+          <div class="folder" data-folder="drafts">
+            <span><i class="fas fa-file-alt"></i><span class="folder-name">Drafts</span></span>
+            <span class="folder-count" id="countDrafts">0</span>
+          </div>
+          <div class="folder" data-folder="sent">
+            <span><i class="fas fa-paper-plane"></i><span class="folder-name">Sent</span></span>
+            <span class="folder-count" id="countSent">0</span>
+          </div>
+          <div class="folder" data-folder="trash">
+            <span><i class="fas fa-trash"></i><span class="folder-name">Trash</span></span>
+            <span class="folder-count" id="countTrash">0</span>
+          </div>
+        </div>
+      </aside>
 
-        <section class="mail-list">
-          <div class="search"><input id="mailSearch" placeholder="Search messages…" style="width:100%;padding:.6rem;border-radius:6px;border:1px solid #333;background:#0f0f10;color:var(--text-light)"></div>
+      <!-- Message List -->
+      <section class="mail-list">
+        <div class="mail-list-header">
+          <h2 id="folderTitle">Inbox</h2>
+          <div class="mail-list-search">
+            <input id="globalMailSearch" placeholder="Search messages..." type="text">
+          </div>
+          <div class="mail-list-controls">
+            <button id="refreshBtn" title="Refresh">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+            <span id="myAddress" style="font-size:0.85rem;color:var(--text-light);opacity:0.7;margin-left:auto;">Loading...</span>
+          </div>
+        </div>
+        <div class="messages-container-wrapper">
           <div id="messagesContainer"></div>
-        </section>
-      </div>
+        </div>
+      </section>
 
+      <!-- Mail Viewer -->
       <div class="mail-main">
         <section class="mail-view">
-        <div class="controls">
-          <button id="btnReply" class="btn-secondary btn-icon" title="Reply"><i class="fa-solid fa-reply"></i><span class="label">Reply</span></button>
-          <button id="btnForward" class="btn-secondary btn-icon" title="Forward"><i class="fa-solid fa-share-from-square"></i><span class="label">Forward</span></button>
-          <button id="btnDelete" class="btn-secondary btn-icon" title="Delete"><i class="fa-solid fa-trash"></i><span class="label">Delete</span></button>
-          <div style="flex:1"></div>
-          <div id="mailMeta" style="color:var(--text-light);opacity:.8" class="kv"><div class="label">Date:</div><div class="value" id="mailDate">&mdash;</div></div>
-        </div>
+          <div class="mail-view-toolbar">
+            <button id="btnReply" title="Reply">
+              <i class="fas fa-reply"></i>
+              Reply
+            </button>
+            <button id="btnForward" title="Forward">
+              <i class="fas fa-share"></i>
+              Forward
+            </button>
+            <button id="btnDelete" title="Delete">
+              <i class="fas fa-trash"></i>
+              Delete
+            </button>
+          </div>
 
-        <div class="header">
-          <h2 id="mailSubject">Select a message</h2>
-          <div id="mailSender" style="color:var(--text-light);opacity:.9"></div>
-        </div>
-        <div class="content" id="mailContent">Use the left column to pick a message — messages load from the server (or local demo data).</div>
-      </section>
+          <div class="mail-content-wrapper" id="mailContentWrapper">
+            <div class="mail-empty-state">
+              <i class="fas fa-envelope-open"></i>
+              <h3>No message selected</h3>
+              <p>Select a message from the list to read its contents</p>
+            </div>
+          </div>
+          
+          <!-- Inline Compose Area -->
+          <div class="compose-area" id="composeArea">
+            <div class="compose-inner">
+              <div class="compose-header">
+                <h3>New Message</h3>
+                <button id="composeClose" class="btn-secondary" style="border:1px solid rgba(255,255,255,0.15)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div class="compose-body">
+                <div class="compose-field">
+                  <label>Send As</label>
+                  <select id="composeSendAs">
+                    <option value="">Send as personal account</option>
+                  </select>
+                </div>
+                
+                <div class="compose-field" style="position:relative">
+                  <label>To</label>
+                  <input id="composeTo" placeholder="Enter email addresses (comma-separated)" autocomplete="off">
+                  <div id="composeSuggestions" class="compose-suggestions"></div>
+                </div>
+                
+                <div class="compose-field">
+                  <label>Subject</label>
+                  <input id="composeSubject" placeholder="Email subject">
+                </div>
+                
+                <div class="compose-field compose-editor">
+                  <label>Message</label>
+                  <textarea id="composeBody" style="display:none;"></textarea>
+                </div>
+              </div>
+              
+              <div class="compose-footer">
+                <button id="saveDraftBtn" class="btn-secondary">
+                  <i class="fas fa-save"></i>
+                  Save Draft
+                </button>
+                <button id="sendBtn" class="btn-primary">
+                  <i class="fas fa-paper-plane"></i>
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </main>
 
   <div data-include="/components/footer.html"></div>
-
-  <!-- Compose Modal (hidden by default) -->
-  <div id="composeModal" class="compose-modal" style="display:none">
-    <header>
-      <div>New Message</div>
-      <div><button id="composeClose" class="btn-secondary">Close</button></div>
-    </header>
-    <div class="body">
-      <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
-        <select id="composeSendAs" style="flex:1;padding:.6rem;border-radius:6px;border:1px solid #333;background:#111;color:var(--text-light)">
-          <option value="">Send as personal account</option>
-        </select>
-      </div>
-      <div style="position:relative">
-        <input id="composeTo" placeholder="To (comma-separated addresses)" autocomplete="off">
-        <div id="composeSuggestions" class="compose-suggestions"></div>
-      </div>
-      <input id="composeSubject" placeholder="Subject">
-      <textarea id="composeBody" placeholder="Message body..."></textarea>
-      <div style="display:flex;gap:.5rem;justify-content:flex-end">
-        <button id="saveDraftBtn" class="btn-secondary">Save Draft</button>
-        <button id="sendBtn" class="btn-primary">Send</button>
-      </div>
-    </div>
-  </div>
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/emails.js"></script>

@@ -8,7 +8,13 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
     .dept-hero { padding: 3rem 1rem; text-align: left; display:flex; gap:1rem; align-items:center; background: linear-gradient(90deg, rgba(78,250,170,0.03) 0%, transparent 100%); border-bottom: 1px solid rgba(78,250,170,0.03); }
-    .dept-hero .logo { width:96px; height:auto; filter: invert(1); }
+    .dept-hero .logo { width:96px; height:auto; }
+    
+    /* Dark mode logo inversion */
+    html[data-theme="dark"] .dept-hero .logo {
+      filter: invert(1);
+    }
+    
     .dept-hero .title { font-family:var(--font-head); font-size:2rem; color:var(--accent-mint); margin-bottom:0.25rem; }
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
 
@@ -111,7 +117,6 @@
         <!-- Divisions -->
         <div class="dept-card">
           <h2>» Security Department Divisions «</h2>
-          <p style="font-style:italic; opacity:0.8; margin-bottom:1.5rem;">Security Department Main Lobby [With BSL Shaders]</p>
 
           <!-- Security Command -->
           <div class="division-card">

@@ -8,7 +8,13 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
     .dept-hero { padding: 3rem 1rem; text-align: left; display:flex; gap:1rem; align-items:center; background: linear-gradient(90deg, rgba(78,250,170,0.03) 0%, transparent 100%); border-bottom: 1px solid rgba(78,250,170,0.03); }
-    .dept-hero .logo { width:96px; height:auto; filter: invert(1); }
+    .dept-hero .logo { width:96px; height:auto; }
+    
+    /* Dark mode logo inversion */
+    html[data-theme="dark"] .dept-hero .logo {
+      filter: invert(1);
+    }
+    
     .dept-hero .title { font-family:var(--font-head); font-size:2rem; color:var(--accent-mint); margin-bottom:0.25rem; }
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
 
@@ -108,7 +114,6 @@
         <!-- Divisions -->
         <div class="dept-card">
           <h2>» External Operations Divisions «</h2>
-          <p style="font-style:italic; opacity:0.8; margin-bottom:1.5rem;">External Operations Main Office - Lower Area</p>
 
           <!-- Mobile Task Force -->
           <div class="division-card">
@@ -154,7 +159,6 @@
             <li><strong>Deployment:</strong> International and interdimensional operations</li>
             <li><strong>Contact:</strong> Ops Liaison via <a href="/accounts/">Accounts</a></li>
             <li><strong>Best For:</strong> Analysts, tacticians, calm under pressure</li>
-            <li><strong>Career Path:</strong> Agent → Operative → Specialist → Commander</li>
           </ul>
         </div>
 

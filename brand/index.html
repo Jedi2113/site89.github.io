@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Site-89 Brand Guide</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+  
+  <style>
+    main.content { padding: 2rem 1rem; }
+    .brand-container { max-width: 1200px; margin: 0 auto; }
+    
+    .brand-section { margin-bottom: 3rem; }
+    .brand-section h2 { 
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-mint);
+      border-bottom: 2px solid var(--accent-teal);
+      padding-bottom: 0.5rem;
+    }
+    
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+    .color-card { background: var(--bg-card); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .color-swatch { height: 120px; width: 100%; }
+    .color-info { padding: 1rem; }
+    .color-info .name { font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 0.5rem; }
+    .color-info .mode { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; color: var(--accent-mint); margin-bottom: 0.5rem; }
+    .color-info .hex { font-family: 'Roboto Mono', monospace; color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .color-info .usage { color: var(--text-light); font-size: 0.9rem; line-height: 1.5; }
+    
+    .typography-grid { display: grid; gap: 1.5rem; }
+    .typography-item { background: var(--bg-card); padding: 1.5rem; border-radius: 8px; }
+    .typography-item .font-name { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--accent-mint); margin-bottom: 0.5rem; }
+    .typography-item .role { color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .typography-item .notes { color: var(--text-light); font-size: 0.9rem; }
+    .typography-item .sample { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    
+    .h1-sample { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; }
+    .h2-sample { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 700; }
+    .h3-sample { font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; }
+    .h4-sample { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; }
+    .body-sample { font-family: 'Roboto', sans-serif; font-size: 1rem; }
+    .mono-sample { font-family: 'Roboto Mono', monospace; font-size: 0.9rem; }
+    
+    .intro-box { 
+      background: linear-gradient(135deg, rgba(78,250,170,0.1), rgba(0,124,107,0.1));
+      border: 1px solid rgba(78,250,170,0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .intro-box p { margin: 0.5rem 0; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <main class="content">
+    <div class="brand-container">
+      <h1 style="font-family: 'Montserrat', sans-serif; font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-mint);">Brand Guide</h1>
+      
+      <div class="intro-box">
+        <p>The Site-89 brand identity reflects our commitment to a secure, professional, and modern aesthetic. This guide establishes the standards for color, typography, and visual communication across all platforms and materials.</p>
+      </div>
+
+      <!-- Primary Colors Section -->
+      <div class="brand-section">
+        <h2>Primary Colors</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-light);">These foundational colors form the basis of our visual identity and should be used for primary UI elements and backgrounds.</p>
+        
+        <div class="color-grid">
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #0D0D0E;"></div>
+            <div class="color-info">
+              <div class="name">Onyx Black</div>
+              <div class="mode">Dark Mode</div>
+              <div class="hex">#0D0D0E</div>
+              <div class="usage">Backgrounds, UI frames, darkness</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #1A1A1C;"></div>
+            <div class="color-info">
+              <div class="name">Carbon Gray</div>
+              <div class="mode">Dark Mode</div>
+              <div class="hex">#1A1A1C</div>
+              <div class="usage">Section backgrounds, cards, borders</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #E5E5E5;"></div>
+            <div class="color-info">
+              <div class="name">Silver Ash</div>
+              <div class="mode">Dark Mode</div>
+              <div class="hex">#E5E5E5</div>
+              <div class="usage">Main text for readability</div>
+            </div>
+          </div>
+
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #F8F9FA;"></div>
+            <div class="color-info">
+              <div class="name">Cream White</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#F8F9FA</div>
+              <div class="usage">Primary backgrounds, reduces eye strain</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #EBEBF0; border: 1px solid #ddd;"></div>
+            <div class="color-info">
+              <div class="name">Soft Taupe</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#EBEBF0</div>
+              <div class="usage">Section backgrounds, cards, subtle borders</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #2C2C2C; border: 1px solid #ddd;"></div>
+            <div class="color-info">
+              <div class="name">Charcoal</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#2C2C2C</div>
+              <div class="usage">Body text for strong readability</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accent Colors Section -->
+      <div class="brand-section">
+        <h2>Accent Colors</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-light);">Accent colors provide visual emphasis and communicate status or importance. Use sparingly to maintain impact.</p>
+        
+        <div class="color-grid">
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #4EFAAA;"></div>
+            <div class="color-info">
+              <div class="name">Site-89 Mint</div>
+              <div class="mode">Dark Mode</div>
+              <div class="hex">#4EFAAA</div>
+              <div class="usage">Buttons, highlights, clearance indicators</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #007C6B;"></div>
+            <div class="color-info">
+              <div class="name">Deep Teal</div>
+              <div class="mode">Dark Mode</div>
+              <div class="hex">#007C6B</div>
+              <div class="usage">Hover effects, shadows, panel headers</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #920000;"></div>
+            <div class="color-info">
+              <div class="name">Emergency Red</div>
+              <div class="mode">Both Modes</div>
+              <div class="hex">#920000</div>
+              <div class="usage">SCP warnings, security alerts</div>
+            </div>
+          </div>
+
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #1E9B8A;"></div>
+            <div class="color-info">
+              <div class="name">Teal Sage</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#1E9B8A</div>
+              <div class="usage">Buttons, links, primary actions</div>
+            </div>
+          </div>
+          
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #0D6E66;"></div>
+            <div class="color-info">
+              <div class="name">Forest Teal</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#0D6E66</div>
+              <div class="usage">Hover effects, text links, emphasis</div>
+            </div>
+          </div>
+
+          <div class="color-card">
+            <div class="color-swatch" style="background-color: #D97706;"></div>
+            <div class="color-info">
+              <div class="name">Warm Amber</div>
+              <div class="mode">Light Mode</div>
+              <div class="hex">#D97706</div>
+              <div class="usage">Secondary actions, caution alerts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typography Section -->
+      <div class="brand-section">
+        <h2>Typography</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-light);">Type choice reinforces our brand personality. Use the specified fonts for their designated roles to maintain consistency.</p>
+        
+        <div class="typography-grid">
+          <div class="typography-item">
+            <div class="font-name">Montserrat</div>
+            <div class="role">Headings (H1–H4)</div>
+            <div class="notes">Strong, modern, clean. Use for all heading levels to establish hierarchy.</div>
+            <div class="sample">
+              <div class="h1-sample">This is H1 Heading</div>
+              <div class="h2-sample">This is H2 Heading</div>
+              <div class="h3-sample">This is H3 Heading</div>
+              <div class="h4-sample">This is H4 Heading</div>
+            </div>
+          </div>
+          
+          <div class="typography-item">
+            <div class="font-name">Roboto</div>
+            <div class="role">Body Text</div>
+            <div class="notes">Easy to read on dark UI. Use for all body content and paragraphs.</div>
+            <div class="sample">
+              <div class="body-sample">The quick brown fox jumps over the lazy dog. This is body text used throughout the Site-89 platform for readability and consistency.</div>
+            </div>
+          </div>
+          
+          <div class="typography-item">
+            <div class="font-name">Roboto Mono</div>
+            <div class="role">Technical Details</div>
+            <div class="notes">Monospace font for terminals, clearance codes, and technical information.</div>
+            <div class="sample">
+              <div class="mono-sample">CLEARANCE_LEVEL_5 | ADMIN.CONSOLE | [ENCRYPTED_DATA_0x7F]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Best Practices Section -->
+      <div class="brand-section">
+        <h2>Best Practices</h2>
+        <div style="display: grid; gap: 1rem;">
+          <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px;">
+            <h3 style="font-family: 'Montserrat', sans-serif; color: var(--accent-mint); margin-bottom: 0.5rem;">Color Contrast</h3>
+            <p style="color: var(--text-light); margin: 0;">Ensure text has sufficient contrast with backgrounds. Site-89 Mint (#4EFAAA) pairs well with Onyx Black (#0D0D0E) and Carbon Gray (#1A1A1C) backgrounds.</p>
+          </div>
+          
+          <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px;">
+            <h3 style="font-family: 'Montserrat', sans-serif; color: var(--accent-mint); margin-bottom: 0.5rem;">Accent Usage</h3>
+            <p style="color: var(--text-light); margin: 0;">Use accent colors strategically. Emergency Red should be reserved for critical alerts and warnings only. Site-89 Mint draws attention to primary actions.</p>
+          </div>
+          
+          <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px;">
+            <h3 style="font-family: 'Montserrat', sans-serif; color: var(--accent-mint); margin-bottom: 0.5rem;">Typography Hierarchy</h3>
+            <p style="color: var(--text-light); margin: 0;">Use font weights and sizes to establish clear hierarchy. Headings should be bold Montserrat, body text should be regular Roboto. Technical content uses Roboto Mono.</p>
+          </div>
+          
+          <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px;">
+            <h3 style="font-family: 'Montserrat', sans-serif; color: var(--accent-mint); margin-bottom: 0.5rem;">Consistency</h3>
+            <p style="color: var(--text-light); margin: 0;">Maintain consistency across all digital and print materials. When in doubt, reference this guide and existing Site-89 materials.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div data-include="/components/footer.html"></div>
+  <script src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+</body>
+</html>

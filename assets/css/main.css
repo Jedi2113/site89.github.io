@@ -29,14 +29,16 @@
 
 /* Light Mode Theme */
 html[data-theme="light"] {
-  --bg-dark: #F5F5F5;
-  --bg-soft: #FAFAFA;
+  --bg-dark: #F8F9FA;
+  --bg-soft: #EBEBF0;
   --bg-card: #FFFFFF;
-  --text-light: #1A1A1A;
-  --muted: #666666;
-  --muted-light: #999999;
-  --card-border: rgba(0, 163, 137, 0.12);
-  --shadow-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --text-light: #2C2C2C;
+  --muted: #555555;
+  --muted-light: #888888;
+  --card-border: rgba(30, 155, 138, 0.15);
+  --shadow-strong: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --accent-mint: #1E9B8A;
+  --accent-teal: #0D6E66;
 }
 
 /* ─────────── Base Styling ─────────── */
@@ -59,6 +61,12 @@ body {
   flex-direction: column;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode - solid background instead of gradient */
+html[data-theme="light"] body {
+  background: var(--bg-dark);
+  background-attachment: unset;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
@@ -757,17 +765,19 @@ html[data-theme="light"] .btn-primary:hover {
 }
 
 html[data-theme="light"] .btn-secondary {
-  border-color: #D0D0D0;
+  border-color: rgba(30, 155, 138, 0.3);
+  color: #0D6E66;
 }
 
 html[data-theme="light"] .btn-secondary:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(30, 155, 138, 0.05);
+  border-color: #1E9B8A;
 }
 
 /* Light mode navbar */
 html[data-theme="light"] #main-nav {
-  background: rgba(245, 245, 245, 0.9);
-  border-bottom-color: #D0D0D0;
+  background: rgba(248, 249, 250, 0.9);
+  border-bottom-color: rgba(30, 155, 138, 0.2);
 }
 
 html[data-theme="light"] #main-nav.is-sticky {
@@ -775,17 +785,17 @@ html[data-theme="light"] #main-nav.is-sticky {
 }
 
 html[data-theme="light"] #main-nav a {
-  color: #1A1A1A;
+  color: #2C2C2C;
 }
 
 html[data-theme="light"] #main-nav a:hover {
-  color: var(--accent-mint);
+  color: #1E9B8A;
 }
 
 /* Light mode dropdowns */
 html[data-theme="light"] .nav-dropdown-parent:hover .nav-dropdown-content {
-  background: linear-gradient(180deg, #FAFAFA, #FFFFFF);
-  border-color: #D0D0D0;
+  background: linear-gradient(180deg, #EBEBF0, #FFFFFF);
+  border-color: rgba(30, 155, 138, 0.2);
 }
 
 /* Light mode modals */
@@ -794,16 +804,16 @@ html[data-theme="light"] .modal {
 }
 
 html[data-theme="light"] .modal-header {
-  border-bottom-color: rgba(0, 163, 137, 0.15);
+  border-bottom-color: rgba(30, 155, 138, 0.2);
 }
 
 html[data-theme="light"] .modal-photo {
-  border-color: rgba(0, 163, 137, 0.2);
+  border-color: rgba(30, 155, 138, 0.25);
 }
 
 html[data-theme="light"] .modal-bio {
-  background: rgba(0, 163, 137, 0.08);
-  border-left-color: var(--accent-teal);
+  background: rgba(30, 155, 138, 0.08);
+  border-left-color: #1E9B8A;
 }
 
 /* Ensure text contrast in light mode */
@@ -811,61 +821,61 @@ html[data-theme="light"] h1,
 html[data-theme="light"] h2,
 html[data-theme="light"] h3,
 html[data-theme="light"] h4 {
-  color: #1A1A1A;
+  color: #2C2C2C;
 }
 
 html[data-theme="light"] p,
 html[data-theme="light"] li {
-  color: #666666;
+  color: #555555;
 }
 
 html[data-theme="light"] a {
-  color: var(--accent-teal);
+  color: #1E9B8A;
 }
 
 html[data-theme="light"] a:hover {
-  color: #008875;
+  color: #0D6E66;
 }
 
-/* Light mode logo inversion */
+/* Light mode logo - no inversion needed */
 html[data-theme="light"] .site-logo,
 html[data-theme="light"] .site-header img,
 html[data-theme="light"] .nav-logo img,
 html[data-theme="light"] #main-nav img {
-  filter: brightness(0.2) contrast(1.1);
+  filter: none;
 }
 
 html[data-theme="light"] .brand-text {
-  color: #1A1A1A;
+  color: #2C2C2C;
 }
 
 html[data-theme="light"] .brand-identifier {
-  color: var(--accent-teal);
+  color: #1E9B8A;
 }
 
 html[data-theme="light"] .brand-title {
-  background: linear-gradient(135deg, var(--accent-teal), var(--accent-mint));
+  background: linear-gradient(135deg, #0D6E66, #1E9B8A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 html[data-theme="light"] .site-header {
-  border-bottom-color: #D0D0D0;
+  border-bottom-color: rgba(30, 155, 138, 0.2);
 }
 
 html[data-theme="light"] .status-pill {
-  background: rgba(0, 163, 137, 0.08);
-  border-color: rgba(0, 163, 137, 0.15);
-  color: var(--accent-teal);
+  background: rgba(30, 155, 138, 0.1);
+  border-color: rgba(30, 155, 138, 0.25);
+  color: #1E9B8A;
 }
 
 /* Light mode buttons */
 html[data-theme="light"] .btn-primary {
-  box-shadow: 0 2px 8px rgba(0, 163, 137, 0.2);
+  box-shadow: 0 2px 8px rgba(30, 155, 138, 0.2);
 }
 
 html[data-theme="light"] .btn-primary:hover {
-  box-shadow: 0 6px 16px rgba(0, 163, 137, 0.3);
+  box-shadow: 0 6px 16px rgba(30, 155, 138, 0.3);
 }
 
 html[data-theme="light"] .btn-secondary {
@@ -899,6 +909,64 @@ html[data-theme="light"] .compose-modal textarea {
   background: #F9F9F9;
   border-color: #D0D0D0;
   color: #1A1A1A;
+}
+
+/* Light mode department pages */
+html[data-theme="light"] .dept-image {
+  filter: none !important;
+}
+
+html[data-theme="light"] .dept-hero .logo {
+  filter: none !important;
+}
+
+html[data-theme="light"] .department-panel {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .department-panel:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme="light"] .dept-title {
+  color: #1E9B8A;
+}
+
+html[data-theme="light"] .dept-content {
+  background: transparent;
+}
+
+html[data-theme="light"] .dept-card {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+}
+
+html[data-theme="light"] .dept-card h2,
+html[data-theme="light"] .dept-card h3 {
+  color: #1E9B8A;
+}
+
+html[data-theme="light"] .side-box h3 {
+  color: #0D6E66;
+}
+
+html[data-theme="light"] .dept-hero {
+  background: linear-gradient(90deg, rgba(30, 155, 138, 0.04) 0%, transparent 100%);
+  border-bottom-color: #D0D0D0;
+}
+
+html[data-theme="light"] .page-hero {
+  background: radial-gradient(circle at top left, rgba(30, 155, 138, 0.05), transparent);
+}
+
+html[data-theme="light"] .page-hero .hero-title {
+  color: #1E9B8A;
+}
+
+html[data-theme="light"] .page-hero .hero-sub {
+  color: #555555;
 }
 
 /* Light mode footer */

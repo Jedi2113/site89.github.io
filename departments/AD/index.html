@@ -8,13 +8,41 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
     .dept-hero { padding: 3rem 1rem; text-align: left; display:flex; gap:1rem; align-items:center; background: linear-gradient(90deg, rgba(78,250,170,0.03) 0%, transparent 100%); border-bottom: 1px solid rgba(78,250,170,0.03); }
-    .dept-hero .logo { width:96px; height:auto; filter: invert(1); }
+    .dept-hero .logo { width:96px; height:auto; }
+    
+    /* Dark mode logo inversion */
+    html[data-theme="dark"] .dept-hero .logo {
+      filter: invert(1);
+    }
+    
     .dept-hero .title { font-family:var(--font-head); font-size:2rem; color:var(--accent-mint); margin-bottom:0.25rem; }
     .dept-hero .subtitle { color:var(--text-light); opacity:0.92; }
+
+    /* Admin-specific styling for executive grandeur */
+    .admin-executive-banner { background: linear-gradient(135deg, rgba(78,250,170,0.08) 0%, rgba(78,250,170,0.03) 100%); border: 2px solid rgba(78,250,170,0.15); border-radius: 8px; padding: 2rem; margin: 2rem auto; max-width: 1100px; text-align: center; }
+    .admin-executive-banner h2 { font-size: 1.8rem; color: var(--accent-mint); margin: 0 0 0.5rem 0; }
+    .admin-executive-banner p { margin: 0; color: var(--text-light); opacity: 0.9; }
+
+    .eotm-window { background: var(--bg-card); border: 2px solid rgba(78,250,170,0.2); border-radius: 8px; padding: 1.5rem; text-align: center; margin: 2rem auto; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .eotm-label { font-size: 0.9rem; color: var(--accent-teal); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .eotm-name { font-size: 1.5rem; color: var(--accent-mint); font-weight: 800; margin: 0.5rem 0; }
+    .eotm-position { font-size: 0.95rem; color: var(--text-light); opacity: 0.8; margin-bottom: 0.75rem; }
+    .eotm-achievement { font-size: 0.9rem; color: var(--muted); font-style: italic; margin: 1rem 0; padding: 0.75rem; background: rgba(78,250,170,0.05); border-left: 3px solid var(--accent-teal); border-radius: 4px; }
+
+    .board-section { background: rgba(78,250,170,0.02); padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; border-left: 4px solid var(--accent-mint); }
+    .board-section h3 { color: var(--accent-mint); margin-top: 0; font-size: 1.3rem; }
+    .board-section p { color: var(--text-light); line-height: 1.7; opacity: 0.95; }
+
+    .io-section { background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, rgba(78,250,170,0.01) 100%); padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; border: 2px solid rgba(78,250,170,0.1); }
+    .io-section h3 { color: var(--accent-mint); margin-top: 0; font-size: 1.3rem; }
+    .io-section p { color: var(--text-light); line-height: 1.7; opacity: 0.95; }
+    .io-division { background: var(--bg-card); padding: 1rem; border-radius: 6px; margin: 0.75rem 0; border-left: 3px solid var(--accent-teal); }
+    .io-division strong { color: var(--accent-teal); }
 
     .dept-grid { display:grid; grid-template-columns: 1fr 320px; gap:1.5rem; max-width:1100px; margin:1.25rem auto; }
     .dept-card { background:var(--bg-card); border:1px solid rgba(78,250,170,0.03); padding:1.25rem; border-radius:8px; }
     .dept-card h2 { color:var(--accent-mint); margin-bottom:0.5rem; }
+    .dept-card h3 { color: var(--accent-teal); margin: 1rem 0 0.5rem 0; }
     .dept-card p { color:var(--text-light); line-height:1.6; opacity:0.95; }
     .side-box h3 { color:var(--accent-teal); margin:0 0 0.6rem 0; }
     .side-box ul { margin:0; padding-left:1rem; }
@@ -35,17 +63,117 @@
   </section>
 
   <section class="content" style="padding-top:1.25rem;">
+    
+    <!-- Executive Banner -->
+    <div class="admin-executive-banner">
+      <h2>The Executive Authority of Site-89</h2>
+      <p>Governance, Policy, and Strategic Direction for the Foundation</p>
+    </div>
+
+    <!-- Main Grid -->
     <div class="dept-grid">
       <div>
+        
+        <!-- Core Overview -->
         <div class="dept-card">
-          <h2>Overview</h2>
-          <p>The Administrative Department serves as the backbone of Site-89's internal governance, overseeing all non-anomalous operations to ensure efficiency, security, and compliance with Foundation protocol. Responsible for personnel management, interdepartmental coordination, budget allocation, ethical oversight, and high-level decision-making, this department operates closely with site leadership to maintain order across the facility. Members of the Administrative Department are often trusted with sensitive information and given broad authority to inspect, audit, and direct the actions of other departments when necessary to preserve operational integrity.</p>
+          <h2>» The Executive Branch «</h2>
+          <p>The Administrative Department serves as the executive authority of Site-89, functioning as the strategic and governance backbone of the entire facility. Unlike operational departments, AD operates at the highest level of site authority, overseeing all non-anomalous operations with comprehensive oversight of financial systems, personnel management, interdepartmental coordination, policy implementation, and ethical governance. Members of this department are entrusted with sensitive information and granted broad authority to inspect, audit, and direct the actions of all other departments when necessary to preserve operational integrity and Foundation security.</p>
 
+          <p style="margin-top: 1rem; font-style: italic; opacity: 0.9;">AD does not run operations. AD ensures all operations run as they should.</p>
+        </div>
+
+        <!-- Board of Directors Section -->
+        <div class="dept-card">
+          <h2>» Board of Directors «</h2>
+          
+          <div class="board-section">
+            <h3>Role & Authority</h3>
+            <p>The Board of Directors serves as the collective executive decision-making body for Site-89, responsible for strategic planning, major policy decisions, and oversight of all departmental operations. The board meets regularly to review site performance, allocate resources, address interdepartmental conflicts, and set long-term objectives aligned with Foundation directives. Board decisions carry the full authority of Site-89 administration and are binding across all departments.</p>
+          </div>
+
+          <div class="board-section">
+            <h3>Responsibilities</h3>
+            <p><strong>Strategic Planning:</strong> Long-term site objectives and operational direction.</p>
+            <p><strong>Resource Allocation:</strong> Budget distribution and departmental funding priorities.</p>
+            <p><strong>Policy Oversight:</strong> Review and approval of major site policies and protocols.</p>
+            <p><strong>Performance Review:</strong> Regular assessment of departmental effectiveness and efficiency.</p>
+            <p><strong>Conflict Resolution:</strong> Mediation and resolution of interdepartmental disputes and resource competitions.</p>
+            <p><strong>Foundation Liaison:</strong> Communication of site status and strategic decisions to higher Foundation authority.</p>
+          </div>
+
+          <div class="board-section">
+            <h3>Board Structure</h3>
+            <p>The board comprises senior leadership from all major departments, ensuring balanced representation and comprehensive oversight. Board composition and specific roles remain classified and are updated as organizational needs evolve. Access to detailed board proceedings is restricted to authorized administrative personnel.</p>
+          </div>
+        </div>
+
+        <!-- Internal Operations Section -->
+        <div class="dept-card">
+          <h2>» Internal Operations (IO) Division «</h2>
+          
+          <div class="io-section">
+            <h3>What is Internal Operations?</h3>
+            <p>Internal Operations (IO) is the specialized division of the Administrative Department tasked with managing the day-to-day internal functions that keep Site-89 running smoothly. While the Board of Directors handles strategic planning and major decisions, IO focuses on the practical implementation and execution of administrative functions across all facility operations. IO ensures that every department has what it needs, that personnel are properly managed, that facilities are maintained, and that all administrative systems operate at peak efficiency.</p>
+          </div>
+
+          <div class="io-section">
+            <h3>Core Functions</h3>
+            
+            <div class="io-division">
+              <strong>Personnel Management & Human Resources</strong>
+              <p>Recruitment, onboarding, records maintenance, scheduling, performance reviews, disciplinary procedures, and personnel development. IO manages the complete lifecycle of employee records and ensures all personnel policies are consistently applied across Site-89.</p>
+            </div>
+
+            <div class="io-division">
+              <strong>Facility Operations & Maintenance</strong>
+              <p>Oversight of building systems, infrastructure maintenance, utilities, security protocols, containment facility condition, and operational readiness. IO coordinates with all departments to ensure facilities support operational requirements.</p>
+            </div>
+
+            <div class="io-division">
+              <strong>Financial & Budget Administration</strong>
+              <p>Budget preparation and management, expenditure tracking, resource allocation, cost control, and financial reporting to Foundation higher authority. IO ensures all site spending aligns with approved budgets and Foundation policies.</p>
+            </div>
+
+            <div class="io-division">
+              <strong>Documentation & Records Management</strong>
+              <p>Maintenance of official site records, policy documentation, incident reports, compliance records, and administrative archives. IO ensures all documentation meets Foundation standards and is properly secured and archived.</p>
+            </div>
+
+            <div class="io-division">
+              <strong>Policy Implementation & Compliance</strong>
+              <p>Ensuring all departments comply with Foundation protocol, site policies, and administrative directives. IO monitors compliance, conducts audits, and ensures corrective actions when needed.</p>
+            </div>
+
+            <div class="io-division">
+              <strong>Interdepartmental Coordination</strong>
+              <p>Facilitation of communication between departments, scheduling of shared resources, coordination of site-wide initiatives, and resolution of operational conflicts. IO serves as the nexus point for administrative interdepartmental activity.</p>
+            </div>
+          </div>
+
+          <div class="io-section">
+            <h3>Why Internal Operations Matters</h3>
+            <p>The Security Department secures anomalies. The Scientific Department studies them. The Department of External Operations protects the world. But none of this happens without Internal Operations managing the systems, people, and resources that make these missions possible. Every document processed, every facility maintained, every budget approved—these are the invisible operations that enable Site-89's primary mission.</p>
+          </div>
+        </div>
+
+        <!-- Internship & Recruitment -->
+        <div class="dept-card">
           <h2>Working in AD — For Interns</h2>
-          <p>AD is an excellent place for interns who enjoy organization, communication, and logistics. Intern duties include assisting with documentation, helping coordinate onboarding, supporting HR tasks, processing reports, and participating in audits and planning meetings. Expect close mentorship, practical experience with site governance, and opportunities to contribute to meaningful projects.</p>
+          <p>Administrative Department internships offer exceptional opportunities for those interested in governance, policy, operations, and site management. Interns work directly with experienced administrative professionals, gaining practical knowledge of how complex organizations function at scale.</p>
 
-          <h2>Skills & Experience</h2>
-          <p>Attention to detail, clear written communication, comfort with structured procedures, and the ability to collaborate across teams are highly valued. Interns will gain experience in administrative workflows, policy drafting, and interdepartmental coordination.</p>
+          <h3>What You'll Do</h3>
+          <ul style="margin-left: 1.5rem; color: var(--text-light); opacity: 0.95;">
+            <li style="margin-bottom: 0.5rem;">Assist with documentation, records management, and administrative filing</li>
+            <li style="margin-bottom: 0.5rem;">Support HR processes including onboarding, scheduling, and personnel records</li>
+            <li style="margin-bottom: 0.5rem;">Help coordinate interdepartmental communications and scheduling</li>
+            <li style="margin-bottom: 0.5rem;">Participate in site audits and compliance reviews</li>
+            <li style="margin-bottom: 0.5rem;">Assist with budget tracking and financial administration</li>
+            <li style="margin-bottom: 0.5rem;">Observe board meetings and strategic planning sessions (where appropriate)</li>
+            <li style="margin-bottom: 0.5rem;">Learn site policy, Foundation protocol, and administrative procedures</li>
+          </ul>
+
+          <h3>Skills & Experience</h3>
+          <p>Attention to detail, clear written communication, organizational ability, and comfort with structured procedures are essential. Interns will gain experience in administrative workflows, policy drafting, organizational management, and high-level site governance.</p>
 
           <p style="margin-top:1rem; padding:1rem; background:rgba(78,250,170,0.05); border-left:3px solid var(--accent-mint); border-radius:4px;">
             <strong style="color:var(--accent-mint);">Interested in joining Administration?</strong><br>
@@ -54,17 +182,35 @@
         </div>
       </div>
 
+      <!-- Sidebar -->
       <aside class="side-box">
+        
+        <!-- Employee of the Month -->
+        <div class="eotm-window">
+          <div class="eotm-label">Employee of the Month</div>
+          <div class="eotm-name">Mystic Fury</div>
+          <div class="eotm-position">Researcher, R&D Division</div>
+          <div class="eotm-achievement">
+            Recognized for exceptional care for their assigned anomalies, punctuality, and team spirit.
+          </div>
+          <div style="font-size: 0.85rem; color: var(--accent-teal); margin-top: 0.5rem;">
+            January 2026
+          </div>
+        </div>
+
+        <!-- Quick Facts -->
         <div class="dept-card">
           <h3>Quick Facts</h3>
-          <ul>
-            <li>Typical shift: Coordinated with mentors</li>
-            <li>Required training: Intern orientation & records handling</li>
-            <li>Contact: <a href="/accounts/">Department Liaison</a></li>
-            <li>Good for: Organizers, communicators, detail-oriented staff</li>
+          <ul style="margin: 0; padding-left: 1rem; color: var(--text-light); opacity: 0.95;">
+            <li style="margin-bottom: 0.4rem;">Director: Dr. Avery Rosewood</li>
+            <li style="margin-bottom: 0.4rem;">Typical hours: Standard site hours + on-call</li>
+            <li style="margin-bottom: 0.4rem;">Clearance: Varies by division (3-5+)</li>
+            <li style="margin-bottom: 0.4rem;">Contact: <a href="/emails/?compose=ad@site89.org">ad@site89.org</a></li>
+            <li>Best for: Organizers, communicators, detail-oriented staff</li>
           </ul>
         </div>
 
+        <!-- Portal -->
         <div class="dept-card" style="margin-top:0.8rem; text-align:center;">
           <a href="/departments/AD/portal/" class="btn-primary">Administration Staff Portal</a>
           <div style="font-size:0.9rem; color:var(--text-light); opacity:0.85; margin-top:0.5rem;">Access limited to AD department members</div>
