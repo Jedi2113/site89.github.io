@@ -179,9 +179,16 @@ document.addEventListener('includesLoaded', () => {
   function initTinyMCE(){
     if(tinyMCEInstance) return;
     
+    // Check if tinymce is available
+    if(typeof tinymce === 'undefined'){
+      console.warn('TinyMCE not loaded, using plain textarea');
+      composeBody.style.display = 'block';
+      return;
+    }
+    
     tinymce.init({
       selector: '#composeBody',
-      height: 400,
+      height: 300,
       menubar: false,
       skin: 'oxide-dark',
       content_css: 'dark',
@@ -196,6 +203,12 @@ document.addEventListener('includesLoaded', () => {
       content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 14px; color: #e0e0e0; background-color: #1a1a1a; }',
       setup: function(editor) {
         tinyMCEInstance = editor;
+      },
+      init_instance_callback: function(editor) {
+        console.log('TinyMCE initialized');
+      },
+      oninit: function(editor) {
+        console.log('TinyMCE loaded');
       }
     });
   }
@@ -298,10 +311,13 @@ document.addEventListener('includesLoaded', () => {
     }
     
     composeTo.focus();
-    // Initialize TinyMCE on first open
-    if(!tinyMCEInstance){
-      initTinyMCE();
-    }
+    
+    // Initialize TinyMCE with a slight delay to ensure DOM is ready
+    setTimeout(() => {
+      if(!tinyMCEInstance){
+        initTinyMCE();
+      }
+    }, 100);
   });
   
   composeClose.addEventListener('click', ()=> { 
@@ -485,19 +501,21 @@ document.addEventListener('includesLoaded', () => {
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
     
-    // Initialize TinyMCE if needed
-    if(!tinyMCEInstance){
-      initTinyMCE();
-      setTimeout(() => {
-        if(tinyMCEInstance){
-          const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-          tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
-        }
-      }, 500);
-    } else {
-      const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-      tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
-    }
+    // Initialize or reset TinyMCE
+    setTimeout(() => {
+      if(!tinyMCEInstance){
+        initTinyMCE();
+        setTimeout(() => {
+          if(tinyMCEInstance){
+            const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+            tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
+          }
+        }, 500);
+      } else {
+        const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+        tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
+      }
+    }, 100);
   });
 
   btnForward.addEventListener('click', ()=>{
@@ -507,19 +525,21 @@ document.addEventListener('includesLoaded', () => {
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
     
-    // Initialize TinyMCE if needed
-    if(!tinyMCEInstance){
-      initTinyMCE();
-      setTimeout(() => {
-        if(tinyMCEInstance){
-          const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-          tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
-        }
-      }, 500);
-    } else {
-      const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-      tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
-    }
+    // Initialize or reset TinyMCE
+    setTimeout(() => {
+      if(!tinyMCEInstance){
+        initTinyMCE();
+        setTimeout(() => {
+          if(tinyMCEInstance){
+            const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+            tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
+          }
+        }, 500);
+      } else {
+        const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
+        tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
+      }
+    }, 100);
   });
 
   // Render list depending on folder
