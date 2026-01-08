@@ -1,5 +1,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 const firebaseConfig = {
   // If you're reading this you are very naughty, please go back to your own project :)
@@ -15,7 +24,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-export { app, auth, onAuthStateChanged };
+
+// Initialize OAuth Providers
+const googleProvider = new GoogleAuthProvider();
+
+export { app, auth, onAuthStateChanged, googleProvider, signInWithPopup };
 
 document.addEventListener("includesLoaded", () => {
   const navAccountsText = document.querySelector("#navAccountsBtn span");

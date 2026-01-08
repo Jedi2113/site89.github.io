@@ -363,12 +363,9 @@
 
     /* Featured Article Window */
     .featured-article-container {
-      position: fixed;
-      top: 70px;
-      left: 0;
-      right: 0;
+      position: relative;
       width: 100%;
-      z-index: 999;
+      z-index: 50;
       padding: 1rem 2rem;
       background: linear-gradient(90deg, rgba(78, 250, 170, 0.08) 0%, rgba(0, 124, 107, 0.05) 100%);
       border-bottom: 1px solid rgba(78, 250, 170, 0.15);
@@ -472,7 +469,6 @@
     @media (max-width: 1024px) {
       .featured-article-container {
         padding: 0.75rem 1.5rem;
-        top: 60px;
       }
 
       .featured-article-window {
@@ -957,6 +953,23 @@
   <!-- Navbar only (no header) -->
   <div data-include="/components/navbar.html"></div>
 
+  <!-- Featured Article (MUST be outside hero-section for position: fixed to work correctly) -->
+  <div id="featuredArticleContainer" class="featured-article-container hidden">
+    <div class="featured-article-window">
+      <div class="featured-badge">📰 Featured</div>
+      <h3 class="featured-article-title" id="featuredTitle"></h3>
+      <div class="featured-article-meta">
+        <span id="featuredCategory"></span>
+        <span id="featuredDate"></span>
+        <span id="featuredAuthor"></span>
+      </div>
+      <p class="featured-article-excerpt" id="featuredExcerpt"></p>
+      <a href="/newsletter/" class="featured-article-link">
+        Read Full Article <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
   <!-- Welcome Modal (shown first to first-time visitors) -->
   <div id="betaWarningModal" class="beta-warning-modal-overlay">
     <div class="beta-warning-modal-content">
@@ -1021,23 +1034,6 @@
         <button id="authBtn" class="btn-secondary">
           <i class="fas fa-user"></i> <span id="authBtnText">Authenticate</span>
         </button>
-      </div>
-    </div>
-
-    <!-- Featured Article -->
-    <div id="featuredArticleContainer" class="featured-article-container hidden">
-      <div class="featured-article-window">
-        <div class="featured-badge">📰 Featured</div>
-        <h3 class="featured-article-title" id="featuredTitle"></h3>
-        <div class="featured-article-meta">
-          <span id="featuredCategory"></span>
-          <span id="featuredDate"></span>
-          <span id="featuredAuthor"></span>
-        </div>
-        <p class="featured-article-excerpt" id="featuredExcerpt"></p>
-        <a href="/newsletter/" class="featured-article-link">
-          Read Full Article <i class="fas fa-arrow-right"></i>
-        </a>
       </div>
     </div>
 
