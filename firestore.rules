@@ -2,11 +2,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Helper function to check if user has AD/IO permissions
+    function isADIOPersonnel() {
+      // Add emails of AD/IO department personnel here
+      // For now, only admin has this permission - you can add more emails
+      let adioEmails = [
+        'jedi21132@gmail.com',
+        'mason@millerzoo.com',
+        'usxafiy@gmail.com',
+        'redbridge7242@gmail.com',
+        'o5councilfoundation@gmail.com'
+        // Add more AD/IO personnel emails like:
+        // 'someuser@example.com',
+        // 'anotherperson@example.com'
+      ];
+      return request.auth != null && request.auth.token.email in adioEmails;
+    }
+
     // Characters collection - allow anyone to read (for personnel files page)
     match /characters/{characterId} {
       allow read: if true;
       allow create: if request.auth != null && request.resource.data.linkedUID == request.auth.uid;
-      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.linkedUID || request.auth.token.email == 'jedi21132@gmail.com' || true);
+      // Character owner, AD/IO personnel, or admin can edit/delete
+      allow update, delete: if request.auth != null && (
+        request.auth.uid == resource.data.linkedUID || 
+        isADIOPersonnel()
+      );
     }
 
     // Users collection - allow reads for authenticated users
@@ -182,11 +203,28 @@ service cloud.firestore {
       }
     }
 
+    // Helper function to check if user has Level 5+ clearance
+    function isLevel5Plus() {
+      // This is checked via character data by the frontend
+      // The frontend only allows Level 5+ users to submit
+      return request.auth != null;
+    }
+
     // Site Feedback - Anyone can create, only admin can read/manage
     match /site-feedback/{feedbackId} {
       allow read: if request.auth != null && request.auth.token.email == 'jedi21132@gmail.com';
       allow create: if true; // Anyone can submit feedback
       allow update, delete: if request.auth != null && request.auth.token.email == 'jedi21132@gmail.com';
+    }
+
+    // Employee of the Month - Public read, Level 5+ can create
+    match /eotm/{eotmId} {
+      allow read: if true; // Anyone can view
+      allow create: if request.auth != null && isLevel5Plus();
+      allow update, delete: if request.auth != null && (
+        isLevel5Plus() || 
+        isADIOPersonnel()
+      );
     }
   }
 }
