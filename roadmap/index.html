@@ -2,20 +2,450 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Development Roadmap - Site-89</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <link rel="stylesheet" href="/assets/css/main.css">
+  
   <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
     ThemeManager.init();
   </script>
+  
+  <style>
+    .content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .roadmap-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+    }
+
+    .roadmap-header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .roadmap-header p {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Progress Overview */
+    .progress-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .progress-stat {
+      background: linear-gradient(135deg, rgba(0, 124, 107, 0.1), transparent);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .progress-stat:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .progress-stat-icon {
+      font-size: 2.5rem;
+      color: var(--accent-mint);
+      margin-bottom: 1rem;
+    }
+
+    .progress-stat-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--accent-teal);
+      margin-bottom: 0.5rem;
+      font-family: var(--font-mono);
+    }
+
+    .progress-stat-label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Overall Progress Bar */
+    .overall-progress {
+      margin-bottom: 3rem;
+      background: rgba(0, 124, 107, 0.1);
+      border: 1px solid rgba(78, 250, 170, 0.2);
+      border-radius: 8px;
+      padding: 2rem;
+    }
+
+    .overall-progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .overall-progress-label h3 {
+      font-size: 1.2rem;
+      color: var(--accent-mint);
+    }
+
+    .overall-progress-label span {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent-teal);
+      font-family: var(--font-mono);
+    }
+
+    .overall-progress-bar {
+      height: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .overall-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal));
+      border-radius: 6px;
+      transition: width 1s ease-out;
+      box-shadow: 0 0 15px rgba(78, 250, 170, 0.5);
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding: 2rem 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, 
+        var(--accent-mint) 0%, 
+        var(--accent-mint) 50%, 
+        rgba(78, 250, 170, 0.3) 50%, 
+        rgba(78, 250, 170, 0.3) 100%);
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .timeline-item.left {
+      flex-direction: row;
+    }
+
+    .timeline-item.right {
+      flex-direction: row-reverse;
+    }
+
+    .timeline-content {
+      width: calc(50% - 50px);
+      background: linear-gradient(135deg, rgba(0, 124, 107, 0.1), transparent);
+      border: 2px solid rgba(78, 250, 170, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .timeline-item.left .timeline-content {
+      margin-right: auto;
+      text-align: right;
+    }
+
+    .timeline-item.right .timeline-content {
+      margin-left: auto;
+      text-align: left;
+    }
+
+    .timeline-content:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 0 30px rgba(78, 250, 170, 0.3);
+      transform: scale(1.02);
+    }
+
+    .timeline-badge {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border: 4px solid var(--bg-dark);
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-badge.completed {
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #000;
+      box-shadow: 0 0 20px rgba(78, 250, 170, 0.5);
+    }
+
+    .timeline-badge.active {
+      background: linear-gradient(135deg, #ff9800, #ff6b35);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
+      animation: pulse-badge 2s infinite;
+    }
+
+    .timeline-badge.future {
+      background: rgba(78, 250, 170, 0.1);
+      border-color: rgba(78, 250, 170, 0.3);
+      color: var(--accent-mint);
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.1); }
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-item.right .phase-header {
+      flex-direction: row;
+    }
+
+    .timeline-item.left .phase-header {
+      flex-direction: row-reverse;
+    }
+
+    .phase-number {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: #000;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .phase-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-mint);
+      margin: 0;
+    }
+
+    .phase-date {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      margin-bottom: 1rem;
+      font-family: var(--font-mono);
+    }
+
+    .phase-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-light);
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+
+    .phase-highlights {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0 0;
+    }
+
+    .phase-highlights li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      opacity: 0.8;
+    }
+
+    .timeline-item.left .phase-highlights li {
+      padding-left: 0;
+      padding-right: 1.5rem;
+    }
+
+    .phase-highlights li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent-mint);
+      font-weight: 700;
+    }
+
+    .timeline-item.left .phase-highlights li::before {
+      left: auto;
+      right: 0;
+    }
+
+    .phase-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .phase-status.completed {
+      background: rgba(78, 250, 170, 0.2);
+      color: var(--accent-mint);
+    }
+
+    .phase-status.active {
+      background: rgba(255, 152, 0, 0.2);
+      color: #ff9800;
+      animation: pulse-status 2s infinite;
+    }
+
+    .phase-status.future {
+      background: rgba(78, 250, 170, 0.05);
+      color: var(--text-light);
+      opacity: 0.6;
+    }
+
+    @keyframes pulse-status {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .timeline::before {
+        left: 30px;
+      }
+
+      .timeline-item.left,
+      .timeline-item.right {
+        flex-direction: row !important;
+        padding-left: 80px;
+      }
+
+      .timeline-content {
+        width: 100% !important;
+        text-align: left !important;
+        margin: 0 !important;
+      }
+
+      .timeline-badge {
+        left: 30px !important;
+      }
+
+      .timeline-item.left .phase-header,
+      .timeline-item.right .phase-header {
+        flex-direction: row !important;
+      }
+
+      .timeline-item.left .phase-highlights li {
+        padding-left: 1.5rem;
+        padding-right: 0;
+      }
+
+      .timeline-item.left .phase-highlights li::before {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 1rem;
+      }
+
+      .progress-overview {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .timeline-item {
+        padding-left: 60px;
+      }
+
+      .timeline-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        left: 20px !important;
+      }
+
+      .timeline::before {
+        left: 20px;
+      }
+
+      .timeline-content {
+        padding: 1.5rem;
+      }
+
+      .phase-title {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -26,75 +456,154 @@
   <div data-include="/components/navbar.html"></div>
 
   <section class="content">
-  </section>
+    <!-- Header -->
+    <div class="roadmap-header">
+      <h1><i class="fas fa-rocket"></i> Development Roadmap</h1>
+      <p>Track Site-89's evolution from initial construction to full operational status. Each phase represents a milestone in our journey to become the premier Foundation roleplay community.</p>
+    </div>
 
-  <div class="roadmap-wrapper">
-    <button class="roadmap-arrow roadmap-prev" aria-label="Previous phase">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-      <div class="roadmap-track">
-
-        <!-- PHASE 1 -->
-        <div class="roadmap-phase completed" data-date="May–Aug 2024">
-          <h3>Phase 1 — Construction</h3>
-          <p>
-            Initial development period focused on infrastructure, backend systems,
-            and foundational architecture. Roleplay activity was minimal or nonexistent.
-          </p>
-          <p>
-            Public awareness was intentionally limited while the project's core
-            stability and scalability were established.
-          </p>
-          <span class="phase-date">Completed: May–Aug 2024</span>
-        </div>
-
-        <!-- PHASE 2 -->
-        <div class="roadmap-phase completed" data-date="Sep–Nov 2024">
-          <h3>Phase 2 — FoF Closed Beta</h3>
-          <p>
-            Semi-private rollout designed to test roleplay systems, policies,
-            and site structure with a limited audience.
-          </p>
-          <p>
-            Focus placed on establishing core departments and onboarding
-            early staff into long-term leadership roles.
-          </p>
-          <span class="phase-date">Completed: Sep–Nov 2024</span>
-        </div>
-
-        <!-- PHASE 3 -->
-        <div class="roadmap-phase active" data-date="Dec 2024–Present">
-          <h3>Phase 3 — Open Beta</h3>
-          <p>
-            Site-89 reaches public accessibility with stable core systems.
-            Outreach efforts begin in preparation for full release.
-          </p>
-          <p>
-            A Site Advertising Board is established to coordinate promotion,
-            content production, and organic growth.
-          </p>
-          <span class="phase-date">Active Phase</span>
-        </div>
-
-        <!-- PHASE 4 -->
-        <div class="roadmap-phase future">
-          <h3>Phase 4 — Full Release</h3>
-          <p>
-            Official public launch with fully operational systems,
-            independent departmental leadership, and refined roleplay frameworks.
-          </p>
-          <p>
-            Emphasis shifts toward sustainability, recruitment, and long-term
-            community engagement.
-          </p>
-          <span class="phase-date">Pending</span>
-        </div>
-
+    <!-- Progress Overview -->
+    <div class="progress-overview">
+      <div class="progress-stat">
+        <div class="progress-stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="progress-stat-value">2</div>
+        <div class="progress-stat-label">Phases Complete</div>
       </div>
-    <button class="roadmap-arrow roadmap-next" aria-label="Next phase">
-      <i class="fas fa-chevron-right"></i>
-    </button>
-  </div>
+      <div class="progress-stat">
+        <div class="progress-stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="progress-stat-value">1</div>
+        <div class="progress-stat-label">Active Phase</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat-icon"><i class="fas fa-hourglass-half"></i></div>
+        <div class="progress-stat-value">1</div>
+        <div class="progress-stat-label">Upcoming Phase</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat-icon"><i class="fas fa-calendar-alt"></i></div>
+        <div class="progress-stat-value" id="devDays">0</div>
+        <div class="progress-stat-label">Days in Development</div>
+      </div>
+    </div>
+
+    <!-- Overall Progress -->
+    <div class="overall-progress">
+      <div class="overall-progress-label">
+        <h3><i class="fas fa-chart-line"></i> Overall Progress</h3>
+        <span>75%</span>
+      </div>
+      <div class="overall-progress-bar">
+        <div class="overall-progress-fill" style="width: 0%;" data-progress="75"></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      <!-- Phase 1 -->
+      <div class="timeline-item left">
+        <div class="timeline-badge completed">
+          <i class="fas fa-hard-hat"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="phase-header">
+            <span class="phase-number">Phase 1</span>
+            <h3 class="phase-title">Construction</h3>
+          </div>
+          <span class="phase-date">May – August 2024</span>
+          <p class="phase-description">
+            Foundation infrastructure built from the ground up. Core systems, backend architecture, and security protocols established during silent development period.
+          </p>
+          <ul class="phase-highlights">
+            <li>Database architecture & Firebase integration</li>
+            <li>Authentication & authorization systems</li>
+            <li>Character management framework</li>
+            <li>Core security infrastructure</li>
+          </ul>
+          <span class="phase-status completed">
+            <i class="fas fa-check-circle"></i> Completed
+          </span>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="timeline-item right">
+        <div class="timeline-badge completed">
+          <i class="fas fa-users-cog"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="phase-header">
+            <span class="phase-number">Phase 2</span>
+            <h3 class="phase-title">Friends & Family Beta</h3>
+          </div>
+          <span class="phase-date">September – November 2024</span>
+          <p class="phase-description">
+            Closed testing phase with trusted community members. Department structures refined, roleplay systems validated, and leadership roles established.
+          </p>
+          <ul class="phase-highlights">
+            <li>Department framework implementation</li>
+            <li>Roleplay policy development</li>
+            <li>Staff onboarding & training</li>
+            <li>Community feedback integration</li>
+          </ul>
+          <span class="phase-status completed">
+            <i class="fas fa-check-circle"></i> Completed
+          </span>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="timeline-item left">
+        <div class="timeline-badge active">
+          <i class="fas fa-rocket"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="phase-header">
+            <span class="phase-number">Phase 3</span>
+            <h3 class="phase-title">Open Beta</h3>
+          </div>
+          <span class="phase-date">December 2024 – Present</span>
+          <p class="phase-description">
+            Public accessibility achieved. Active outreach, content creation, and community growth initiatives underway. Site Advertising Board coordinating promotional efforts.
+          </p>
+          <ul class="phase-highlights">
+            <li>Public site launch & accessibility</li>
+            <li>Marketing & outreach campaigns</li>
+            <li>Content production acceleration</li>
+            <li>Community growth & engagement</li>
+          </ul>
+          <span class="phase-status active">
+            <i class="fas fa-circle-notch fa-spin"></i> In Progress
+          </span>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="timeline-item right">
+        <div class="timeline-badge future">
+          <i class="fas fa-flag-checkered"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="phase-header">
+            <span class="phase-number">Phase 4</span>
+            <h3 class="phase-title">Full Release</h3>
+          </div>
+          <span class="phase-date">Target: Q2 2025</span>
+          <p class="phase-description">
+            Official public launch with fully operational systems, independent department leadership, and refined roleplay frameworks. Focus shifts to long-term sustainability and community excellence.
+          </p>
+          <ul class="phase-highlights">
+            <li>Complete departmental autonomy</li>
+            <li>Advanced roleplay mechanics</li>
+            <li>Sustained recruitment pipeline</li>
+            <li>Long-term community engagement</li>
+          </ul>
+          <span class="phase-status future">
+            <i class="fas fa-hourglass-half"></i> Upcoming
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Footer -->
   <div data-include="/components/footer.html"></div>
@@ -103,55 +612,26 @@
   <script type="module" src="/assets/js/auth.js"></script>
 
   <script>
+    // Calculate days in development
+    const startDate = new Date('2024-05-01');
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    document.getElementById('devDays').textContent = diffDays;
+
+    // Animate progress bar
+    setTimeout(() => {
+      const progressBar = document.querySelector('.overall-progress-fill');
+      const targetProgress = progressBar.getAttribute('data-progress');
+      progressBar.style.width = targetProgress + '%';
+    }, 300);
+
     // Sticky nav
     document.addEventListener("scroll", () => {
       const nav = document.getElementById("main-nav");
-      nav.classList.toggle("is-sticky", window.scrollY > 120);
-    });
-
-    const phases = document.querySelectorAll('.roadmap-phase');
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, {
-      threshold: 0.4
-    });
-
-    phases.forEach(phase => observer.observe(phase));
-
-    // Arrow navigation for roadmap cards
-    const roadmapWrapper = document.querySelector('.roadmap-wrapper');
-    const roadmapTrack = document.querySelector('.roadmap-track');
-    const prevBtn = document.querySelector('.roadmap-prev');
-    const nextBtn = document.querySelector('.roadmap-next');
-    let currentIndex = 0;
-
-    function scrollToPhase(index) {
-      const cardWidth = 380 + 20; // card width + gap
-      roadmapTrack.scrollLeft = index * cardWidth;
-      currentIndex = index;
-    }
-
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        scrollToPhase(currentIndex - 1);
+      if (nav) {
+        nav.classList.toggle("is-sticky", window.scrollY > 120);
       }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      const totalPhases = document.querySelectorAll('.roadmap-phase').length;
-      if (currentIndex < totalPhases - 1) {
-        scrollToPhase(currentIndex + 1);
-      }
-    });
-
-    // Disable wheel scroll on roadmap
-    roadmapWrapper.addEventListener('wheel', (e) => {
-      e.preventDefault();
     });
   </script>
 </body>

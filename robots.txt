@@ -1,0 +1,14 @@
+# Allow all search engines to index the site
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://site89.github.io/sitemap.xml
+
+# Disallow admin and account pages from being indexed
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /login/
+
+# Crawl delay (optional, adjust as needed)
+Crawl-delay: 1

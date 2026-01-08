@@ -368,7 +368,7 @@
       left: 0;
       right: 0;
       width: 100%;
-      z-index: 9;
+      z-index: 999;
       padding: 1rem 2rem;
       background: linear-gradient(90deg, rgba(78, 250, 170, 0.08) 0%, rgba(0, 124, 107, 0.05) 100%);
       border-bottom: 1px solid rgba(78, 250, 170, 0.15);
@@ -376,6 +376,7 @@
       justify-content: center;
       align-items: center;
       animation: slideDown 0.4s ease-out;
+      backdrop-filter: blur(10px);
     }
 
     @keyframes slideDown {
