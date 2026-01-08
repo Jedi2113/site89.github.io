@@ -299,10 +299,10 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       padding: 4rem 2rem;
       background: radial-gradient(ellipse at top left, rgba(78, 250, 170, 0.1), transparent);
-      text-align: center;
+      text-align: left;
     }
 
     .featured-title {
@@ -593,6 +593,10 @@
 
       .hero-section, .featured-section {
         padding: 2rem 1rem;
+      }
+
+      .featured-section {
+        display: none;
       }
     }
 
