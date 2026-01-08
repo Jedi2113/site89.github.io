@@ -275,6 +275,31 @@
       color: var(--text-light);
       opacity: 0.7;
     }
+
+    /* Responsive Grid */
+    @media (max-width: 1024px) {
+      .personnel-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .personnel-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .personnel-card-image {
+        height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .personnel-card-image {
+        height: 200px;
+      }
+    }
   </style>
 </head>
 <body>

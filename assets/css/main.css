@@ -44,6 +44,7 @@ html[data-theme="light"] {
 /* ─────────── Base Styling ─────────── */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 html, body { height: 100%; }
@@ -70,6 +71,14 @@ html[data-theme="light"] body {
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
+
+@media (max-width: 1024px) {
+  .container { padding: 0 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 1rem; }
+}
 
 h1, h2, h3, h4 { font-family: var(--font-head); margin: 0; color: var(--text-light); }
 h1 { font-size: clamp(1.6rem, 3.6vw, 2.4rem); }
