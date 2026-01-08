@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thread — Site-89 Forum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    .thread-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .thread-post {
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.1);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .thread-post.locked {
+      border-left: 4px solid #ff6b6b;
+      background: linear-gradient(90deg, rgba(255,107,107,0.05) 0%, var(--bg-card) 100%);
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+
+    .post-author-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .author-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .author-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .author-name {
+      font-weight: 600;
+      color: var(--accent-mint);
+      font-size: 1.1rem;
+    }
+
+    .author-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      background: rgba(78,250,170,0.1);
+      border: 1px solid rgba(78,250,170,0.2);
+      color: var(--accent-mint);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .action-btn:hover {
+      background: rgba(78,250,170,0.2);
+    }
+
+    .action-btn.danger {
+      background: rgba(255,107,107,0.1);
+      border-color: rgba(255,107,107,0.2);
+      color: #ff6b6b;
+    }
+
+    .action-btn.danger:hover {
+      background: rgba(255,107,107,0.2);
+    }
+
+    .thread-category-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .thread-title {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .thread-content {
+      color: var(--text-light);
+      line-height: 1.7;
+      font-size: 1.05rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(78,250,170,0.05);
+    }
+
+    .post-votes {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .vote-btn {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      opacity: 0.6;
+      cursor: pointer;
+      font-size: 1.3rem;
+      padding: 0.5rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .vote-btn:hover {
+      opacity: 1;
+    }
+
+    .vote-btn.upvoted {
+      color: var(--accent-mint);
+      opacity: 1;
+    }
+
+    .vote-btn.downvoted {
+      color: #ff6b6b;
+      opacity: 1;
+    }
+
+    .replies-section {
+      margin-top: 2rem;
+    }
+
+    .replies-header {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent-mint);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .reply-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .reply-thread {
+      margin-left: 2.5rem;
+      border-left: 2px solid rgba(78,250,170,0.1);
+      padding-left: 1rem;
+    }
+
+    .reply-card .reply-btn {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      opacity: 0.6;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .reply-card .reply-btn:hover {
+      opacity: 1;
+      color: var(--accent-mint);
+    }
+
+    .reply-form-inline {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(78,250,170,0.1);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .reply-form-inline textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(78,250,170,0.1);
+      border-radius: 6px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+    }
+
+    .reply-form-inline textarea:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+    }
+
+    .reply-content {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-top: 0.75rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .reply-form {
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .reply-form textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 1rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(78,250,170,0.1);
+      border-radius: 6px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+
+    .reply-form textarea:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+    }
+
+    .locked-notice {
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      color: #ff6b6b;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-mint);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      transform: translateX(-4px);
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 3rem;
+      color: var(--accent-mint);
+      font-size: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .post-header {
+        flex-direction: column;
+      }
+
+      .post-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .thread-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div data-include="/components/header.html"></div>
+  <div data-include="/components/navbar.html"></div>
+
+  <div class="thread-container">
+    <a href="/forum/" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Forum
+    </a>
+
+    <div id="threadView">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+    </div>
+
+    <div id="repliesSection" class="replies-section" style="display: none;">
+      <div class="replies-header">
+        <i class="fas fa-comments"></i>
+        <span id="replyCount">0 Replies</span>
+      </div>
+
+      <div id="replyForm" class="reply-form" style="display: none;">
+        <textarea id="replyContent" placeholder="Write your reply..."></textarea>
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn-primary" id="submitReply">Post Reply</button>
+        </div>
+      </div>
+
+      <div id="lockedNotice" class="locked-notice" style="display: none;">
+        <i class="fas fa-lock"></i>
+        This thread has been locked by a moderator
+      </div>
+
+      <div id="repliesList"></div>
+    </div>
+  </div>
+
+  <div data-include="/components/footer.html"></div>
+
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module" src="/assets/js/include.js"></script>
+  <script type="module" src="/assets/js/navbar.js"></script>
+  <script type="module" src="/assets/js/forumThread.js"></script>
+</body>
+</html>

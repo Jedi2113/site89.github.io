@@ -196,14 +196,6 @@
       }
     });
 
-    // Display current user info
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) return window.location.href = "/login/";
-
-      accountEmail.textContent = user.email;
-      accountUID.textContent = user.uid;
-    });
-
     // Logout
     logoutBtn.addEventListener("click", () => {
       try { localStorage.removeItem('selectedCharacter'); } catch (err) { /* ignore */ }
