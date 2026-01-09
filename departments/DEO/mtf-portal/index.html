@@ -8,59 +8,66 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/main.css">
 
-  <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
     ThemeManager.init();
   </script>
 
   <style>
-    .page-hero { padding: 2.5rem 1rem; text-align:center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
-    .page-hero .hero-title { font-family: var(--font-head); font-size: 2rem; color: var(--accent-mint); margin-bottom: 0.35rem; }
-    .page-hero .hero-sub { color: var(--text-light); opacity: 0.9; }
+    .page-hero { padding:2.5rem 1rem; text-align:center; background:linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom:1px solid rgba(78,250,170,0.03); }
+    .page-hero .hero-title { font-family:var(--font-head); font-size:2rem; color:var(--accent-mint); margin-bottom:0.35rem; }
+    .page-hero .hero-sub { color:var(--text-light); opacity:0.9; }
 
-    .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom: 2px solid rgba(78,250,170,0.1); flex-wrap:wrap; }
+    .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom:2px solid rgba(78,250,170,0.1); flex-wrap:wrap; }
     .tab-btn { padding:0.8rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-light); cursor:pointer; font-weight:600; transition:all 0.2s ease; }
-    .tab-btn.active { border-bottom-color: var(--accent-mint); color: var(--accent-mint); }
-    .tab-btn:hover { color: var(--accent-mint); }
+    .tab-btn.active { border-bottom-color:var(--accent-mint); color:var(--accent-mint); }
+    .tab-btn:hover { color:var(--accent-mint); }
 
     .tab-content { display:none; }
     .tab-content.active { display:block; }
 
-    .roster-table { width:100%; border-collapse:collapse; margin-top:1rem; }
-    .roster-table th, .roster-table td { padding:0.8rem; text-align:left; border-bottom:1px solid rgba(78,250,170,0.1); color:var(--text-light); }
-    .roster-table th { background: rgba(78,250,170,0.05); font-weight:600; color:var(--accent-mint); }
-    .roster-table tr:hover { background: rgba(78,250,170,0.03); }
-    .edit-btn { padding:0.4rem 0.8rem; background:var(--accent-teal); color:#06100e; border:none; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+    .roster-table, .loadout-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .roster-table th, .roster-table td, .loadout-table th, .loadout-table td { padding:0.8rem; text-align:left; border-bottom:1px solid rgba(78,250,170,0.1); color:var(--text-light); }
+    .roster-table th, .loadout-table th { background:rgba(78,250,170,0.05); font-weight:600; color:var(--accent-mint); }
+    .roster-table tr:hover, .loadout-table tr:hover { background:rgba(78,250,170,0.03); }
+    
+    .edit-btn { padding:0.4rem 0.8rem; background:var(--accent-teal); color:#06100e; border:none; border-radius:4px; cursor:pointer; font-size:0.85rem; margin-right:0.5rem; }
     .edit-btn:hover { background:var(--accent-mint); }
+    .delete-btn { padding:0.4rem 0.8rem; background:#ff6b6b; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+    .delete-btn:hover { background:#ff4444; }
 
     .op-card { background:var(--bg-card); border:2px solid rgba(78,250,170,0.15); border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; }
-    .op-card.active { border-color: var(--accent-mint); box-shadow: 0 0 20px rgba(78,250,170,0.2); }
-    .op-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+    .op-card.active { border-color:var(--accent-mint); box-shadow:0 0 20px rgba(78,250,170,0.2); }
+    .op-card.archived { border-left:4px solid rgba(78,250,170,0.3); }
+    .op-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem; }
     .op-title { font-size:1.3rem; font-weight:700; color:var(--accent-mint); }
-    .op-status { padding:0.4rem 0.8rem; background:rgba(78,250,170,0.1); border-radius:4px; font-size:0.85rem; color:var(--accent-mint); font-weight:600; }
-    .op-details { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem; }
-    .op-detail-label { font-weight:600; color:var(--accent-teal); font-size:0.85rem; }
+    .op-status { padding:0.4rem 0.8rem; background:rgba(78,250,170,0.1); border-radius:4px; font-size:0.85rem; font-weight:600; }
+    .op-details { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin:1rem 0; }
+    .op-detail-label { font-weight:600; color:var(--accent-teal); font-size:0.85rem; text-transform:uppercase; }
     .op-detail-value { color:var(--text-light); margin-top:0.3rem; }
-
-    .loadout-table { width:100%; border-collapse:collapse; margin-top:1rem; }
-    .loadout-table th, .loadout-table td { padding:0.8rem; text-align:left; border-bottom:1px solid rgba(78,250,170,0.1); color:var(--text-light); }
-    .loadout-table th { background: rgba(78,250,170,0.05); font-weight:600; color:var(--accent-mint); }
+    .op-description { color:var(--text-light); line-height:1.7; margin:1rem 0; padding:1rem; background:rgba(78,250,170,0.02); border-radius:4px; }
+    .op-summary { margin-top:1rem; padding:1rem; background:rgba(78,250,170,0.05); border-left:3px solid var(--accent-mint); border-radius:4px; }
+    .op-summary-label { font-weight:700; color:var(--accent-mint); margin-bottom:0.5rem; }
+    .op-images { display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
+    .op-image { max-width:200px; max-height:150px; object-fit:cover; border-radius:4px; border:1px solid rgba(78,250,170,0.2); cursor:pointer; transition:transform 0.2s ease; }
+    .op-image:hover { transform:scale(1.05); }
 
     .access-denied { text-align:center; padding:3rem; color:var(--text-light); }
     .access-denied i { font-size:3rem; opacity:0.5; margin-bottom:1rem; display:block; }
 
-    .add-btn { padding:0.6rem 1.2rem; background:var(--accent-mint); color:#06100e; border:none; border-radius:6px; cursor:pointer; font-weight:600; margin-bottom:1rem; }
+    .add-btn { padding:0.6rem 1.2rem; background:var(--accent-mint); color:#06100e; border:none; border-radius:6px; cursor:pointer; font-weight:600; margin-bottom:1rem; display:inline-flex; align-items:center; gap:0.5rem; }
     .add-btn:hover { background:var(--accent-teal); }
 
     .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; }
     .modal-overlay.active { display:flex; }
-    .modal-box { background:var(--bg-card); padding:2rem; border-radius:8px; border:2px solid var(--accent-mint); max-width:500px; width:90%; }
+    .modal-box { background:var(--bg-card); padding:2rem; border-radius:8px; border:2px solid var(--accent-mint); max-width:600px; width:90%; max-height:85vh; overflow-y:auto; }
     .modal-box h3 { margin-top:0; color:var(--accent-mint); }
-    .modal-box input, .modal-box textarea { width:100%; padding:0.6rem; margin:0.8rem 0; background:var(--bg-soft); border:1px solid rgba(78,250,170,0.2); border-radius:4px; color:var(--text-light); font-family:var(--font-body); box-sizing:border-box; }
-    .modal-box input:focus, .modal-box textarea:focus { outline:none; border-color:var(--accent-mint); }
+    .modal-box label { display:block; color:var(--accent-teal); font-weight:600; margin-top:1rem; margin-bottom:0.4rem; }
+    .modal-box input, .modal-box textarea, .modal-box select { width:100%; padding:0.6rem; margin-bottom:0.8rem; background:var(--bg-soft); border:1px solid rgba(78,250,170,0.2); border-radius:4px; color:var(--text-light); font-family:var(--font-body); box-sizing:border-box; }
+    .modal-box textarea { min-height:100px; resize:vertical; }
+    .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus { outline:none; border-color:var(--accent-mint); }
     .modal-buttons { display:flex; gap:0.8rem; margin-top:1.5rem; }
-    .modal-buttons button { flex:1; padding:0.6rem; border:none; border-radius:4px; cursor:pointer; font-weight:600; }
+    .modal-buttons button { flex:1; padding:0.8rem; border:none; border-radius:4px; cursor:pointer; font-weight:600; }
     .btn-save { background:var(--accent-mint); color:#06100e; }
     .btn-cancel { background:rgba(78,250,170,0.1); border:1px solid var(--accent-mint); color:var(--accent-mint); }
 
@@ -72,9 +79,11 @@
     .medal-date { color:var(--accent-teal); font-size:0.85rem; margin-bottom:0.8rem; }
     .medal-reason { color:var(--text-light); line-height:1.6; }
 
-    .op-images { display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
-    .op-image { max-width:200px; border-radius:4px; border:1px solid rgba(78,250,170,0.2); cursor:pointer; transition:transform 0.2s ease; }
-    .op-image:hover { transform:scale(1.05); }
+    .image-url-input { margin-bottom:0.5rem; }
+    .image-preview-list { display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap; }
+    .image-preview-item { position:relative; display:inline-block; }
+    .image-preview-item img { width:80px; height:80px; object-fit:cover; border-radius:4px; border:1px solid rgba(78,250,170,0.2); }
+    .remove-image-btn { position:absolute; top:-5px; right:-5px; background:#ff6b6b; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px; line-height:20px; padding:0; }
   </style>
 </head>
 <body>
@@ -94,20 +103,22 @@
     </div>
 
     <div id="portalContent" style="display:none;">
-      <!-- Tab Navigation -->
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'roster')">Roster</button>
-        <button class="tab-btn" onclick="switchTab(event, 'active-ops')">Active Operations</button>
-        <button class="tab-btn" onclick="switchTab(event, 'previous-ops')">Previous Operations</button>
-        <button class="tab-btn" onclick="switchTab(event, 'loadouts')">Loadouts</button>
-        <button class="tab-btn" onclick="switchTab(event, 'medals')">Medals</button>
+        <button class="tab-btn active" data-tab="roster">Roster</button>
+        <button class="tab-btn" data-tab="active-ops">Active Operations</button>
+        <button class="tab-btn" data-tab="previous-ops">Previous Operations</button>
+        <button class="tab-btn" data-tab="loadouts">Loadouts</button>
+        <button class="tab-btn" data-tab="medals">Medals</button>
       </div>
 
       <!-- Roster Tab -->
       <div id="roster" class="tab-content active">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
           <h2 style="color:var(--accent-mint);margin:0;">MTF Roster</h2>
-          <button id="addRosterBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Add Personnel</button>
+          <button id="addRosterBtn" class="add-btn" style="display:none;">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Personnel</span>
+          </button>
         </div>
         <table class="roster-table">
           <thead>
@@ -117,7 +128,7 @@
               <th>Clearance</th>
               <th>Status</th>
               <th>Medals</th>
-              <th id="rosterActionHeader" style="display:none;">Action</th>
+              <th id="rosterActionHeader" style="display:none;">Actions</th>
             </tr>
           </thead>
           <tbody id="rosterBody">
@@ -128,9 +139,12 @@
 
       <!-- Active Operations Tab -->
       <div id="active-ops" class="tab-content">
-        <div style="margin-bottom:1.5rem;">
-          <h2 style="color:var(--accent-mint);margin-top:0;">Active Operations</h2>
-          <button id="addOpBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Add Operation</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+          <h2 style="color:var(--accent-mint);margin:0;">Active Operations</h2>
+          <button id="addOpBtn" class="add-btn" style="display:none;">
+            <i class="fa-solid fa-plus"></i>
+            <span>New Operation</span>
+          </button>
         </div>
         <div id="activeOpsContainer">
           <p style="opacity:0.8;">Loading operations...</p>
@@ -139,19 +153,21 @@
 
       <!-- Previous Operations Tab -->
       <div id="previous-ops" class="tab-content">
-        <h2 style="color:var(--accent-mint);margin-top:0;">Previous Operations</h2>
+        <h2 style="color:var(--accent-mint);margin-top:0;">Previous Operations Archive</h2>
+        <p style="opacity:0.8;margin-bottom:1.5rem;">Completed and archived operations with after-action reports</p>
         <div id="previousOpsContainer">
           <p style="opacity:0.8;">Loading operations...</p>
         </div>
       </div>
 
-
-
       <!-- Loadouts Tab -->
       <div id="loadouts" class="tab-content">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
           <h2 style="color:var(--accent-mint);margin:0;">Equipment Loadouts</h2>
-          <button id="addLoadoutBtn" class="add-btn" style="display:none;"><i class="fa-solid fa-plus" style="margin-right:0.5rem;"></i>Assign Equipment</button>
+          <button id="addLoadoutBtn" class="add-btn" style="display:none;">
+            <i class="fa-solid fa-plus"></i>
+            <span>Assign Equipment</span>
+          </button>
         </div>
         <table class="loadout-table">
           <thead>
@@ -161,7 +177,7 @@
               <th>Serial Number</th>
               <th>Status</th>
               <th>Issue Date</th>
-              <th id="loadoutActionHeader" style="display:none;">Action</th>
+              <th id="loadoutActionHeader" style="display:none;">Actions</th>
             </tr>
           </thead>
           <tbody id="loadoutBody">
@@ -181,16 +197,94 @@
     </div>
   </section>
 
+  <!-- Roster Modal -->
+  <div id="rosterModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Add Personnel to MTF Roster</h3>
+      <label>Name</label>
+      <input type="text" id="rosterName" placeholder="Personnel Name" maxlength="100">
+      <label>Rank</label>
+      <input type="text" id="rosterRank" placeholder="Rank/Position" maxlength="50">
+      <label>Clearance Level</label>
+      <select id="rosterClearance">
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3">Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
+      </select>
+      <label>Status</label>
+      <select id="rosterStatus">
+        <option value="Active">Active</option>
+        <option value="On Leave">On Leave</option>
+        <option value="Deployed">Deployed</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+      <div class="modal-buttons">
+        <button class="btn-save" id="saveRosterBtn">Save</button>
+        <button class="btn-cancel" id="cancelRosterBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Operation Modal -->
   <div id="operationModal" class="modal-overlay">
     <div class="modal-box">
-      <h3>Add Operation</h3>
-      <input id="opName" placeholder="Operation Name" maxlength="100">
-      <textarea id="opDesc" placeholder="Operation Description" rows="4" maxlength="500"></textarea>
-      <input id="opStartDate" type="date">
+      <h3 id="opModalTitle">Add Operation</h3>
+      <input type="hidden" id="opId">
+      <label>Operation Name</label>
+      <input type="text" id="opName" placeholder="Operation Name" maxlength="100">
+      <label>Description</label>
+      <textarea id="opDesc" placeholder="Operation Description" rows="4" maxlength="1000"></textarea>
+      <label>Start Date</label>
+      <input type="date" id="opStartDate">
+      <label>End Date (for archiving)</label>
+      <input type="date" id="opEndDate">
+      <label>Status</label>
+      <select id="opStatus">
+        <option value="true">Active</option>
+        <option value="false">Archived</option>
+      </select>
+      <div id="archivedFields" style="display:none;">
+        <label>Operation Result</label>
+        <select id="opSuccess">
+          <option value="true">Success</option>
+          <option value="false">Failed</option>
+        </select>
+        <label>After-Action Summary</label>
+        <textarea id="opSummary" placeholder="Summary of the operation..." rows="4" maxlength="2000"></textarea>
+        <label>Image URLs (one per line)</label>
+        <textarea id="opImages" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" rows="3"></textarea>
+      </div>
       <div class="modal-buttons">
-        <button class="btn-save" onclick="saveOperation()">Save</button>
-        <button class="btn-cancel" onclick="closeOperationModal()">Cancel</button>
+        <button class="btn-save" id="saveOpBtn">Save</button>
+        <button class="btn-cancel" id="cancelOpBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loadout Modal -->
+  <div id="loadoutModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Assign Equipment</h3>
+      <label>Personnel Name</label>
+      <input type="text" id="loadoutPersonnel" placeholder="Personnel Name" maxlength="100">
+      <label>Equipment</label>
+      <input type="text" id="loadoutEquipment" placeholder="Equipment Name" maxlength="200">
+      <label>Serial Number</label>
+      <input type="text" id="loadoutSerial" placeholder="Serial Number" maxlength="50">
+      <label>Status</label>
+      <select id="loadoutStatus">
+        <option value="Issued">Issued</option>
+        <option value="Returned">Returned</option>
+        <option value="In Maintenance">In Maintenance</option>
+        <option value="Lost">Lost</option>
+      </select>
+      <label>Issue Date</label>
+      <input type="date" id="loadoutDate">
+      <div class="modal-buttons">
+        <button class="btn-save" id="saveLoadoutBtn">Save</button>
+        <button class="btn-cancel" id="cancelLoadoutBtn">Cancel</button>
       </div>
     </div>
   </div>
@@ -198,152 +292,144 @@
   <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
-  <script type="module" src="/assets/js/auth.js"></script>
-
-  <script type="module" src="/assets/js/auth.js"></script>
-
   <script type="module">
-    import { app, auth } from "/assets/js/auth.js";
-    import { getFirestore, collection, query, where, getDocs, orderBy, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { app, auth, onAuthStateChanged } from "/assets/js/auth.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy, addDoc, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const db = getFirestore(app);
-
-    const accessDenied = document.getElementById('accessDenied');
-    const portalContent = document.getElementById('portalContent');
-    const addOpBtn = document.getElementById('addOpBtn');
     let userClearance = 0;
+    let currentUser = null;
 
     // Tab switching
-    window.switchTab = function(event, tabName) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabName).classList.add('active');
-      event.target.classList.add('active');
-    };
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        const tabName = e.currentTarget.dataset.tab;
+        document.getElementById(tabName).classList.add('active');
+        e.currentTarget.classList.add('active');
+      });
+    });
 
-    // Access control: allow MTF personnel, DEO Directors, and IA personnel
-    function checkAccess(){
-      const accessDenied = document.getElementById('accessDenied');
-      const portalContent = document.getElementById('portalContent');
-      try{
+    // Access control
+    async function checkAccess() {
+      try {
         const raw = localStorage.getItem('selectedCharacter');
-        if(!raw){
+        if (!raw) {
           window.location.replace('/departments/DEO/mtf-portal/403/');
-          return;
+          return false;
         }
+        
         const charData = JSON.parse(raw);
-        const dept = charData && charData.department ? String(charData.department) : '';
-        const rank = charData && charData.rank ? String(charData.rank) : '';
+        const dept = charData.department || '';
+        const rank = charData.rank || '';
+        userClearance = charData.clearance || 0;
         
-        // Allow access for:
-        // 1. DEO/MTF personnel
-        // 2. DEO/IA personnel (Intelligence Agency has oversight)
-        // 3. DEO Directors and Assistant Directors (leadership access)
-        // 4. Characters with "MTF" in their department (backwards compatibility)
-        const hasAccess = dept.indexOf('DEO/MTF') !== -1 || 
-                         dept.indexOf('DEO/IA') !== -1 ||
-                         dept.indexOf('MTF') !== -1 ||
-                         rank.indexOf('DEO Director') !== -1 ||
-                         rank.indexOf('DEO Assistant Director') !== -1;
+        const hasAccess = dept.includes('DEO/MTF') || 
+                         dept.includes('DEO/IA') ||
+                         dept.includes('MTF') ||
+                         rank.includes('DEO Director') ||
+                         rank.includes('DEO Assistant Director');
         
-        if(!hasAccess){
+        if (!hasAccess) {
           window.location.replace('/departments/DEO/mtf-portal/403/');
-          return;
+          return false;
         }
-        // allowed
-        accessDenied.style.display = 'none';
-        portalContent.style.display = 'block';
         
-        loadOperations();
-        loadRoster();
-        loadLoadouts();
-        loadMedals();
+        document.getElementById('accessDenied').style.display = 'none';
+        document.getElementById('portalContent').style.display = 'block';
         
-        // Get user clearance level
-        const character = JSON.parse(localStorage.getItem('selectedCharacter'));
-        userClearance = character.clearance || 0;
-        
-        // Show add buttons for L3+
-        if(userClearance >= 3){
-          document.getElementById('addOpBtn').style.display = 'inline-block';
-          document.getElementById('addRosterBtn').style.display = 'inline-block';
-          document.getElementById('addLoadoutBtn').style.display = 'inline-block';
+        // Show management buttons for L3+
+        if (userClearance >= 3) {
+          document.getElementById('addOpBtn').style.display = 'inline-flex';
+          document.getElementById('addRosterBtn').style.display = 'inline-flex';
+          document.getElementById('addLoadoutBtn').style.display = 'inline-flex';
+          document.getElementById('rosterActionHeader').style.display = 'table-cell';
+          document.getElementById('loadoutActionHeader').style.display = 'table-cell';
         }
-      }catch(err){
+        
+        return true;
+      } catch (err) {
+        console.error('Access check error:', err);
         window.location.replace('/departments/DEO/mtf-portal/403/');
-        console.error('portal access error', err);
+        return false;
       }
     }
-
-    // Check if user is logged in first
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.replace('/departments/DEO/mtf-portal/403/');
-        return;
-      }
-      checkAccess();
-    });
 
     // Load operations
     async function loadOperations() {
       try {
-        const active = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', true), orderBy('startDate', 'desc')));
-        const previous = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', false), orderBy('endDate', 'desc')));
+        const activeOps = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', true), orderBy('startDate', 'desc')));
+        const previousOps = await getDocs(query(collection(db, 'mtf-operations'), where('isActive', '==', false), orderBy('endDate', 'desc')));
 
         const activeContainer = document.getElementById('activeOpsContainer');
         const previousContainer = document.getElementById('previousOpsContainer');
 
-        if (active.empty) activeContainer.innerHTML = '<p style="opacity:0.8;">No active operations.</p>';
-        else {
+        // Active operations
+        if (activeOps.empty) {
+          activeContainer.innerHTML = '<p style="opacity:0.8;">No active operations at this time.</p>';
+        } else {
           activeContainer.innerHTML = '';
-          active.forEach(doc => {
-            const op = doc.data();
-            activeContainer.innerHTML += `<div class="op-card active">
-              <div class="op-header">
-                <div class="op-title">${op.name}</div>
-                <div class="op-status">ACTIVE</div>
+          activeOps.forEach(opDoc => {
+            const op = opDoc.data();
+            const editBtn = userClearance >= 3 ? `<button class="edit-btn" onclick="editOperation('${opDoc.id}')">Edit</button><button class="delete-btn" onclick="archiveOperation('${opDoc.id}')">Archive</button>` : '';
+            
+            activeContainer.innerHTML += `
+              <div class="op-card active">
+                <div class="op-header">
+                  <div class="op-title">${op.name || 'Unnamed Operation'}</div>
+                  <div class="op-status" style="color:var(--accent-mint);">ACTIVE</div>
+                </div>
+                <div class="op-details">
+                  <div><div class="op-detail-label">Start Date</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
+                  <div><div class="op-detail-label">Duration</div><div class="op-detail-value">Ongoing</div></div>
+                </div>
+                <div class="op-description">${op.description || 'No description provided.'}</div>
+                ${editBtn ? `<div style="margin-top:1rem;">${editBtn}</div>` : ''}
               </div>
-              <div class="op-details">
-                <div class="op-detail"><div class="op-detail-label">Start Date</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
-                <div class="op-detail"><div class="op-detail-label">Personnel</div><div class="op-detail-value">${op.personnel || 'Classified'}</div></div>
-              </div>
-              <div style="color:var(--text-light);line-height:1.6;">${op.description || ''}</div>
-            </div>`;
+            `;
           });
         }
 
-        if (previous.empty) previousContainer.innerHTML = '<p style="opacity:0.8;">No previous operations.</p>';
-        else {
+        // Previous operations
+        if (previousOps.empty) {
+          previousContainer.innerHTML = '<p style="opacity:0.8;">No previous operations on record.</p>';
+        } else {
           previousContainer.innerHTML = '';
-          previous.forEach(doc => {
-            const op = doc.data();
-            const statusColor = op.success ? 'rgba(78,250,170,0.1)' : 'rgba(176,0,0,0.1)';
-            const statusTextColor = op.success ? 'var(--accent-mint)' : '#ff6b6b';
-            const statusLabel = op.success ? 'SUCCESS' : 'FAILED';
+          previousOps.forEach(opDoc => {
+            const op = opDoc.data();
+            const success = op.success === true;
+            const statusColor = success ? 'rgba(78,250,170,0.1)' : 'rgba(176,0,0,0.1)';
+            const statusTextColor = success ? 'var(--accent-mint)' : '#ff6b6b';
+            const statusLabel = success ? 'SUCCESS' : 'FAILED';
+            const editBtn = userClearance >= 3 ? `<button class="edit-btn" onclick="editOperation('${opDoc.id}')">Edit</button><button class="delete-btn" onclick="deleteOperation('${opDoc.id}')">Delete</button>` : '';
             
             let imagesHtml = '';
-            if(op.images && Array.isArray(op.images) && op.images.length > 0){
+            if (op.images && Array.isArray(op.images) && op.images.length > 0) {
               imagesHtml = '<div class="op-images">';
               op.images.forEach(imgUrl => {
-                imagesHtml += `<img src="${imgUrl}" alt="Operation image" class="op-image">`;
+                imagesHtml += `<img src="${imgUrl}" alt="Operation image" class="op-image" onclick="window.open('${imgUrl}', '_blank')">`;
               });
               imagesHtml += '</div>';
             }
             
-            previousContainer.innerHTML += `<div class="op-card">
-              <div class="op-header">
-                <div class="op-title">${op.name}</div>
-                <div style="padding:0.4rem 0.8rem;background:${statusColor};border-radius:4px;font-size:0.85rem;color:${statusTextColor};font-weight:600;">${statusLabel}</div>
+            previousContainer.innerHTML += `
+              <div class="op-card archived">
+                <div class="op-header">
+                  <div class="op-title">${op.name || 'Unnamed Operation'}</div>
+                  <div style="padding:0.4rem 0.8rem;background:${statusColor};border-radius:4px;font-size:0.85rem;color:${statusTextColor};font-weight:600;">${statusLabel}</div>
+                </div>
+                <div class="op-details">
+                  <div><div class="op-detail-label">Started</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
+                  <div><div class="op-detail-label">Ended</div><div class="op-detail-value">${op.endDate || 'N/A'}</div></div>
+                  <div><div class="op-detail-label">Result</div><div class="op-detail-value">${statusLabel}</div></div>
+                </div>
+                <div class="op-description">${op.description || 'No description provided.'}</div>
+                ${op.summary ? `<div class="op-summary"><div class="op-summary-label">After-Action Summary:</div><div style="color:var(--text-light);line-height:1.6;">${op.summary}</div></div>` : ''}
+                ${imagesHtml}
+                ${editBtn ? `<div style="margin-top:1rem;">${editBtn}</div>` : ''}
               </div>
-              <div class="op-details">
-                <div class="op-detail"><div class="op-detail-label">Started</div><div class="op-detail-value">${op.startDate || 'N/A'}</div></div>
-                <div class="op-detail"><div class="op-detail-label">Ended</div><div class="op-detail-value">${op.endDate || 'N/A'}</div></div>
-                <div class="op-detail"><div class="op-detail-label">Status</div><div class="op-detail-value">${statusLabel}</div></div>
-              </div>
-              <div style="color:var(--text-light);line-height:1.6;margin-bottom:1rem;">${op.description || ''}</div>
-              ${op.summary ? `<div style="margin-top:1rem;padding:1rem;background:rgba(78,250,170,0.05);border-left:3px solid var(--accent-mint);border-radius:4px;"><strong style="color:var(--accent-mint);">After-Action Summary:</strong><p style="margin-top:0.5rem;line-height:1.6;">${op.summary}</p></div>` : ''}
-              ${imagesHtml}
-            </div>`;
+            `;
           });
         }
       } catch (err) {
@@ -354,39 +440,36 @@
     // Load roster
     async function loadRoster() {
       try {
-        // Query for both 'MTF' and characters with 'DEO/MTF' in their department
-        const mtfQuery1 = await getDocs(query(collection(db, 'characters'), where('department', '==', 'MTF')));
-        const mtfQuery2 = await getDocs(query(collection(db, 'characters'), where('department', '==', 'DEO/MTF')));
-        
-        // Combine results
-        const allDocs = [...mtfQuery1.docs, ...mtfQuery2.docs];
+        const rosterSnap = await getDocs(query(collection(db, 'mtf-roster'), orderBy('name', 'asc')));
         const tbody = document.getElementById('rosterBody');
 
-        if (allDocs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel found.</td></tr>';
+        if (rosterSnap.empty) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No MTF personnel on roster.</td></tr>';
           return;
         }
 
         tbody.innerHTML = '';
-        allDocs.forEach(doc => {
-          const char = doc.data();
-          const medalCount = char.medals && Array.isArray(char.medals) ? char.medals.length : 0;
-          const medalDisplay = medalCount > 0 ? `<span style="padding:0.2rem 0.6rem;background:rgba(255,215,0,0.1);border-radius:4px;color:#ffd700;font-size:0.85rem;"><i class="fa-solid fa-medal" style="margin-right:0.3rem;"></i>${medalCount}</span>` : '—';
+        rosterSnap.forEach(rosterDoc => {
+          const person = rosterDoc.data();
+          const medalCount = person.medals || 0;
+          const medalDisplay = medalCount > 0 ? 
+            `<span style="padding:0.2rem 0.6rem;background:rgba(255,215,0,0.1);border-radius:4px;color:#ffd700;font-size:0.85rem;"><i class="fa-solid fa-medal" style="margin-right:0.3rem;"></i>${medalCount}</span>` : 
+            '—';
           
-          tbody.innerHTML += `<tr>
-            <td>${char.name}</td>
-            <td>${char.rank || 'Unassigned'}</td>
-            <td>Level ${char.clearance || 0}</td>
-            <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">Active</span></td>
-            <td>${medalDisplay}</td>
-            ${userClearance >= 3 ? `<td><button class="edit-btn" onclick="alert('Roster edit feature coming soon')">Edit</button></td>` : '<td></td>'}
-          </tr>`;
+          const actionBtns = userClearance >= 3 ? 
+            `<button class="delete-btn" onclick="deleteRoster('${rosterDoc.id}')">Remove</button>` : '';
+          
+          tbody.innerHTML += `
+            <tr>
+              <td>${person.name || 'Unknown'}</td>
+              <td>${person.rank || 'Unassigned'}</td>
+              <td>Level ${person.clearance || 0}</td>
+              <td><span style="padding:0.2rem 0.6rem;background:rgba(78,250,170,0.1);border-radius:4px;color:var(--accent-mint);font-size:0.85rem;">${person.status || 'Active'}</span></td>
+              <td>${medalDisplay}</td>
+              ${userClearance >= 3 ? `<td>${actionBtns}</td>` : ''}
+            </tr>
+          `;
         });
-
-        // Show action header only for L3+
-        if (userClearance >= 3) {
-          document.getElementById('rosterActionHeader').style.display = 'table-cell';
-        }
       } catch (err) {
         console.error('Error loading roster:', err);
       }
@@ -395,34 +478,33 @@
     // Load loadouts
     async function loadLoadouts() {
       try {
-        const loadouts = await getDocs(collection(db, 'mtf-loadouts'));
+        const loadoutsSnap = await getDocs(query(collection(db, 'mtf-loadouts'), orderBy('issueDate', 'desc')));
         const tbody = document.getElementById('loadoutBody');
 
-        if (loadouts.empty) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No loadouts on record.</td></tr>';
+        if (loadoutsSnap.empty) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.8;">No equipment loadouts on record.</td></tr>';
           return;
         }
 
         tbody.innerHTML = '';
-        loadouts.forEach(doc => {
-          const lo = doc.data();
+        loadoutsSnap.forEach(loadoutDoc => {
+          const lo = loadoutDoc.data();
           const statusColor = lo.status === 'Issued' ? 'rgba(78,250,170,0.1)' : 'rgba(255,165,0,0.1)';
           const statusTextColor = lo.status === 'Issued' ? 'var(--accent-mint)' : '#ffa500';
+          const actionBtns = userClearance >= 3 ? 
+            `<button class="delete-btn" onclick="deleteLoadout('${loadoutDoc.id}')">Remove</button>` : '';
           
-          tbody.innerHTML += `<tr>
-            <td>${lo.personnel || 'Unknown'}</td>
-            <td>${lo.equipment || 'Unknown'}</td>
-            <td>${lo.serialNumber || 'N/A'}</td>
-            <td><span style="padding:0.2rem 0.6rem;background:${statusColor};border-radius:4px;color:${statusTextColor};font-size:0.85rem;">${lo.status || 'Issued'}</span></td>
-            <td>${lo.issueDate || 'N/A'}</td>
-            ${userClearance >= 3 ? `<td><button class="edit-btn" onclick="alert('Loadout edit feature coming soon')">Manage</button></td>` : '<td></td>'}
-          </tr>`;
+          tbody.innerHTML += `
+            <tr>
+              <td>${lo.personnel || 'Unknown'}</td>
+              <td>${lo.equipment || 'Unknown'}</td>
+              <td>${lo.serialNumber || 'N/A'}</td>
+              <td><span style="padding:0.2rem 0.6rem;background:${statusColor};border-radius:4px;color:${statusTextColor};font-size:0.85rem;">${lo.status || 'Issued'}</span></td>
+              <td>${lo.issueDate || 'N/A'}</td>
+              ${userClearance >= 3 ? `<td>${actionBtns}</td>` : ''}
+            </tr>
+          `;
         });
-        
-        // Show action header only for L3+
-        if (userClearance >= 3) {
-          document.getElementById('loadoutActionHeader').style.display = 'table-cell';
-        }
       } catch (err) {
         console.error('Error loading loadouts:', err);
       }
@@ -431,17 +513,17 @@
     // Load medals
     async function loadMedals() {
       try {
-        const medals = await getDocs(query(collection(db, 'mtf-medals'), orderBy('dateAwarded', 'desc')));
+        const medalsSnap = await getDocs(query(collection(db, 'mtf-medals'), orderBy('dateAwarded', 'desc')));
         const container = document.getElementById('medalsContainer');
 
-        if (medals.empty) {
+        if (medalsSnap.empty) {
           container.innerHTML = '<p style="opacity:0.8;">No medals awarded yet.</p>';
           return;
         }
 
         container.innerHTML = '';
-        medals.forEach(doc => {
-          const medal = doc.data();
+        medalsSnap.forEach(medalDoc => {
+          const medal = medalDoc.data();
           const medalIcons = {
             'Valor': 'fa-star',
             'Service': 'fa-medal',
@@ -452,37 +534,95 @@
           };
           const icon = medalIcons[medal.type] || 'fa-medal';
           
-          container.innerHTML += `<div class="medal-card">
-            <div class="medal-icon"><i class="fa-solid ${icon}"></i></div>
-            <div class="medal-details">
-              <div class="medal-name">${medal.name || 'Unnamed Medal'}</div>
-              <div class="medal-recipient">Awarded to: <strong>${medal.recipient || 'Unknown'}</strong></div>
-              <div class="medal-date">Date: ${medal.dateAwarded || 'Unknown'}</div>
-              <div class="medal-reason">${medal.reason || 'No citation provided'}</div>
+          container.innerHTML += `
+            <div class="medal-card">
+              <div class="medal-icon"><i class="fa-solid ${icon}"></i></div>
+              <div class="medal-details">
+                <div class="medal-name">${medal.name || 'Unnamed Medal'}</div>
+                <div class="medal-recipient">Awarded to: <strong>${medal.recipient || 'Unknown'}</strong></div>
+                <div class="medal-date">Date: ${medal.dateAwarded || 'Unknown'}</div>
+                <div class="medal-reason">${medal.reason || 'No citation provided.'}</div>
+              </div>
             </div>
-          </div>`;
+          `;
         });
       } catch (err) {
         console.error('Error loading medals:', err);
       }
     }
 
-    // Operation modal
-    window.openOperationModal = function() {
-      document.getElementById('operationModal').classList.add('active');
-    };
+    // Roster modal handlers
+    document.getElementById('addRosterBtn').addEventListener('click', () => {
+      document.getElementById('rosterModal').classList.add('active');
+    });
 
-    window.closeOperationModal = function() {
-      document.getElementById('operationModal').classList.remove('active');
+    document.getElementById('cancelRosterBtn').addEventListener('click', () => {
+      document.getElementById('rosterModal').classList.remove('active');
+      document.getElementById('rosterName').value = '';
+      document.getElementById('rosterRank').value = '';
+    });
+
+    document.getElementById('saveRosterBtn').addEventListener('click', async () => {
+      const name = document.getElementById('rosterName').value.trim();
+      const rank = document.getElementById('rosterRank').value.trim();
+      const clearance = parseInt(document.getElementById('rosterClearance').value);
+      const status = document.getElementById('rosterStatus').value;
+
+      if (!name || !rank) {
+        alert('Please fill in name and rank');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'mtf-roster'), {
+          name, rank, clearance, status,
+          medals: 0,
+          createdAt: new Date()
+        });
+        document.getElementById('rosterModal').classList.remove('active');
+        document.getElementById('rosterName').value = '';
+        document.getElementById('rosterRank').value = '';
+        loadRoster();
+      } catch (err) {
+        alert('Error saving roster: ' + err.message);
+      }
+    });
+
+    // Operation modal handlers
+    document.getElementById('addOpBtn').addEventListener('click', () => {
+      document.getElementById('opModalTitle').textContent = 'Add Operation';
+      document.getElementById('opId').value = '';
       document.getElementById('opName').value = '';
       document.getElementById('opDesc').value = '';
       document.getElementById('opStartDate').value = '';
-    };
+      document.getElementById('opEndDate').value = '';
+      document.getElementById('opStatus').value = 'true';
+      document.getElementById('opSuccess').value = 'true';
+      document.getElementById('opSummary').value = '';
+      document.getElementById('opImages').value = '';
+      document.getElementById('archivedFields').style.display = 'none';
+      document.getElementById('operationModal').classList.add('active');
+    });
 
-    window.saveOperation = async function() {
+    document.getElementById('opStatus').addEventListener('change', (e) => {
+      document.getElementById('archivedFields').style.display = e.target.value === 'false' ? 'block' : 'none';
+    });
+
+    document.getElementById('cancelOpBtn').addEventListener('click', () => {
+      document.getElementById('operationModal').classList.remove('active');
+    });
+
+    document.getElementById('saveOpBtn').addEventListener('click', async () => {
+      const opId = document.getElementById('opId').value;
       const name = document.getElementById('opName').value.trim();
-      const desc = document.getElementById('opDesc').value.trim();
+      const description = document.getElementById('opDesc').value.trim();
       const startDate = document.getElementById('opStartDate').value;
+      const endDate = document.getElementById('opEndDate').value;
+      const isActive = document.getElementById('opStatus').value === 'true';
+      const success = document.getElementById('opSuccess').value === 'true';
+      const summary = document.getElementById('opSummary').value.trim();
+      const imagesText = document.getElementById('opImages').value.trim();
+      const images = imagesText ? imagesText.split('\n').filter(url => url.trim()) : [];
 
       if (!name || !startDate) {
         alert('Please fill in operation name and start date');
@@ -490,27 +630,160 @@
       }
 
       try {
-        await addDoc(collection(db, 'mtf-operations'), {
-          name: name,
-          description: desc,
-          startDate: startDate,
-          isActive: true,
-          createdAt: new Date(),
-          personnel: '',
-          success: null,
-          endDate: null,
-          summary: ''
-        });
-        closeOperationModal();
+        const opData = {
+          name, description, startDate, isActive,
+          endDate: endDate || null,
+          success: isActive ? null : success,
+          summary: isActive ? '' : summary,
+          images: isActive ? [] : images,
+          updatedAt: new Date()
+        };
+
+        if (opId) {
+          await updateDoc(doc(db, 'mtf-operations', opId), opData);
+        } else {
+          opData.createdAt = new Date();
+          await addDoc(collection(db, 'mtf-operations'), opData);
+        }
+
+        document.getElementById('operationModal').classList.remove('active');
         loadOperations();
       } catch (err) {
         alert('Error saving operation: ' + err.message);
       }
+    });
+
+    // Loadout modal handlers
+    document.getElementById('addLoadoutBtn').addEventListener('click', () => {
+      document.getElementById('loadoutModal').classList.add('active');
+    });
+
+    document.getElementById('cancelLoadoutBtn').addEventListener('click', () => {
+      document.getElementById('loadoutModal').classList.remove('active');
+      document.getElementById('loadoutPersonnel').value = '';
+      document.getElementById('loadoutEquipment').value = '';
+      document.getElementById('loadoutSerial').value = '';
+      document.getElementById('loadoutDate').value = '';
+    });
+
+    document.getElementById('saveLoadoutBtn').addEventListener('click', async () => {
+      const personnel = document.getElementById('loadoutPersonnel').value.trim();
+      const equipment = document.getElementById('loadoutEquipment').value.trim();
+      const serialNumber = document.getElementById('loadoutSerial').value.trim();
+      const status = document.getElementById('loadoutStatus').value;
+      const issueDate = document.getElementById('loadoutDate').value;
+
+      if (!personnel || !equipment) {
+        alert('Please fill in personnel and equipment');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'mtf-loadouts'), {
+          personnel, equipment, serialNumber, status, issueDate,
+          createdAt: new Date()
+        });
+        document.getElementById('loadoutModal').classList.remove('active');
+        document.getElementById('loadoutPersonnel').value = '';
+        document.getElementById('loadoutEquipment').value = '';
+        document.getElementById('loadoutSerial').value = '';
+        document.getElementById('loadoutDate').value = '';
+        loadLoadouts();
+      } catch (err) {
+        alert('Error saving loadout: ' + err.message);
+      }
+    });
+
+    // Delete functions
+    window.deleteRoster = async (id) => {
+      if (!confirm('Remove this person from the roster?')) return;
+      try {
+        await deleteDoc(doc(db, 'mtf-roster', id));
+        loadRoster();
+      } catch (err) {
+        alert('Error deleting roster entry: ' + err.message);
+      }
     };
 
-    // Wire up add operation button
-    addOpBtn.addEventListener('click', openOperationModal);
-  </script>
+    window.deleteLoadout = async (id) => {
+      if (!confirm('Delete this loadout entry?')) return;
+      try {
+        await deleteDoc(doc(db, 'mtf-loadouts', id));
+        loadLoadouts();
+      } catch (err) {
+        alert('Error deleting loadout: ' + err.message);
+      }
+    };
 
+    window.deleteOperation = async (id) => {
+      if (!confirm('Permanently delete this operation?')) return;
+      try {
+        await deleteDoc(doc(db, 'mtf-operations', id));
+        loadOperations();
+      } catch (err) {
+        alert('Error deleting operation: ' + err.message);
+      }
+    };
+
+    window.archiveOperation = async (id) => {
+      if (!confirm('Archive this operation? You can add details after archiving.')) {
+        return;
+      }
+      try {
+        await updateDoc(doc(db, 'mtf-operations', id), {
+          isActive: false,
+          endDate: new Date().toISOString().split('T')[0],
+          success: true
+        });
+        loadOperations();
+      } catch (err) {
+        alert('Error archiving operation: ' + err.message);
+      }
+    };
+
+    window.editOperation = async (id) => {
+      try {
+        const opDoc = await getDoc(doc(db, 'mtf-operations', id));
+        if (!opDoc.exists()) {
+          alert('Operation not found');
+          return;
+        }
+
+        const op = opDoc.data();
+        document.getElementById('opModalTitle').textContent = 'Edit Operation';
+        document.getElementById('opId').value = id;
+        document.getElementById('opName').value = op.name || '';
+        document.getElementById('opDesc').value = op.description || '';
+        document.getElementById('opStartDate').value = op.startDate || '';
+        document.getElementById('opEndDate').value = op.endDate || '';
+        document.getElementById('opStatus').value = op.isActive ? 'true' : 'false';
+        document.getElementById('opSuccess').value = op.success ? 'true' : 'false';
+        document.getElementById('opSummary').value = op.summary || '';
+        document.getElementById('opImages').value = (op.images || []).join('\n');
+        document.getElementById('archivedFields').style.display = op.isActive ? 'none' : 'block';
+        document.getElementById('operationModal').classList.add('active');
+      } catch (err) {
+        alert('Error loading operation: ' + err.message);
+      }
+    };
+
+    // Initialize
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace('/departments/DEO/mtf-portal/403/');
+        return;
+      }
+      currentUser = user;
+      const hasAccess = await checkAccess();
+      if (hasAccess) {
+        await Promise.all([
+          loadOperations(),
+          loadRoster(),
+          loadLoadouts(),
+          loadMedals()
+        ]);
+      }
+    });
+  </script>
 </body>
 </html>

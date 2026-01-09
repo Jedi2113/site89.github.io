@@ -119,7 +119,7 @@
 
     <div id="accessNotice" class="access-notice" style="display:none;">
       <i class="fas fa-info-circle"></i>
-      <strong>For DEO Personnel:</strong> You have permission to create and manage Persons of Interest entries.
+      <strong>For DEO/IA Personnel & Level 5+:</strong> You have permission to create and manage Persons of Interest entries.
     </div>
 
     <div id="poisContainer">
@@ -205,10 +205,8 @@
         const rank = userCharacter.rank || '';
         const clearance = userCharacter.clearance || 0;
         
-        // Allow DEO personnel (Level 2+) and Directors to manage POIs
-        canManagePois = (dept.includes('DEO') && clearance >= 2) || 
-                       rank.includes('Director') ||
-                       rank.includes('Assistant Director');
+        // Allow DEO/IA members OR Level 5+ personnel to manage POIs
+        canManagePois = dept.includes('DEO/IA') || clearance >= 5;
         
         if (canManagePois) {
           document.getElementById('addPoiBtn').style.display = 'inline-block';
