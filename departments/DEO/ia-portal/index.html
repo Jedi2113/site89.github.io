@@ -88,7 +88,7 @@
       try{
         const raw = localStorage.getItem('selectedCharacter');
         if(!raw){
-          window.location.replace('/departments/DEO/ia-portal/403/');
+          window.location.replace('/403/');
           return;
         }
         const ch = JSON.parse(raw);
@@ -103,14 +103,14 @@
                          rank.indexOf('DEO Assistant Director') !== -1;
         
         if(!hasAccess){
-          window.location.replace('/departments/DEO/ia-portal/403/');
+          window.location.replace('/403/');
           return;
         }
         // allowed
         accessDenied.style.display = 'none';
         portalContent.style.display = 'block';
       }catch(err){
-        window.location.replace('/departments/DEO/ia-portal/403/');
+        window.location.replace('/403/');
         console.error('portal access error', err);
       }
     }
@@ -118,7 +118,7 @@
     // Check if user is logged in first
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.replace('/departments/DEO/ia-portal/403/');
+        window.location.replace('/403/');
         return;
       }
       checkAccess();

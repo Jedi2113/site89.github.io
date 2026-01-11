@@ -316,7 +316,7 @@
       try {
         const raw = localStorage.getItem('selectedCharacter');
         if (!raw) {
-          window.location.replace('/departments/DEO/mtf-portal/403/');
+          window.location.replace('/403/');
           return false;
         }
         
@@ -332,7 +332,7 @@
                          rank.includes('DEO Assistant Director');
         
         if (!hasAccess) {
-          window.location.replace('/departments/DEO/mtf-portal/403/');
+          window.location.replace('/403/');
           return false;
         }
         
@@ -351,7 +351,7 @@
         return true;
       } catch (err) {
         console.error('Access check error:', err);
-        window.location.replace('/departments/DEO/mtf-portal/403/');
+        window.location.replace('/403/');
         return false;
       }
     }
