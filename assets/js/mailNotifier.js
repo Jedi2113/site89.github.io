@@ -1,14 +1,104 @@
 // Global email notification badge updater
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, collection, query, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, onSnapshot, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-// Helper: Build character email address from name
-function emailFromName(name){
+// Normalize a name into a base local-part "lastname.firstname"
+function baseLocalFromName(name){
   if(!name) return '';
   const parts = name.trim().split(/\s+/);
   const first = parts[0] ? parts[0].toLowerCase().replace(/[^a-z]/g,'') : '';
   const last = parts.length>1 ? parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'') : first;
-  return `${last}.${first}@site89.org`;
+  return last && first ? `${last}.${first}` : '';
+}
+
+// Given a base local and counts, return a unique email with numeric suffixes for duplicates
+function makeUniqueEmail(baseLocal, counts){
+  if(!baseLocal) return '';
+  const current = counts.get(baseLocal) || 0;
+  const next = current + 1;
+  counts.set(baseLocal, next);
+  const localPart = next === 1 ? baseLocal : `${baseLocal}${next}`;
+  return `${localPart}@site89.org`.toLowerCase();
+}
+
+let emailDirectoryPromise = null;
+let emailDirectory = null;
+
+async function getEmailDirectory(db){
+  if(emailDirectory) return emailDirectory;
+  if(emailDirectoryPromise) return emailDirectoryPromise;
+
+  emailDirectoryPromise = (async ()=>{
+    const raw = [];
+    try {
+      const snap = await getDocs(collection(db,'characters'));
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        if(data && data.name) raw.push(data);
+      });
+    } catch(err) {
+      console.error('Failed to load characters for email directory:', err);
+      return { entries: [], byPid: new Map(), byBase: new Map(), countsSnapshot: new Map() };
+    }
+
+    raw.sort((a,b)=>{
+      const aName = (a.name||'').toLowerCase();
+      const bName = (b.name||'').toLowerCase();
+      if(aName !== bName) return aName.localeCompare(bName);
+      const aPid = (a.pid||'').toString();
+      const bPid = (b.pid||'').toString();
+      return aPid.localeCompare(bPid);
+    });
+
+    const counts = new Map();
+    const entries = raw.map(char => {
+      const baseLocal = baseLocalFromName(char.name);
+      const email = makeUniqueEmail(baseLocal, counts);
+      return {
+        email,
+        baseLocal,
+        pid: char.pid ? String(char.pid) : '',
+        department: char.department || '',
+        name: char.name || '',
+        pfp: char.pfp || char.image || char.photo || char.photoUrl || char.photoURL || char.profileImage || char.avatar || char.picture || '/assets/img/logo.png'
+      };
+    }).filter(entry => !!entry.email);
+
+    const byPid = new Map();
+    const byBase = new Map();
+    entries.forEach(entry => {
+      if(entry.pid) byPid.set(entry.pid, entry.email);
+      const list = byBase.get(entry.baseLocal) || [];
+      list.push(entry);
+      byBase.set(entry.baseLocal, list);
+    });
+
+    emailDirectory = { entries, byPid, byBase, countsSnapshot: new Map(counts) };
+    return emailDirectory;
+  })();
+
+  return emailDirectoryPromise;
+}
+
+function resolveEmailForCharacter(char, directory){
+  if(!char || !char.name) return '';
+  const baseLocal = baseLocalFromName(char.name);
+  if(!baseLocal) return '';
+
+  const pidKey = char.pid ? String(char.pid) : '';
+  if(pidKey && directory.byPid.has(pidKey)) return directory.byPid.get(pidKey);
+
+  const bucket = directory.byBase.get(baseLocal);
+  if(bucket && bucket.length){
+    if(bucket.length === 1) return bucket[0].email;
+    const dept = (char.department || '').toLowerCase();
+    const match = bucket.find(entry => (entry.department || '').toLowerCase() === dept);
+    return match ? match.email : bucket[0].email;
+  }
+
+  const snapshotCount = (directory.countsSnapshot.get(baseLocal) || 0) + 1;
+  const localPart = snapshotCount === 1 ? baseLocal : `${baseLocal}${snapshotCount}`;
+  return `${localPart}@site89.org`.toLowerCase();
 }
 
 // Request desktop notification permission on first load
@@ -50,20 +140,11 @@ function enableAudioOnInteraction() {
 
 // Get sender's profile picture from character database
 async function getSenderPfp(senderEmail, db) {
+  const normalized = (senderEmail || '').toLowerCase();
   try {
-    const q = query(
-      collection(db, 'characters'),
-      where('name', '!=', null)
-    );
-    const snapshot = await getDocs(q);
-    
-    for (const doc of snapshot.docs) {
-      const char = doc.data();
-      const charEmail = emailFromName(char.name);
-      if (charEmail === senderEmail && char.pfp) {
-        return char.pfp;
-      }
-    }
+    const directory = await getEmailDirectory(db);
+    const match = (directory.entries || []).find(entry => entry.email === normalized);
+    if(match && match.pfp) return match.pfp;
   } catch(e) {
     console.log('Could not fetch sender pfp:', e);
   }
@@ -110,7 +191,7 @@ function initMailNotifier() {
   // Enable audio on user interaction
   enableAudioOnInteraction();
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     // Clean up previous listener
     if(unsubscribe){ 
       unsubscribe(); 
@@ -124,13 +205,22 @@ function initMailNotifier() {
     try {
       const selected = JSON.parse(localStorage.getItem('selectedCharacter'));
       if(selected && selected.name){
-        myAddress = emailFromName(selected.name);
+        try {
+          const directory = await getEmailDirectory(db);
+          myAddress = resolveEmailForCharacter(selected, directory);
+        } catch(dirErr) {
+          console.warn('Directory resolution failed, using fallback:', dirErr);
+          const baseLocal = baseLocalFromName(selected.name);
+          myAddress = baseLocal ? `${baseLocal}@site89.org` : '';
+        }
       } else if(user.email){
         myAddress = user.email;
       }
     } catch(e){ 
       if(user.email) myAddress = user.email;
     }
+
+    myAddress = (myAddress || '').toLowerCase();
     
     if(!myAddress) {
       navMailBadge.style.display = 'none';

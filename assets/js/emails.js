@@ -1,13 +1,112 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import { getFirestore, collection, query, where, orderBy, getDocs, onSnapshot, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-// Helper: Build character email address from name: lastname.firstname@site89.org (always lowercase)
-function emailFromName(name){
+// Normalize a name into a local-part seed like "lastname.firstname"
+function baseLocalFromName(name){
   if(!name) return '';
   const parts = name.trim().split(/\s+/);
   const first = parts[0] ? parts[0].toLowerCase().replace(/[^a-z]/g,'') : '';
   const last = parts.length>1 ? parts[parts.length-1].toLowerCase().replace(/[^a-z]/g,'') : first;
-  return `${last}.${first}@site89.org`.toLowerCase();
+  return last && first ? `${last}.${first}` : '';
+}
+
+// Given a base local-part and running counts, return a unique email (appends numbers on duplicates)
+function makeUniqueEmail(baseLocal, counts){
+  if(!baseLocal) return '';
+  const current = counts.get(baseLocal) || 0;
+  const next = current + 1;
+  counts.set(baseLocal, next);
+  const localPart = next === 1 ? baseLocal : `${baseLocal}${next}`;
+  return `${localPart}@site89.org`.toLowerCase();
+}
+
+let emailDirectoryPromise = null;
+let emailDirectory = null;
+
+// Build a deterministic directory of character emails with collision handling
+async function getEmailDirectory(db){
+  if(emailDirectory) return emailDirectory;
+  if(emailDirectoryPromise) return emailDirectoryPromise;
+
+  emailDirectoryPromise = (async () => {
+    const raw = [];
+    try {
+      const snap = await getDocs(collection(db, 'characters'));
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        if(data && data.name) raw.push(data);
+      });
+    } catch(err) {
+      console.error('Failed to load characters for email directory:', err);
+      return { entries: [], byPid: new Map(), byBase: new Map(), countsSnapshot: new Map() };
+    }
+
+    // Sort for deterministic assignment (name, then pid if available)
+    raw.sort((a,b)=>{
+      const aName = (a.name||'').toLowerCase();
+      const bName = (b.name||'').toLowerCase();
+      if(aName !== bName) return aName.localeCompare(bName);
+      const aPid = (a.pid || '').toString();
+      const bPid = (b.pid || '').toString();
+      return aPid.localeCompare(bPid);
+    });
+
+    const counts = new Map();
+    const entries = raw.map(char => {
+      const baseLocal = baseLocalFromName(char.name);
+      const email = makeUniqueEmail(baseLocal, counts);
+      return {
+        email,
+        baseLocal,
+        pid: char.pid ? String(char.pid) : '',
+        department: char.department || '',
+        name: char.name || '',
+        image: char.image || char.photo || char.photoUrl || char.photoURL || char.profileImage || char.avatar || char.picture || null
+      };
+    }).filter(entry => !!entry.email);
+
+    const byPid = new Map();
+    const byBase = new Map();
+    entries.forEach(entry => {
+      if(entry.pid) byPid.set(entry.pid, entry.email);
+      const list = byBase.get(entry.baseLocal) || [];
+      list.push(entry);
+      byBase.set(entry.baseLocal, list);
+    });
+
+    emailDirectory = { entries, byPid, byBase, countsSnapshot: new Map(counts) };
+    return emailDirectory;
+  })();
+
+  return emailDirectoryPromise;
+}
+
+// Resolve a character's email using the directory (falls back to baseLocal if missing)
+function resolveEmailForCharacter(char, directory){
+  if(!char || !char.name){
+    return '';
+  }
+  const baseLocal = baseLocalFromName(char.name);
+  if(!baseLocal) return '';
+
+  const pidKey = char.pid ? String(char.pid) : '';
+  if(pidKey && directory.byPid.has(pidKey)){
+    return directory.byPid.get(pidKey);
+  }
+
+  const bucket = directory.byBase.get(baseLocal);
+  if(bucket && bucket.length){
+    if(bucket.length === 1) return bucket[0].email;
+    const dept = (char.department || '').toLowerCase();
+    const deptMatch = bucket.find(entry => (entry.department || '').toLowerCase() === dept);
+    if(deptMatch) return deptMatch.email;
+    return bucket[0].email;
+  }
+
+  // Fallback: generate next available using snapshot counts
+  const snapshotCount = (directory.countsSnapshot.get(baseLocal) || 0) + 1;
+  const localPart = snapshotCount === 1 ? baseLocal : `${baseLocal}${snapshotCount}`;
+  return `${localPart}@site89.org`.toLowerCase();
 }
 
 // Helper: Get divisions a character can send from (clearance 5+ for their division)
@@ -56,48 +155,37 @@ function isValidEmail(email){
 // Helper: Expand mailing lists (e.g., "SD@site89.org" → all characters with "SD/" in dept)
 async function expandMailingLists(recipients, db){
   const expanded = [];
-  // Normalize all recipients to lowercase for case-insensitive handling
   const normalizedRecipients = recipients.map(r => r.toLowerCase());
-  // Match division addresses (case-insensitive): bod@, io@, sd@, scd@, deo@, mtf@, ia@ followed by site89.org
   const mailingLists = normalizedRecipients.filter(r => /^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
   const personalEmails = normalizedRecipients.filter(r => !/^(bod|io|sd|scd|deo|mtf|ia)@site89\.org$/i.test(r));
-  
-  console.log('Mailing lists detected:', mailingLists);
-  console.log('Personal emails:', personalEmails);
-  
-  // Add personal emails as-is
+
   expanded.push(...personalEmails);
-  
-  // For each mailing list, expand to matching characters
+
+  if(!mailingLists.length) return [...new Set(expanded)];
+
+  const directory = await getEmailDirectory(db);
+  const entries = directory.entries || [];
+
   for(const list of mailingLists){
-    const divCode = list.split('@')[0].toLowerCase(); // "SD@" → "sd"
+    const divCode = list.split('@')[0].toLowerCase();
     const deptPrefixes = divCode === 'bod' ? ['AD/BOD', 'AD/BOD/'] : 
                          divCode === 'io' ? ['AD/IO', 'AD/IO/'] : 
                          divCode === 'sd' ? ['SD/', 'SD'] : 
-                         divCode === 'scd' ? ['ScD/', 'ScD'] : 
+                         divCode === 'scd' ? ['SCD/', 'SCD'] : 
                          divCode === 'deo' ? ['DEO/', 'DEO'] : 
                          divCode === 'mtf' ? ['DEO/MTF', 'DEO/MTF/'] : 
                          divCode === 'ia' ? ['DEO/IA', 'DEO/IA/'] : null;
-    
-    if(deptPrefixes){
-      try {
-        const charsSnap = await getDocs(collection(db, 'characters'));
-        charsSnap.forEach(snap => {
-          const ch = snap.data();
-          if(ch.department && ch.name){
-            const dept = String(ch.department).toUpperCase();
-            // Check if any prefix matches (case-insensitive)
-            if(deptPrefixes.some(prefix => dept.indexOf(prefix.toUpperCase()) !== -1)){
-              expanded.push(emailFromName(ch.name));
-            }
-          }
-        });
-        console.log('Mailing list', list, 'expanded to', expanded.length, 'total recipients');
-      } catch(e){ console.error('Mailing list expansion failed for', list, e); }
-    }
+
+    if(!deptPrefixes) continue;
+
+    entries.forEach(entry => {
+      const dept = (entry.department || '').toUpperCase();
+      if(deptPrefixes.some(prefix => dept.indexOf(prefix.toUpperCase()) !== -1)){
+        expanded.push(entry.email);
+      }
+    });
   }
-  
-  // Remove duplicates
+
   return [...new Set(expanded)];
 }
 
@@ -239,18 +327,19 @@ document.addEventListener('includesLoaded', () => {
     composeSendAs.innerHTML = '<option value="">Send as personal account</option>';
     if(directorDivisions && directorDivisions.length > 0){
       const divisionMap = {
-        'bod': 'Board of Directors (bod@site89.org)',
-        'io': 'Internal Operations (io@site89.org)',
-        'sd': 'Security Department (sd@site89.org)',
-        'scd': 'Scientific Department (scd@site89.org)',
-        'deo': 'External Operations (deo@site89.org)',
-        'mtf': 'Mobile Task Force (mtf@site89.org)',
-        'ia': 'Intelligence Agency (ia@site89.org)'
+        'bod': 'Board of Directors (bod.mgmt@site89.org)',
+        'io': 'Internal Operations (io.mgmt@site89.org)',
+        'sd': 'Security Department (sd.mgmt@site89.org)',
+        'scd': 'Scientific Department (scd.mgmt@site89.org)',
+        'deo': 'External Operations (deo.mgmt@site89.org)',
+        'mtf': 'Mobile Task Force (mtf.mgmt@site89.org)',
+        'ia': 'Intelligence Agency (ia.mgmt@site89.org)'
       };
       directorDivisions.forEach(div => {
         const opt = document.createElement('option');
-        opt.value = div + '@site89.org';
-        opt.textContent = divisionMap[div] || div + '@site89.org';
+        const mgmtAddr = div + '.mgmt@site89.org';
+        opt.value = mgmtAddr;
+        opt.textContent = divisionMap[div] || mgmtAddr;
         composeSendAs.appendChild(opt);
       });
     }
@@ -375,21 +464,17 @@ document.addEventListener('includesLoaded', () => {
     const normalizedEmail = email ? email.toLowerCase() : '';
     // Check cache first
     if(charactersCache[normalizedEmail]) return charactersCache[normalizedEmail];
-    
+
     try {
-      const charsSnap = await getDocs(collection(db, 'characters'));
-      charsSnap.forEach(snap => {
-        const ch = snap.data();
-        if(ch.name){
-          const charEmail = emailFromName(ch.name).toLowerCase();
-          const image = ch.image || ch.photo || ch.photoUrl || ch.photoURL || ch.profileImage || ch.avatar || ch.picture || null;
-          charactersCache[charEmail] = image;
-        }
+      const directory = await getEmailDirectory(db);
+      directory.entries.forEach(entry => {
+        const image = entry.image || null;
+        charactersCache[entry.email.toLowerCase()] = image;
       });
     } catch(e){ 
       console.error('Failed to fetch character images:', e); 
     }
-    
+
     return charactersCache[normalizedEmail] || null;
   }
 
@@ -418,8 +503,11 @@ document.addEventListener('includesLoaded', () => {
     if(!sender) return alert('No sender address set. Select a character or sign in.');
     
     // Validate director is allowed to send from chosen address
-    if(directorSendAddr && !directorDivisions.includes(directorSendAddr.split('@')[0].toLowerCase())){
+    if(directorSendAddr){
+      const sendCode = directorSendAddr.split('@')[0].replace('.mgmt','').toLowerCase();
+      if(!directorDivisions.includes(sendCode)){
       return alert('You do not have permission to send from ' + directorSendAddr);
+    }
     }
 
     // disable buttons while sending
@@ -746,8 +834,9 @@ document.addEventListener('includesLoaded', () => {
     const snaps = await getDocs(collection(db,'emails'));
     if (snaps.empty){
       const demoSenderEmail = currentUser ? currentUser.email : 'demo@site89.org';
-      await addDoc(collection(db,'emails'), { sender: 'director@site89.org', senderEmail: 'demo@site89.org', recipients: [myAddress], subject: 'Welcome to Site‑89 Mail', body: 'This is a demo message. Use Compose to send test emails between characters.', status: 'sent', ts: serverTimestamp() });
-      await addDoc(collection(db,'emails'), { sender: myAddress, senderEmail: demoSenderEmail, recipients: ['director@site89.org'], subject: 'Re: Welcome', body: 'Thanks — message received.', status: 'sent', ts: serverTimestamp() });
+      const directorDemo = 'director.mgmt@site89.org';
+      await addDoc(collection(db,'emails'), { sender: directorDemo, senderEmail: 'demo@site89.org', recipients: [myAddress], subject: 'Welcome to Site‑89 Mail', body: 'This is a demo message. Use Compose to send test emails between characters.', status: 'sent', ts: serverTimestamp() });
+      await addDoc(collection(db,'emails'), { sender: myAddress, senderEmail: demoSenderEmail, recipients: [directorDemo], subject: 'Re: Welcome', body: 'Thanks — message received.', status: 'sent', ts: serverTimestamp() });
     }
   }
 
@@ -760,19 +849,34 @@ document.addEventListener('includesLoaded', () => {
     // Use selectedCharacter if present, otherwise fallback to user email
     let selected = null;
     try { selected = JSON.parse(localStorage.getItem('selectedCharacter')); } catch(e){ selected = null; }
-    if (selected && selected.name){
-      myAddress = emailFromName(selected.name);
-      // Get director divisions for this character
-      directorDivisions = getDirectorDivisions();
+    
+    try {
+      if (selected && selected.name){
+        const directory = await getEmailDirectory(db);
+        myAddress = resolveEmailForCharacter(selected, directory);
+        directorDivisions = getDirectorDivisions();
+        updateSendAsOptions();
+      } else if (user && user.email){
+        myAddress = user.email;
+        directorDivisions = [];
+      } else {
+        myAddress = '';
+        directorDivisions = [];
+      }
+    } catch(err){
+      console.error('Failed to resolve character email:', err);
+      // Fallback: use simple name-based email or user email
+      if(selected && selected.name){
+        const baseLocal = baseLocalFromName(selected.name);
+        myAddress = baseLocal ? `${baseLocal}@site89.org` : (user && user.email ? user.email : '');
+      } else {
+        myAddress = user && user.email ? user.email : '';
+      }
+      directorDivisions = selected ? getDirectorDivisions() : [];
       updateSendAsOptions();
-    } else if (user && user.email){
-      myAddress = user.email;
-      directorDivisions = [];
-    } else {
-      myAddress = '';
-      directorDivisions = [];
     }
 
+    myAddress = (myAddress || '').toLowerCase();
     myAddressEl.textContent = myAddress || 'Not signed in';
 
     if(!myAddress){
