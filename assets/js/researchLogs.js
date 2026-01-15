@@ -22,6 +22,7 @@ function formatDate(ts){ if(!ts) return ''; try { return new Date(ts.seconds * 1
 // State
 let logs = [];
 let currentLogId = null;
+let versions = []; // Array of {clearance: number, content: string}
 
 // DOM elements
 const searchInput = document.getElementById('rlSearch');
@@ -31,6 +32,8 @@ const modalTitle = document.getElementById('rlModalTitle');
 const closeBtn = document.getElementById('rlCloseBtn');
 const cancelBtn = document.getElementById('rlCancelBtn');
 const loadBtn = document.getElementById('rlLoadBtn');
+const addVersionBtn = document.getElementById('rlAddVersion');
+const versionsContainer = document.getElementById('rlVersionsContainer');
 const form = document.getElementById('rlForm');
 const titleInput = document.getElementById('rlTitle');
 const clearanceInput = document.getElementById('rlClearance');
@@ -61,12 +64,119 @@ function resetForm(){
   modalTitle.textContent = 'New Research Log';
   linkedPreview.innerHTML = '';
   previewDiv.innerHTML = '';
+  versions = [];
+  renderVersions();
   setStatus('');
+}
+
+// Version management
+function addVersion(){
+  versions.push({ clearance: 1, content: '' });
+  renderVersions();
+}
+
+function removeVersion(index){
+  versions.splice(index, 1);
+  renderVersions();
+}
+
+// Expose removeVersion globally for inline handlers
+window.rlRemoveVersion = removeVersion;
+
+function renderVersions(){
+  if(!versionsContainer) return;
+  
+  versionsContainer.innerHTML = versions.map((v, i) => `
+    <div class="rl-version-block">
+      <div class="rl-version-header">
+        <div class="rl-version-label">Version ${i + 1} - Clearance Level</div>
+        <button type="button" class="rl-version-remove" onclick="window.rlRemoveVersion(${i})">✕ Remove</button>
+      </div>
+      <select class="rl-version-clearance" data-index="${i}" style="width:100%;padding:.6rem;margin-bottom:.5rem;background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:var(--text-primary)">
+        <option value="0" ${v.clearance === 0 ? 'selected' : ''}>Level 0 (Public)</option>
+        <option value="1" ${v.clearance === 1 ? 'selected' : ''}>Level 1</option>
+        <option value="2" ${v.clearance === 2 ? 'selected' : ''}>Level 2</option>
+        <option value="3" ${v.clearance === 3 ? 'selected' : ''}>Level 3</option>
+        <option value="4" ${v.clearance === 4 ? 'selected' : ''}>Level 4</option>
+        <option value="5" ${v.clearance === 5 ? 'selected' : ''}>Level 5 (Restricted)</option>
+      </select>
+      <div class="rl-version-grid">
+        <div class="rl-version-editor">
+          <div style="font-weight:600;margin-bottom:.5rem">Markdown Editor</div>
+          <textarea class="rl-version-content" data-index="${i}" placeholder="Content for this clearance level...">${v.content}</textarea>
+        </div>
+        <div>
+          <div style="font-weight:600;margin-bottom:.5rem">Live Preview</div>
+          <div class="rl-version-preview" id="preview-${i}"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  // Wire up event listeners
+  document.querySelectorAll('.rl-version-clearance').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      versions[index].clearance = parseInt(e.target.value);
+    });
+  });
+  
+  document.querySelectorAll('.rl-version-content').forEach(textarea => {
+    textarea.addEventListener('input', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      versions[index].content = e.target.value;
+      updateVersionPreview(index);
+    });
+  });
+  
+  // Update all previews
+  versions.forEach((v, i) => updateVersionPreview(i));
+}
+
+function updateVersionPreview(index){
+  const previewEl = document.getElementById(`preview-${index}`);
+  if(!previewEl || !window.marked) return;
+  const content = versions[index]?.content || '';
+  previewEl.innerHTML = content ? window.marked.parse(content) : '<em>Preview will appear here...</em>';
+}
+
+// Helper to get appropriate version for user
+function getVersionForUser(log){
+  if(!log.versions || log.versions.length === 0) {
+    // Fallback to old single-version format
+    return { clearance: log.clearanceLevel || 0, content: log.contentMd || '' };
+  }
+  
+  const userC = userClearance();
+  
+  // Find versions user has clearance for (clearance >= version.clearance)
+  const accessible = log.versions.filter(v => !isNaN(userC) && userC >= v.clearance);
+  
+  let selectedVersion;
+  if(accessible.length > 0) {
+    // Return highest clearance version they can access
+    selectedVersion = accessible.reduce((highest, current) => 
+      current.clearance > highest.clearance ? current : highest
+    );
+  } else {
+    // Fallback: return lowest clearance version available
+    selectedVersion = log.versions.reduce((lowest, current) => 
+      current.clearance < lowest.clearance ? current : lowest
+    );
+  }
+  
+  // Normalize property name: contentMd -> content
+  return {
+    clearance: selectedVersion.clearance,
+    content: selectedVersion.contentMd || selectedVersion.content || ''
+  };
 }
 
 function openModal(){
   if(!canEdit()){ alert('Only ScD/R&D personnel or Level 5+ can create/edit logs.'); return; }
   resetForm();
+  versions = [{ clearance: 1, content: '' }]; // Initialize with one version
+  renderVersions();
   modal.style.display = 'flex';
   modal.setAttribute('aria-hidden', 'false');
   titleInput.focus();
@@ -107,10 +217,17 @@ async function loadExisting(){
     clearanceInput.value = data.clearanceLevel || '1';
     tagsInput.value = (data.tags || []).join(', ');
     linkedItemsInput.value = (data.linkedItems || []).join(', ');
-    contentInput.value = data.contentMd || '';
+    
+    // Load versions
+    if(data.versions && data.versions.length > 0){
+      versions = data.versions.map(v => ({ clearance: v.clearance || 0, content: v.contentMd || '' }));
+    } else {
+      // Fallback for old format
+      versions = [{ clearance: data.clearanceLevel || 1, content: data.contentMd || '' }];
+    }
     
     updateLinkedPreview();
-    updateMarkdownPreview();
+    renderVersions();
     setStatus('');
   } catch(err){
     console.error('Error loading log:', err);
@@ -157,8 +274,10 @@ async function handleSubmit(e){
   const clearanceLevel = parseInt(clearanceInput.value);
   if(isNaN(clearanceLevel)){ setStatus('Select clearance level.', true); return; }
   
-  const content = contentInput.value.trim();
-  if(!content){ setStatus('Content required.', true); return; }
+  // Validate versions
+  if(versions.length === 0){ setStatus('Add at least one clearance version.', true); return; }
+  const hasContent = versions.some(v => v.content && v.content.trim());
+  if(!hasContent){ setStatus('At least one version must have content.', true); return; }
   
   const tags = tagsInput.value.split(',').map(s => s.trim()).filter(Boolean);
   const linkedItems = linkedItemsInput.value.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
@@ -176,7 +295,7 @@ async function handleSubmit(e){
     clearanceLevel,
     tags,
     linkedItems,
-    contentMd: content,
+    versions: versions.map(v => ({ clearance: v.clearance, contentMd: v.content })),
     updatedAt: serverTimestamp(),
     createdByUid: snap.exists() ? (snap.data().createdByUid || auth.currentUser.uid) : auth.currentUser.uid,
     createdByEmail: snap.exists() ? (snap.data().createdByEmail || auth.currentUser.email) : auth.currentUser.email,
@@ -254,7 +373,12 @@ function renderList(){
 // View modal
 function openViewModal(log){
   viewTitle.textContent = log.title || '(untitled)';
-  viewMeta.textContent = `${log.author || 'Unknown'} • ${log.department || ''} • ${formatDate(log.createdAt)} • Clearance ${log.clearanceLevel || '?'}`;
+  
+  // Get appropriate version for user
+  const version = getVersionForUser(log);
+  const versionInfo = log.versions && log.versions.length > 1 ? ` • Viewing Level ${version.clearance} version` : '';
+  
+  viewMeta.textContent = `${log.author || 'Unknown'} • ${log.department || ''} • ${formatDate(log.createdAt)} • Clearance ${log.clearanceLevel || '?'}${versionInfo}`;
   
   if(log.linkedItems && log.linkedItems.length){
     viewLinked.innerHTML = '<strong>Linked to:</strong> ' + log.linkedItems.map(i => `<span class="rl-linked">${i}</span>`).join('');
@@ -262,8 +386,8 @@ function openViewModal(log){
     viewLinked.innerHTML = '';
   }
   
-  if(log.contentMd && window.marked){
-    viewContent.innerHTML = window.marked.parse(log.contentMd);
+  if(version.content && window.marked){
+    viewContent.innerHTML = window.marked.parse(version.content);
   } else {
     viewContent.innerHTML = '<em>No content available.</em>';
   }
@@ -296,10 +420,16 @@ function openViewModal(log){
         clearanceInput.value = data.clearanceLevel || '1';
         tagsInput.value = (data.tags || []).join(', ');
         linkedItemsInput.value = (data.linkedItems || []).join(', ');
-        contentInput.value = data.contentMd || '';
+        
+        // Load versions
+        if(data.versions && data.versions.length > 0){
+          versions = data.versions.map(v => ({ clearance: v.clearance || 0, content: v.contentMd || '' }));
+        } else {
+          versions = [{ clearance: data.clearanceLevel || 1, content: data.contentMd || '' }];
+        }
         
         updateLinkedPreview();
-        updateMarkdownPreview();
+        renderVersions();
         
         modal.style.display = 'flex';
         modal.setAttribute('aria-hidden', 'false');
@@ -349,6 +479,7 @@ function initializeResearchLogs(){
   closeBtn?.addEventListener('click', closeModal);
   cancelBtn?.addEventListener('click', closeModal);
   loadBtn?.addEventListener('click', loadExisting);
+  addVersionBtn?.addEventListener('click', addVersion);
   form?.addEventListener('submit', handleSubmit);
   
   viewCloseBtn?.addEventListener('click', closeViewModal);

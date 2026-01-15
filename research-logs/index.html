@@ -78,9 +78,19 @@
         .rl-actions{display:flex;gap:.5rem;margin-top:1.5rem}
         .rl-status{margin-top:.5rem;font-size:.9rem}
 
+        /* Version Management */
+        .rl-version-block{background:var(--bg-dark);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1rem;margin-bottom:1rem;position:relative}
+        .rl-version-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+        .rl-version-label{font-weight:600;color:var(--accent-mint)}
+        .rl-version-remove{background:transparent;border:none;color:var(--accent-red);cursor:pointer;padding:.2rem .5rem;font-size:.9rem}
+        .rl-version-remove:hover{text-decoration:underline}
+        .rl-version-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .rl-version-editor textarea{min-height:200px;font-family:monospace;resize:vertical;width:100%;padding:.6rem;background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:var(--text-primary)}
+        .rl-version-preview{background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1rem;min-height:200px;overflow-y:auto;line-height:1.6}
+
         @media (max-width:720px){
           .rl-header{flex-direction:column;align-items:stretch}
-          .rl-grid,.rl-editor-grid{grid-template-columns:1fr}
+          .rl-grid,.rl-editor-grid,.rl-version-grid{grid-template-columns:1fr}
           .rl-table th:nth-child(3),.rl-table td:nth-child(3){display:none}
         }
       </style>
@@ -147,7 +157,15 @@
             <label>
               Content (Markdown) *
               <div style="font-size:.9rem;color:var(--text-light);margin-top:.2rem">Use Markdown formatting: **bold**, *italic*, # headers, - lists, [links](url)</div>
+              <div style="margin-top:.5rem;padding:.5rem;background:rgba(78,250,170,0.05);border:1px solid rgba(78,250,170,0.1);border-radius:4px">
+                <strong style="color:var(--accent-mint)">Multi-Clearance System</strong>
+                <p style="font-size:.85rem;color:var(--text-light);margin:.3rem 0 0 0">You can create multiple versions for different clearance levels. Users see the highest version they have access to. If no version exists at their level, they see the lowest available version.</p>
+              </div>
             </label>
+            
+            <div id="rlVersionsContainer"></div>
+            
+            <button type="button" id="rlAddVersion" class="rl-btn-secondary" style="margin-bottom:1rem">+ Add Clearance Version</button>
             
             <div class="rl-editor-grid">
               <div>
