@@ -19,7 +19,7 @@ function getSelectedCharacter(){ try { return JSON.parse(localStorage.getItem('s
 function parseClearance(v){ if(v === undefined || v === null) return NaN; if(typeof v === 'number') return v; const s = String(v); const m = s.match(/\d+/); return m ? parseInt(m[0],10) : NaN; }
 function userClearance(){ const ch = getSelectedCharacter(); return ch ? parseClearance(ch.clearance) : NaN; }
 function userDepartment(){ const ch = getSelectedCharacter(); return ch && ch.department ? ch.department : ''; }
-function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase(); return d.includes('research') || d.includes('r&d') || d.includes('scien') || d.includes('scd') || d.includes('rnd'); }
+function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase().replace(/[^a-z0-9]/g, ''); return d.includes('research') || d.includes('rd') || d.includes('scien') || d.includes('scd') || d.includes('scientificdepartment'); }
 function displayName(){ const ch = getSelectedCharacter(); if(ch && ch.name) return ch.name; return 'Unknown'; }
 
 function formatItemNumber(raw){ const s = (raw || '').toUpperCase().replace(/\s+/g,''); const digits = s.match(/\d+/); if(!digits) return s || 'SCP-000'; const padded = digits[0].padStart(3,'0'); return `SCP-${padded}`; }

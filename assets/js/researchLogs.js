@@ -10,7 +10,11 @@ function getSelectedCharacter(){ try { return JSON.parse(localStorage.getItem('s
 function parseClearance(v){ if(v === undefined || v === null) return NaN; if(typeof v === 'number') return v; const s = String(v); const m = s.match(/\d+/); return m ? parseInt(m[0],10) : NaN; }
 function userClearance(){ const ch = getSelectedCharacter(); return ch ? parseClearance(ch.clearance) : NaN; }
 function userDepartment(){ const ch = getSelectedCharacter(); return ch && ch.department ? ch.department : ''; }
-function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase(); return d.includes('research') || d.includes('r&d') || d.includes('scien') || d.includes('scd') || d.includes('rnd'); }
+function isDeptAllowed(dept){ 
+  if(!dept) return false; 
+  const d = dept.toLowerCase().replace(/[^a-z0-9]/g, ''); // Remove spaces/special chars
+  return d.includes('research') || d.includes('rd') || d.includes('scien') || d.includes('scd') || d.includes('scientificdepartment'); 
+}
 function canEdit(){ const c = userClearance(); if(!isNaN(c) && c >= 5) return true; return isDeptAllowed(userDepartment()); }
 function displayName(){ const ch = getSelectedCharacter(); return ch ? (ch.name || auth.currentUser?.email || 'Unknown') : (auth.currentUser?.email || 'Unknown'); }
 function formatDate(ts){ if(!ts) return ''; try { return new Date(ts.seconds * 1000).toLocaleDateString(); } catch(e){ return ''; } }
@@ -319,9 +323,25 @@ function closeViewModal(){
 
 // Initialize
 function initializeResearchLogs(){
+  // Debug logging
+  const dept = userDepartment();
+  const clearance = userClearance();
+  const canEditResult = canEdit();
+  console.log('🔍 Research Logs Permission Check:', { 
+    department: dept, 
+    clearance, 
+    isDeptAllowed: isDeptAllowed(dept),
+    canEdit: canEditResult 
+  });
+  
   // Show new button if authorized
   setTimeout(() => {
-    if(canEdit()) newBtn.style.display = 'inline-block';
+    if(canEdit()) {
+      newBtn.style.display = 'inline-block';
+      console.log('✅ Showing New Log button');
+    } else {
+      console.log('❌ Hiding New Log button');
+    }
   }, 50);
   
   // Wire buttons

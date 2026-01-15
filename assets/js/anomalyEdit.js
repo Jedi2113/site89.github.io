@@ -6,7 +6,7 @@ function getSelectedCharacter(){ try { return JSON.parse(localStorage.getItem('s
 function parseClearance(v){ if(v === undefined || v === null) return NaN; if(typeof v === 'number') return v; const s = String(v); const m = s.match(/\d+/); return m ? parseInt(m[0],10) : NaN; }
 function userClearance(){ const ch = getSelectedCharacter(); return ch ? parseClearance(ch.clearance) : NaN; }
 function userDepartment(){ const ch = getSelectedCharacter(); return ch && ch.department ? ch.department : ''; }
-function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase(); return d.includes('research') || d.includes('r&d') || d.includes('scien') || d.includes('scd') || d.includes('rnd'); }
+function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase().replace(/[^a-z0-9]/g, ''); return d.includes('research') || d.includes('rd') || d.includes('scien') || d.includes('scd') || d.includes('scientificdepartment'); }
 function canEdit(){ const c = userClearance(); if(!isNaN(c) && c >= 4) return true; return isDeptAllowed(userDepartment()); }
 
 // Local storage key
