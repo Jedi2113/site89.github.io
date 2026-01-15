@@ -142,15 +142,29 @@ function updateVersionPreview(index){
 
 // Helper to get appropriate version for user
 function getVersionForUser(log){
+  console.log('🔍 getVersionForUser called', { 
+    logTitle: log.title, 
+    hasVersions: !!log.versions, 
+    versionCount: log.versions?.length 
+  });
+  
   if(!log.versions || log.versions.length === 0) {
     // Fallback to old single-version format
+    console.log('📜 Using single-version fallback');
     return { clearance: log.clearanceLevel || 0, content: log.contentMd || '' };
   }
   
   const userC = userClearance();
+  console.log('👤 User clearance:', userC);
+  console.log('📚 Available versions:', log.versions.map(v => ({ 
+    clearance: v.clearance, 
+    hasContent: !!(v.contentMd || v.content),
+    contentLength: (v.contentMd || v.content || '').length
+  })));
   
   // Find versions user has clearance for (clearance >= version.clearance)
   const accessible = log.versions.filter(v => !isNaN(userC) && userC >= v.clearance);
+  console.log('✅ Accessible versions:', accessible.map(v => v.clearance));
   
   let selectedVersion;
   if(accessible.length > 0) {
@@ -164,6 +178,14 @@ function getVersionForUser(log){
       current.clearance < lowest.clearance ? current : lowest
     );
   }
+  
+  console.log('🎯 Selected version:', { 
+    clearance: selectedVersion.clearance, 
+    hasContentMd: !!selectedVersion.contentMd,
+    hasContent: !!selectedVersion.content,
+    contentMdLength: (selectedVersion.contentMd || '').length,
+    contentLength: (selectedVersion.content || '').length
+  });
   
   // Normalize property name: contentMd -> content
   return {
