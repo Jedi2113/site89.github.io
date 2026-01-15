@@ -117,12 +117,30 @@ function renderList(){
   const dis = disruptionFilter?.value || 'all';
   const userC = userClearance();
   const deptOk = isDeptAllowed(userDepartment());
+  
+  console.log('📋 Rendering list - User Clearance:', userC, 'Dept OK:', deptOk, 'Dept:', userDepartment());
+  
   const filtered = anomalies.filter(a => {
     // clearance gate per item: user can view if dept is allowed OR user clearance >= required
     const req = parseClearance(a.clearanceLevel);
-    const userHasClearance = !Number.isNaN(userC) && userC >= req;
-    const allowed = deptOk || userHasClearance;
-    if(!allowed) return false;
+    
+    // ScD/R&D departments can see all clearance levels
+    if(!deptOk) {
+      // Not in special dept, must have sufficient clearance
+      // Both userC and req must be valid numbers, and userC must be >= req
+      if(Number.isNaN(userC) || Number.isNaN(req)) {
+        console.log(`❌ ${a.itemNumber}: Invalid clearance (userC=${userC}, req=${req})`);
+        return false;
+      }
+      if(userC < req) {
+        console.log(`❌ ${a.itemNumber}: Insufficient clearance (userC=${userC} < req=${req})`);
+        return false;
+      }
+      console.log(`✅ ${a.itemNumber}: Clearance OK (userC=${userC} >= req=${req})`);
+    } else {
+      console.log(`✅ ${a.itemNumber}: ScD/R&D bypass`);
+    }
+    
     if(cls !== 'all' && a.containmentClass !== cls) return false;
     if(risk !== 'all' && a.riskClass !== risk) return false;
     if(dis !== 'all' && a.disruptionClass !== dis) return false;
