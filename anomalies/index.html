@@ -1,256 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- SECURITY LOCKDOWN - LOAD FIRST -->
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site-89 Anomalies</title>
-
-  <!-- Fonts & CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Containment Database — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
-  <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
     ThemeManager.init();
   </script>
-
-  <style>
-    .doom-easter-egg {
-      position: fixed;
-      left: -45px;
-      top: 15%;
-      transform: rotate(15deg);
-      font-size: 3rem;
-      color: #ff6b6b;
-      cursor: pointer;
-      z-index: 999;
-      transition: all 0.3s ease;
-      animation: demonPeek 4s ease-in-out infinite;
-      text-shadow: 0 0 15px rgba(255, 107, 107, 0.8), 0 0 30px rgba(176, 0, 0, 0.5);
-      filter: drop-shadow(0 0 10px #ff6b6b);
-    }
-
-    .doom-easter-egg:hover {
-      left: 0;
-      transform: rotate(0deg) scale(1.3);
-      animation: none;
-    }
-
-    @keyframes demonPeek {
-      0%, 100% { left: -45px; }
-      50% { left: -30px; }
-    }
-
-    @media (max-width: 768px) {
-      .doom-easter-egg {
-        font-size: 2rem;
-        left: -30px;
-      }
-      .doom-easter-egg:hover {
-        left: 5px;
-      }
-      @keyframes demonPeek {
-        0%, 100% { left: -30px; }
-        50% { left: -20px; }
-      }
-    }
-
-    .tab-buttons {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
-    .tab-buttons div {
-      padding: 8px 15px;
-      background-color: #1f2125;
-      border: 2px solid #8B0000;
-      border-radius: 6px;
-      color: #fff;
-    }
-    .tab-buttons div.active {
-      background-color: #8B0000;
-      color: #fff;
-    }
-    .tab-content {
-      display: none;
-      background-color: #1f2125;
-      padding: 15px;
-      border: 2px solid #8B0000;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    .tab-content table {
-      width: 100%;
-      border-collapse: collapse;
-      color: #fff;
-    }
-    .tab-content th, .tab-content td {
-      padding: 8px;
-      border: 1px solid #444;
-      text-align: left;
-    }
-    .tab-content th {
-      background-color: #8B0000;
-    }
-    .section-header {
-      background-color: #8B0000;
-      color: #fff;
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-  </style>
 </head>
 <body>
-
-  <!-- Header & Navbar -->
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
-  <!-- Hidden DOOM Easter Egg -->
-  <a href="/games/doom/" class="doom-easter-egg" title="RIP AND TEAR">
-    <i class="fa-solid fa-skull-crossbones"></i>
-  </a>
+  <main class="content">
+    <section class="about-box">
+      <h1>Containment Database</h1>
+      <p>Anomaly files authored by research staff. Creating/editing requires ScD/R&D department or Level 5 clearance. Viewing respects per-file clearance.</p>
+    </section>
 
-  <section class="content ms-anomalies">
-    <style>
-      /* M365-style layout */
-      .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
-      .ms-title h1{margin:0;font-size:1.6rem}
-      .ms-title p{margin:0;color:var(--text-light);opacity:.9}
-      .ms-toolbar{display:flex;align-items:center;gap:.6rem}
-      .ms-search{padding:.56rem .8rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:280px}
-      .ms-filters{display:flex;gap:.5rem}
-      .table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
-      .table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
-      .table th,.table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
-      .click-row{display:block;color:inherit;text-decoration:none}
-      .pill{display:inline-block;padding:.25rem .5rem;border-radius:6px;font-weight:700;font-size:.85rem}
-      .pill.Safe{background:rgba(78,250,170,0.08);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.06)}
-      .pill.Euclid{background:rgba(0,124,107,0.07);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.06)}
-      .pill.Keter{background:rgba(146,0,0,0.06);color:var(--accent-red);border:1px solid rgba(146,0,0,0.06)}
-      .empty{padding:1.2rem;color:var(--text-light)}
-      @media (max-width:720px){ .ms-header{flex-direction:column;align-items:stretch}.ms-toolbar{justify-content:space-between} .table th:nth-child(3), .table td:nth-child(3){display:none} }
-    </style>
+    <section class="about-box ms-logs">
+      <style>
+        .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+        .ms-title h1{margin:0;font-size:1.5rem}
+        .ms-title .ms-sub{margin:0;color:var(--text-light);font-size:.95rem}
+        .ms-toolbar{display:flex;align-items:center;gap:.6rem}
+        .ms-search{padding:.5rem .7rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:220px}
+        .ms-btn-new{padding:.45rem .8rem;border-radius:6px;background:var(--accent-mint);color:var(--bg-dark);border:none;font-weight:700;cursor:pointer;transition:all 0.2s}
+        .ms-btn-new:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(78,250,170,0.3)}
+        .ms-table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
+        .ms-table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
+        .ms-table th,.ms-table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
+        .click-row{display:block;color:inherit;text-decoration:none}
+        .pill{display:inline-block;padding:.25rem .5rem;border-radius:6px;font-weight:700;font-size:.85rem}
+        .pill.Safe{background:rgba(78,250,170,0.08);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.06)}
+        .pill.Euclid{background:rgba(0,124,107,0.07);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.06)}
+        .pill.Keter{background:rgba(146,0,0,0.06);color:var(--accent-red);border:1px solid rgba(146,0,0,0.06)}
+        .empty{padding:1.2rem;color:var(--text-light)}
+        .modal-content{background:var(--bg-card);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.4);max-width:1100px !important}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);background:linear-gradient(135deg, rgba(78,250,170,0.06) 0%, rgba(0,124,107,0.03) 100%)}
+        .modal-header h2{margin:0;font-size:1.4rem;font-weight:900}
+        .an-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+        .an-form-grid label{display:flex;flex-direction:column;gap:.4rem;font-weight:600;font-size:.9rem}
+        .an-form-grid input, .an-form-grid select{padding:.6rem;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:rgba(255,255,255,0.02);color:inherit;font-size:.95rem;transition:all 0.2s}
+        .an-form-grid input:focus, .an-form-grid select:focus{outline:none;border-color:var(--accent-mint);background:rgba(78,250,170,0.04);box-shadow:0 0 8px rgba(78,250,170,0.15)}
+        textarea{font-family:var(--font-mono);font-size:.9rem;padding:.6rem;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:rgba(255,255,255,0.02);color:inherit;resize:vertical;transition:all 0.2s}
+        textarea:focus{outline:none;border-color:var(--accent-mint);background:rgba(78,250,170,0.04);box-shadow:0 0 8px rgba(78,250,170,0.15)}
+        .preview-card{background:rgba(78,250,170,0.03);border:1px solid rgba(78,250,170,0.08);border-radius:6px;padding:.8rem;overflow-y:auto;font-size:.9rem;line-height:1.6}
+        .form-buttons{display:flex;gap:.6rem;align-items:center;margin-top:1.5rem;flex-wrap:wrap;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08)}
+        .btn-primary, .btn-secondary{padding:.6rem 1.2rem;border-radius:6px;border:none;font-weight:700;cursor:pointer;transition:all 0.2s;font-size:.95rem}
+        .btn-primary{background:var(--accent-mint);color:var(--bg-dark)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(78,250,170,0.3)}
+        .btn-secondary{background:rgba(78,250,170,0.15);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.3)}
+        .btn-secondary:hover{background:rgba(78,250,170,0.25);border-color:var(--accent-mint)}
+        #loadExistingBtn{background:rgba(0,212,232,0.2);color:#00d4e8;border:2px solid rgba(0,212,232,0.4);padding:.5rem 1rem;font-size:.9rem;font-weight:700}
+        #loadExistingBtn:hover{background:rgba(0,212,232,0.3);border-color:#00d4e8;box-shadow:0 0 12px rgba(0,212,232,0.3)}
+        .feedback{margin:0;padding:.5rem .8rem;border-radius:4px;font-size:.9rem;font-weight:600}
+        @media (max-width:720px){ .ms-header{flex-direction:column;align-items:stretch}.ms-toolbar{justify-content:space-between} .ms-table th:nth-child(3), .ms-table td:nth-child(3){display:none} }
+      </style>
 
-    <div class="ms-header">
-      <div class="ms-title">
-        <h1>Containment Database</h1>
-        <p>Quick list of site anomalies — click any row to open the full entry.</p>
-      </div>
+      <div class="ms-header">
+        <div class="ms-title">
+          <h1>Anomalies</h1>
+          <p class="ms-sub">Live index sourced from Firestore. Filter by class/risk/disruption, or search by SCP number and text.</p>
+        </div>
 
-      <div class="ms-toolbar">
-        <input id="anomalySearch" class="ms-search" placeholder="Search by SCP ID or nickname…">
-        <div class="ms-filters">
-          <select id="classFilter">
-            <option value="all">All classes</option>
-            <option value="Safe">Safe</option>
-            <option value="Euclid">Euclid</option>
-            <option value="Keter">Keter</option>
-          </select>
+        <div class="ms-toolbar">
+          <input id="anomalySearch" class="ms-search" placeholder="Search anomalies…">
+          <button id="newAnomalyBtn" class="ms-btn-new" style="display:none">+ New</button>
         </div>
       </div>
-    </div>
 
-    <table class="table" aria-describedby="tableDesc">
-      <thead>
-        <tr><th style="width:160px">Item</th><th style="width:160px">Class</th><th>Nickname</th></tr>
-      </thead>
-      <tbody id="anomalyTableBody">
-        <tr><td colspan="3" class="empty">Loading anomalies…</td></tr>
-      </tbody>
-    </table>
-    <div id="tableDesc" style="display:none">Click any row to open full anomaly file.</div>
-  </section>
+      <div id="createModal" class="modal" aria-hidden="true" style="display:none">
+        <div class="modal-content" role="dialog" aria-modal="true" style="max-width:1000px;">
+          <div class="modal-header">
+            <h2>Create / Edit Anomaly</h2>
+            <button id="closeModalBtn" class="btn-link" title="Close">✕</button>
+          </div>
+
+          <form id="anomalyForm" style="padding:1.5rem">
+            <div style="background:rgba(0,212,232,0.08);border:1px solid rgba(0,212,232,0.2);border-radius:8px;padding:1rem;margin-bottom:1rem">
+              <strong style="color:#00d4e8;display:block;margin-bottom:.5rem">💡 Creating or Editing?</strong>
+              <p style="margin:0;font-size:.9rem;color:var(--text-light)">Enter an SCP number and click <strong>📂 Load Existing</strong> to edit an existing anomaly, or fill in all fields to create a new one.</p>
+            </div>
+            <div class="an-form-grid">
+              <label>Item Number (SCP-000)
+                <input id="itemNumber" required placeholder="SCP-131">
+              </label>
+              <label>Nickname (optional)
+                <input id="nickname" placeholder="Eye Pods">
+              </label>
+              <label>Photo URL (optional)
+                <input id="photoUrl" placeholder="https://...">
+              </label>
+              <label>Containment Class
+                <select id="containmentClass" required>
+                  <option value="">Select</option>
+                  <option>Safe</option>
+                  <option>Euclid</option>
+                  <option>Keter</option>
+                  <option>Thaumiel</option>
+                  <option>Neutralized</option>
+                  <option>Explained</option>
+                </select>
+              </label>
+              <label>Risk Class
+                <select id="riskClass" required>
+                  <option value="">Select</option>
+                  <option>Notice</option>
+                  <option>Caution</option>
+                  <option>Warning</option>
+                  <option>Danger</option>
+                  <option>Critical</option>
+                </select>
+              </label>
+              <label>Disruption Class
+                <select id="disruptionClass" required>
+                  <option value="">Select</option>
+                  <option>Dark</option>
+                  <option>Vlam</option>
+                  <option>Keneq</option>
+                  <option>Ekhi</option>
+                  <option>Amida</option>
+                </select>
+              </label>
+              <label>Viewing Clearance Required
+                <select id="clearanceLevel" required>
+                  <option value="">Select</option>
+                  <option value="1">Level 1 (Intern)</option>
+                  <option value="2">Level 2</option>
+                  <option value="3">Level 3</option>
+                  <option value="4">Level 4</option>
+                  <option value="5">Level 5</option>
+                </select>
+              </label>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-weight:600;font-size:.9rem">Special Containment Procedures (Markdown)
+                  <textarea id="procedures" placeholder="Detail containment procedures..." required style="height:300px;flex:1"></textarea>
+                </label>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-weight:600;font-size:.9rem">Procedures Preview
+                  <div id="proceduresPreview" class="preview-card" style="height:300px;overflow-y:auto"></div>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-weight:600;font-size:.9rem">Description (Markdown)
+                  <textarea id="description" placeholder="Describe the anomaly..." required style="height:300px;flex:1"></textarea>
+                </label>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label style="font-weight:600;font-size:.9rem">Description Preview
+                  <div id="descriptionPreview" class="preview-card" style="height:300px;overflow-y:auto"></div>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:.6rem;align-items:center;margin-top:1rem;flex-wrap:wrap;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08)">
+              <button class="btn-primary" type="submit">Save Anomaly</button>
+              <button class="btn-secondary" type="button" id="loadExistingBtn">📂 Load Existing</button>
+              <p id="formStatus" class="feedback"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <h2 style="margin-top:1rem">Entries</h2>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+        <select id="classFilter">
+          <option value="all">All classes</option>
+          <option>Safe</option>
+          <option>Euclid</option>
+          <option>Keter</option>
+          <option>Thaumiel</option>
+          <option>Neutralized</option>
+          <option>Explained</option>
+        </select>
+        <select id="riskFilter">
+          <option value="all">All risk</option>
+          <option>Notice</option>
+          <option>Caution</option>
+          <option>Warning</option>
+          <option>Danger</option>
+          <option>Critical</option>
+        </select>
+        <select id="disruptionFilter">
+          <option value="all">All disruption</option>
+          <option>Dark</option>
+          <option>Vlam</option>
+          <option>Keneq</option>
+          <option>Ekhi</option>
+          <option>Amida</option>
+        </select>
+      </div>
+
+      <table class="ms-table" aria-describedby="anomaliesDesc">
+        <thead>
+          <tr><th style="width:140px">Item</th><th style="width:140px">Containment</th><th style="width:140px">Risk</th><th style="width:140px">Disruption</th><th>Nickname</th></tr>
+        </thead>
+        <tbody id="anomalyTableBody">
+          <tr><td colspan="5" class="empty">Loading…</td></tr>
+        </tbody>
+      </table>
+      <div id="anomaliesDesc" style="display:none">Click any anomaly to view.</div>
+    </section>
+  </main>
 
   <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
-
-  <script type="module">
-    (function(){
-      // Anomaly data (local fallback)
-      const anomalies = [
-        { id: 'SCP-131', clazz: 'Safe', nick: 'The Eye Pods' },
-        { id: 'SCP-160', clazz: 'Euclid', nick: 'Predator Drone' },
-        { id: 'SCP-178', clazz: 'Safe', nick: '3-D Glasses' },
-        { id: 'SCP-330', clazz: 'Safe', nick: 'Take Only Two' },
-        { id: 'SCP-346', clazz: 'Safe', nick: 'Pterry' },
-        { id: 'SCP-553', clazz: 'Euclid', nick: 'Crystalline Butterflies' },
-        { id: 'SCP-811', clazz: 'Euclid', nick: 'Swamp Woman' },
-        { id: 'SCP-999', clazz: 'Safe', nick: 'The Tickle Monster' },
-        { id: 'SCP-1162', clazz: 'Euclid', nick: 'A hole in the wall' },
-        { id: 'SCP-2295', clazz: 'Safe', nick: 'Patchwork Bear' },
-
-        { id: 'SCP-009', clazz: 'Euclid', nick: 'Red Ice' },
-        { id: 'SCP-049', clazz: 'Euclid', nick: 'The Plague Doctor' },
-        { id: 'SCP-063', clazz: 'Safe', nick: "The World's Best Toothbrush" },
-        { id: 'SCP-109', clazz: 'Euclid', nick: 'Infinite Canteen' },
-        { id: 'SCP-151', clazz: 'Euclid', nick: 'The Painting' },
-        { id: 'SCP-524', clazz: 'Safe', nick: 'Walter the Omnivorous Rabbit' },
-        { id: 'SCP-548', clazz: 'Euclid', nick: 'Ice Spider' },
-        { id: 'SCP-1025', clazz: 'Safe', nick: 'An Encyclopedia of Common Diseases' },
-
-        { id: 'SCP-098', clazz: 'Euclid', nick: 'Surgeon Crabs' },
-        { id: 'SCP-914', clazz: 'Safe', nick: 'The Clockworks' },
-        { id: 'SCP-939', clazz: 'Keter', nick: 'With Many Voices' },
-
-        { id: 'SCP-689', clazz: 'Keter', nick: 'Haunter in the Dark' },
-        { id: 'SCP-718', clazz: 'Keter', nick: 'Eyeball' },
-        { id: 'SCP-966', clazz: 'Euclid', nick: 'Sleep Killer' },
-        { id: 'SCP-1048', clazz: 'Keter', nick: 'Builder Bear' },
-        { id: 'SCP-3199', clazz: 'Keter', nick: 'Humans, Refuted' },
-        { id: 'SCP-294', clazz: 'Euclid', nick: 'The Coffee Machine' },
-
-        { id: 'SCP-087', clazz: 'Euclid', nick: 'The Stairwell' },
-        { id: 'SCP-1000', clazz: 'Keter', nick: 'Bigfoot' },
-        { id: 'SCP-1057', clazz: 'Safe', nick: 'Absence of Shark' },
-        { id: 'SCP-2761', clazz: 'Euclid', nick: 'Most of an Allosaurus' }
-      ];
-
-      const tbody = document.getElementById('anomalyTableBody');
-      const searchInput = document.getElementById('anomalySearch');
-      const classFilter = document.getElementById('classFilter');
-
-      function idNum(id){ const m = id.match(/\d+/); return m ? m[0] : id; }
-
-      function render(list){
-        if(!list || list.length === 0){ tbody.innerHTML = '<tr><td colspan="3" class="empty">No anomalies found</td></tr>'; return; }
-        tbody.innerHTML = '';
-        list.forEach(a => {
-          const row = document.createElement('tr');
-          const num = idNum(a.id);
-          row.innerHTML = `
-            <td><a class="click-row" href="/anomalies/${num}/">${a.id}</a></td>
-            <td><a class="click-row" href="/anomalies/${num}/"><span class="pill ${a.clazz}">${a.clazz}</span></a></td>
-            <td><a class="click-row" href="/anomalies/${num}/">${a.nick}</a></td>
-          `;
-          tbody.appendChild(row);
-        });
-      }
-
-      function applyFilters(){
-        const q = (searchInput.value || '').toLowerCase().trim();
-        const cls = classFilter.value;
-        let list = anomalies.slice();
-        if(q) list = list.filter(a => (a.id||'').toLowerCase().includes(q) || (a.nick||'').toLowerCase().includes(q));
-        if(cls !== 'all') list = list.filter(a => a.clazz === cls);
-        render(list);
-      }
-
-      searchInput.addEventListener('input', applyFilters);
-      classFilter.addEventListener('change', applyFilters);
-
-      // initial
-      render(anomalies);
-
-      // accessibility: focus on search when includes loaded
-      document.addEventListener('includesLoaded', ()=>{ searchInput.focus(); });
-    })();
-  </script>
+  <script type="module" src="/assets/js/anomalyIndex.js"></script>
 </body>
 </html>

@@ -5,6 +5,12 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      { "source": "/anomalies/view", "destination": "/anomalies/view/index.html" },
+      { "source": "/anomalies/view/**", "destination": "/anomalies/view/index.html" },
+      { "source": "/anomalies/new", "destination": "/anomalies/new/index.html" },
+      { "source": "/anomalies/new/**", "destination": "/anomalies/new/index.html" }
     ]
   }
 }
