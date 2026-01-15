@@ -301,6 +301,12 @@ async function handleSubmit(e){
   const hasContent = versions.some(v => v.content && v.content.trim());
   if(!hasContent){ setStatus('At least one version must have content.', true); return; }
   
+  console.log('💾 Saving versions:', versions.map(v => ({ 
+    clearance: v.clearance, 
+    contentLength: (v.content || '').length,
+    contentPreview: (v.content || '').substring(0, 50) 
+  })));
+  
   const tags = tagsInput.value.split(',').map(s => s.trim()).filter(Boolean);
   const linkedItems = linkedItemsInput.value.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
   
