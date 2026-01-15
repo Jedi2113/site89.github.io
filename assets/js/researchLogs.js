@@ -40,8 +40,6 @@ const clearanceInput = document.getElementById('rlClearance');
 const tagsInput = document.getElementById('rlTags');
 const linkedItemsInput = document.getElementById('rlLinkedItems');
 const linkedPreview = document.getElementById('rlLinkedPreview');
-const contentInput = document.getElementById('rlContent');
-const previewDiv = document.getElementById('rlPreview');
 const statusDiv = document.getElementById('rlStatus');
 const tableBody = document.getElementById('rlTableBody');
 
@@ -63,7 +61,6 @@ function resetForm(){
   currentLogId = null;
   modalTitle.textContent = 'New Research Log';
   linkedPreview.innerHTML = '';
-  previewDiv.innerHTML = '';
   versions = [];
   renderVersions();
   setStatus('');
@@ -270,16 +267,6 @@ function updateLinkedPreview(){
     const type = item.startsWith('AN-') ? 'Anomaly' : item.startsWith('POI-') ? 'POI' : item.startsWith('GOI-') ? 'GOI' : 'Item';
     return `<div class="rl-linked-item">${type}: ${item}</div>`;
   }).join('');
-}
-
-// Update markdown preview
-function updateMarkdownPreview(){
-  const md = contentInput.value;
-  if(!md || !window.marked){
-    previewDiv.innerHTML = '<em>Preview will appear here...</em>';
-    return;
-  }
-  previewDiv.innerHTML = window.marked.parse(md);
 }
 
 // Handle form submission
