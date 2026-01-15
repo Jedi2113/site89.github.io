@@ -502,7 +502,6 @@ function initializeResearchLogs(){
   
   // Wire live preview
   linkedItemsInput?.addEventListener('input', updateLinkedPreview);
-  contentInput?.addEventListener('input', updateMarkdownPreview);
   
   // Wire search
   searchInput?.addEventListener('input', renderList);
