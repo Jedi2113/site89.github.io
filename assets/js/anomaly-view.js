@@ -69,9 +69,12 @@ async function loadAnomaly(){ const params = new URLSearchParams(window.location
     const data = snap.data();
 
     // clearance gate
-    const required = parseClearance(data.clearanceLevel || 1);
+    const required = parseClearance(data.clearanceLevel || 0);
     const userC = userClearance();
-    if(required && (!isDeptAllowed(userDepartment()) && (Number.isNaN(userC) || userC < required))){
+    const deptOk = isDeptAllowed(userDepartment());
+    const userHasClearance = !Number.isNaN(userC) && userC >= required;
+    const allowed = deptOk || userHasClearance;
+    if(!allowed){
       titleEl.textContent = 'Restricted file';
       proceduresRender.textContent = `Requires clearance Level ${required} or ScD/R&D assignment.`;
       descriptionRender.textContent = '';

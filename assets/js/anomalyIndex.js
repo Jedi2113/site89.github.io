@@ -86,9 +86,10 @@ function renderList(){
   const userC = userClearance();
   const deptOk = isDeptAllowed(userDepartment());
   const filtered = anomalies.filter(a => {
-    // clearance gate per item
+    // clearance gate per item: user can view if dept is allowed OR user clearance >= required
     const req = parseClearance(a.clearanceLevel);
-    const allowed = deptOk || (!Number.isNaN(req) ? (!Number.isNaN(userC) && userC >= req) : true);
+    const userHasClearance = !Number.isNaN(userC) && userC >= req;
+    const allowed = deptOk || userHasClearance;
     if(!allowed) return false;
     if(cls !== 'all' && a.containmentClass !== cls) return false;
     if(risk !== 'all' && a.riskClass !== risk) return false;
@@ -118,11 +119,21 @@ function renderList(){
 }
 
 function wireModal(){
-  if(newBtn){ newBtn.style.display = canEdit() ? 'inline-block' : 'none'; newBtn.addEventListener('click', ()=>{ if(!canEdit()) return alert('Only ScD/R&D or Level 5 may edit.'); modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); document.getElementById('itemNumber').focus(); refreshPreview(); }); }
+  const updateButtonVisibility = () => {
+    if(newBtn){ newBtn.style.display = canEdit() ? 'inline-block' : 'none'; }
+  };
+  
+  if(newBtn){ 
+    updateButtonVisibility();
+    newBtn.addEventListener('click', ()=>{ if(!canEdit()) return alert('Only ScD/R&D or Level 5 may edit.'); modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); document.getElementById('itemNumber').focus(); refreshPreview(); }); 
+  }
   if(closeModalBtn) closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); setStatus(''); });
   if(loadExistingBtn) loadExistingBtn.addEventListener('click', loadExisting);
   [proceduresInput, descriptionInput].forEach(el=> el && el.addEventListener('input', refreshPreview));
   if(form) form.addEventListener('submit', handleSubmit);
+  
+  // Update button visibility when character selection changes
+  window.addEventListener('storage', updateButtonVisibility);
 }
 
 function subscribe(){
@@ -138,7 +149,9 @@ function subscribe(){
   });
 }
 
-function kickoff(){ if(window.__anomalyIndexReady) return; window.__anomalyIndexReady=true; refreshPreview(); wireModal(); subscribe(); if(searchInput) searchInput.addEventListener('input', renderList); classFilter?.addEventListener('change', renderList); riskFilter?.addEventListener('change', renderList); disruptionFilter?.addEventListener('change', renderList); 
+function kickoff(){ if(window.__anomalyIndexReady) return; window.__anomalyIndexReady=true; refreshPreview(); subscribe(); if(searchInput) searchInput.addEventListener('input', renderList); classFilter?.addEventListener('change', renderList); riskFilter?.addEventListener('change', renderList); disruptionFilter?.addEventListener('change', renderList); 
+  // Wire modal after a small delay to ensure character is loaded
+  setTimeout(() => { wireModal(); }, 50);
   // auto-load anomaly if id or item param provided
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id') || params.get('item');
