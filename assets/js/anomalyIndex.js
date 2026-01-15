@@ -118,27 +118,33 @@ function renderList(){
   const userC = userClearance();
   const deptOk = isDeptAllowed(userDepartment());
   
-  console.log('📋 Rendering list - User Clearance:', userC, 'Dept OK:', deptOk, 'Dept:', userDepartment());
+  console.log('📋 CLEARANCE CHECK - User Clearance:', userC, '| Dept OK:', deptOk, '| Dept:', userDepartment());
   
   const filtered = anomalies.filter(a => {
-    // clearance gate per item: user can view if dept is allowed OR user clearance >= required
     const req = parseClearance(a.clearanceLevel);
     
+    console.log(`Checking ${a.itemNumber}: req=${req} (type: ${typeof a.clearanceLevel}, raw: ${a.clearanceLevel})`);
+    
     // ScD/R&D departments can see all clearance levels
-    if(!deptOk) {
-      // Not in special dept, must have sufficient clearance
-      // Both userC and req must be valid numbers, and userC must be >= req
-      if(Number.isNaN(userC) || Number.isNaN(req)) {
-        console.log(`❌ ${a.itemNumber}: Invalid clearance (userC=${userC}, req=${req})`);
+    if(deptOk) {
+      console.log(`  ✅ ScD/R&D bypass`);
+      // Skip clearance check for ScD/R&D
+    } else {
+      // Not in special dept - must have sufficient clearance
+      // User clearance must be >= required clearance
+      if(Number.isNaN(userC)) {
+        console.log(`  ❌ BLOCKED: User has invalid clearance (NaN)`);
+        return false;
+      }
+      if(Number.isNaN(req)) {
+        console.log(`  ❌ BLOCKED: Anomaly has invalid clearance (NaN)`);
         return false;
       }
       if(userC < req) {
-        console.log(`❌ ${a.itemNumber}: Insufficient clearance (userC=${userC} < req=${req})`);
+        console.log(`  ❌ BLOCKED: User clearance ${userC} < required ${req}`);
         return false;
       }
-      console.log(`✅ ${a.itemNumber}: Clearance OK (userC=${userC} >= req=${req})`);
-    } else {
-      console.log(`✅ ${a.itemNumber}: ScD/R&D bypass`);
+      console.log(`  ✅ ALLOWED: User clearance ${userC} >= required ${req}`);
     }
     
     if(cls !== 'all' && a.containmentClass !== cls) return false;
