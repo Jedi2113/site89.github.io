@@ -238,6 +238,14 @@
           return;
         }
         
+        // Load all research logs to check for links
+        const logsQuery = query(collection(db, 'researchLogs'));
+        const logsSnapshot = await getDocs(logsQuery);
+        const allLogs = [];
+        logsSnapshot.forEach(docSnap => {
+          allLogs.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        
         container.innerHTML = '';
         let visibleCount = 0;
         
@@ -251,6 +259,26 @@
           
           visibleCount++;
           
+          // Find linked research logs
+          const poiDesignation = (poi.designation || '').toUpperCase();
+          const linkedLogs = allLogs.filter(log => {
+            return log.linkedItems && log.linkedItems.some(item => 
+              item.toUpperCase() === poiDesignation || 
+              item.toUpperCase().includes('POI-') && poiDesignation.includes(item.toUpperCase())
+            );
+          });
+          
+          // Apply clearance filtering to logs
+          const userC = getUserClearance();
+          const deptOk = isDeptAllowed(getUserDepartment());
+          const visibleLogs = linkedLogs.filter(log => {
+            const req = parseClearance(log.clearanceLevel);
+            if(!deptOk){
+              if(isNaN(userC) || isNaN(req) || userC < req) return false;
+            }
+            return true;
+          });
+          
           const priorityClass = `${(poi.priority || 'unknown').toLowerCase()}-priority`;
           const priorityTagClass = `priority-${(poi.priority || 'unknown').toLowerCase()}`;
           
@@ -262,6 +290,18 @@
               <button class="action-btn delete" onclick="deletePoi('${poiId}')">
                 <i class="fas fa-trash"></i> Delete
               </button>
+            </div>
+          ` : '';
+          
+          const linkedLogsHTML = visibleLogs.length > 0 ? `
+            <div class="poi-section">
+              <h4>Related Research Logs</h4>
+              ${visibleLogs.map(log => `
+                <div style="padding:.5rem;background:rgba(78,250,170,0.06);border:1px solid rgba(78,250,170,0.12);border-radius:6px;margin-bottom:.5rem">
+                  <a href="/research-logs/?view=${log.id}" style="color:var(--accent-mint);font-weight:600;text-decoration:none">${log.title || '(untitled)'}</a>
+                  <div style="font-size:.85rem;color:var(--text-light);margin-top:.3rem">${log.author || 'Unknown'} • Level ${log.clearanceLevel || '?'}</div>
+                </div>
+              `).join('')}
             </div>
           ` : '';
           
@@ -297,6 +337,7 @@
                   <p>${poi.notes}</p>
                 </div>
               ` : ''}
+              ${linkedLogsHTML}
               ${actionButtons}
             </div>
           `;
@@ -315,6 +356,35 @@
       } catch (err) {
         console.error('Error loading POIs:', err);
       }
+    }
+    
+    // Helper functions for clearance
+    function getUserClearance(){
+      try {
+        const ch = JSON.parse(localStorage.getItem('selectedCharacter'));
+        return ch ? parseClearance(ch.clearance) : NaN;
+      } catch(e){ return NaN; }
+    }
+    
+    function getUserDepartment(){
+      try {
+        const ch = JSON.parse(localStorage.getItem('selectedCharacter'));
+        return ch && ch.department ? ch.department : '';
+      } catch(e){ return ''; }
+    }
+    
+    function parseClearance(v){
+      if(v === undefined || v === null) return NaN;
+      if(typeof v === 'number') return v;
+      const s = String(v);
+      const m = s.match(/\d+/);
+      return m ? parseInt(m[0],10) : NaN;
+    }
+    
+    function isDeptAllowed(dept){
+      if(!dept) return false;
+      const d = dept.toLowerCase();
+      return d.includes('research') || d.includes('r&d') || d.includes('scien') || d.includes('scd') || d.includes('rnd');
     }
 
     // Modal functions

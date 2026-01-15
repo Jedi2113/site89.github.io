@@ -1,5 +1,5 @@
 import { app } from '/assets/js/auth.js';
-import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js';
 
 const db = getFirestore(app);
@@ -12,6 +12,8 @@ const proceduresRender = document.getElementById('proceduresRender');
 const descriptionRender = document.getElementById('descriptionRender');
 const photoArea = document.getElementById('photoArea');
 const creditsRender = document.getElementById('creditsRender');
+const linkedLogsSection = document.getElementById('linkedLogsSection');
+const linkedLogsContainer = document.getElementById('linkedLogsContainer');
 
 function getSelectedCharacter(){ try { return JSON.parse(localStorage.getItem('selectedCharacter')); } catch(e){ return null; } }
 function parseClearance(v){ if(v === undefined || v === null) return NaN; if(typeof v === 'number') return v; const s = String(v); const m = s.match(/\d+/); return m ? parseInt(m[0],10) : NaN; }
@@ -90,6 +92,7 @@ async function loadAnomaly(){ const params = new URLSearchParams(window.location
     renderMeta(data);
     renderPhoto(data.photoUrl);
     renderCredits(data);
+    loadLinkedResearchLogs(data.itemNumber);
   } catch(err){
     titleEl.textContent = 'Error loading anomaly';
     proceduresRender.textContent = err.message;
@@ -99,6 +102,61 @@ async function loadAnomaly(){ const params = new URLSearchParams(window.location
     if(creditsRender) creditsRender.textContent = '';
   }
 }
+
+async function loadLinkedResearchLogs(itemNumber){
+  if(!linkedLogsSection || !linkedLogsContainer) return;
+  
+  try{
+    // Format item number to match linked format (e.g., AN-049)
+    const digits = (itemNumber || '').match(/\d+/);
+    if(!digits) return;
+    const formatted = `AN-${digits[0].padStart(3, '0')}`;
+    
+    // Query research logs where linkedItems array contains this anomaly
+    const logsRef = collection(db, 'researchLogs');
+    const q = query(logsRef, where('linkedItems', 'array-contains', formatted));
+    const snapshot = await getDocs(q);
+    
+    if(snapshot.empty){
+      linkedLogsSection.style.display = 'none';
+      return;
+    }
+    
+    // Check user clearance for filtering
+    const userC = userClearance();
+    const deptOk = isDeptAllowed(userDepartment());
+    
+    const logs = [];
+    snapshot.forEach(docSnap => {
+      const log = { id: docSnap.id, ...docSnap.data() };
+      const req = parseClearance(log.clearanceLevel);
+      
+      // Apply clearance filter
+      if(!deptOk){
+        if(Number.isNaN(userC) || Number.isNaN(req) || userC < req) return;
+      }
+      
+      logs.push(log);
+    });
+    
+    if(logs.length === 0){
+      linkedLogsSection.style.display = 'none';
+      return;
+    }
+    
+    linkedLogsSection.style.display = 'block';
+    linkedLogsContainer.innerHTML = logs.map(log => {
+      return `<div style="padding:.7rem;background:rgba(78,250,170,0.06);border:1px solid rgba(78,250,170,0.12);border-radius:6px">
+        <a href="/research-logs/?view=${log.id}" style="color:var(--accent-mint);font-weight:600;text-decoration:none">${log.title || '(untitled)'}</a>
+        <div style="font-size:.85rem;color:var(--text-light);margin-top:.3rem">${log.author || 'Unknown'} • Level ${log.clearanceLevel || '?'}</div>
+      </div>`;
+    }).join('');
+  } catch(err){
+    console.error('Error loading linked logs:', err);
+    linkedLogsSection.style.display = 'none';
+  }
+}
+
 let booted = false;
 function kickoff(){ if(booted) return; booted = true; loadAnomaly(); }
 

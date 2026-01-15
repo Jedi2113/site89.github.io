@@ -2,15 +2,12 @@
 <html lang="en">
 <head>
   <!-- SECURITY LOCKDOWN - LOAD FIRST -->
-
   <meta charset="utf-8">
   <script src="/assets/js/secure-access.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="required-clearance" content="1">
   <title>Research Logs — Site-89</title>
   <link rel="stylesheet" href="/assets/css/main.css">
-  <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/wgqechbx2jopsbvntv872129bj4qw3wbxsvy35z27edgkqz4/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
   <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
@@ -24,88 +21,168 @@
   <main class="content">
     <section class="about-box">
       <h1>Research Logs</h1>
-      <p>Repository for research notes and experiment logs. Viewing requires security clearance &ge; 1. Creating entries requires membership of the Research/Scientific departments or clearance &ge; 5.</p>
+      <p>Repository for research notes and experiment logs. Viewing requires security clearance ≥ 1. Creating entries requires membership of ScD/R&D departments or clearance ≥ 5.</p>
     </section>
 
-    <section class="about-box ms-logs">
+    <section class="about-box">
       <style>
-        /* M365-style header / table layout */
-        .ms-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
-        .ms-title h1{margin:0;font-size:1.5rem}
-        .ms-title .ms-sub{margin:0;color:var(--text-light);font-size:.95rem}
-        .ms-toolbar{display:flex;align-items:center;gap:.6rem}
-        .ms-search{padding:.5rem .7rem;border-radius:6px;border:1px solid rgba(0,0,0,0.06);min-width:220px}
-        .ms-btn-new{padding:.45rem .8rem;border-radius:6px;background:var(--accent-mint);color:var(--bg-dark);border:none}
+        /* Header / Toolbar */
+        .rl-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+        .rl-search{padding:.5rem .8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.08);min-width:220px;background:var(--bg-dark);color:var(--text-primary)}
+        .rl-btn-new{padding:.5rem 1rem;border-radius:6px;background:var(--accent-mint);color:var(--bg-dark);border:none;font-weight:600;cursor:pointer;transition:all .2s}
+        .rl-btn-new:hover{background:var(--accent-teal);transform:translateY(-1px)}
 
-        /* Table styles */
-        .ms-table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
-        .ms-table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
-        .ms-table th,.ms-table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
-        .click-row{display:block;color:inherit;text-decoration:none}
-        .pill{display:inline-block;padding:.25rem .5rem;border-radius:6px;font-weight:700;font-size:.85rem}
-        .pill.Safe{background:rgba(78,250,170,0.08);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.06)}
-        .pill.Euclid{background:rgba(0,124,107,0.07);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.06)}
-        .pill.Keter{background:rgba(146,0,0,0.06);color:var(--accent-red);border:1px solid rgba(146,0,0,0.06)}
-        .empty{padding:1.2rem;color:var(--text-light)}
+        /* Table */
+        .rl-table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--bg-card);border-radius:8px;overflow:hidden}
+        .rl-table thead{background:linear-gradient(90deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700}
+        .rl-table th,.rl-table td{padding:.9rem .75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
+        .rl-table tbody tr{cursor:pointer;transition:background .15s}
+        .rl-table tbody tr:hover{background:rgba(78,250,170,0.04)}
+        .rl-link{color:inherit;text-decoration:none;font-weight:600}
+        .rl-link:hover{color:var(--accent-mint)}
+        .rl-tag{display:inline-block;padding:.2rem .5rem;margin-right:.3rem;border-radius:4px;font-size:.85rem;background:rgba(78,250,170,0.1);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.2)}
+        .rl-linked{display:inline-block;padding:.2rem .5rem;margin-right:.3rem;border-radius:4px;font-size:.85rem;background:rgba(0,124,107,0.1);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.2)}
+        .rl-empty{padding:2rem;text-align:center;color:var(--text-light)}
 
-        /* View modal */
-        .view-modal{display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);z-index:1800}
-        .view-modal[aria-hidden="false"]{display:flex}
-        .view-modal .modal-box{background:var(--bg-card);padding:1.2rem;border-radius:10px;max-width:900px;width:96%;border:1px solid rgba(255,255,255,0.03)}
-        .view-modal .meta{color:var(--text-light);opacity:.9;margin-top:.4rem}
+        /* Modal */
+        .rl-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center}
+        .rl-modal[aria-hidden="false"]{display:flex}
+        .rl-modal-content{background:var(--bg-card);border-radius:10px;max-width:1100px;width:96%;max-height:90vh;overflow-y:auto;padding:1.5rem;border:1px solid rgba(255,255,255,0.06)}
+        .rl-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+        .rl-close{background:transparent;border:none;font-size:1.5rem;color:var(--text-light);cursor:pointer;padding:0;width:30px;height:30px}
+        .rl-close:hover{color:var(--accent-red)}
 
-        @media (max-width:720px){ .ms-header{flex-direction:column;align-items:stretch}.ms-toolbar{justify-content:space-between} .ms-table th:nth-child(2), .ms-table td:nth-child(2){display:none} }
+        /* Form */
+        .rl-form label{display:block;margin-bottom:1rem;font-weight:600}
+        .rl-form input,.rl-form textarea,.rl-form select{width:100%;padding:.6rem;margin-top:.3rem;background:var(--bg-dark);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:var(--text-primary);font-family:inherit}
+        .rl-form input:focus,.rl-form textarea:focus,.rl-form select:focus{outline:none;border-color:var(--accent-mint);box-shadow:0 0 0 2px rgba(78,250,170,0.1)}
+        .rl-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+        .rl-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+        .rl-form textarea{min-height:300px;font-family:monospace;resize:vertical}
+        .rl-preview{background:var(--bg-dark);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:1rem;min-height:300px;overflow-y:auto;line-height:1.6}
+        .rl-preview h1,.rl-preview h2,.rl-preview h3{color:var(--accent-mint);margin-top:1rem}
+        .rl-preview code{background:rgba(0,0,0,0.3);padding:.2rem .4rem;border-radius:3px}
+        .rl-preview pre{background:rgba(0,0,0,0.3);padding:1rem;border-radius:6px;overflow-x:auto}
+        .rl-preview a{color:var(--accent-mint)}
+
+        /* Linked items select */
+        .rl-linked-select{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;padding:.5rem;background:var(--bg-dark);border:1px solid rgba(255,255,255,0.08);border-radius:6px;min-height:50px}
+        .rl-linked-item{display:flex;align-items:center;gap:.3rem;padding:.3rem .6rem;background:rgba(0,124,107,0.1);color:var(--accent-teal);border:1px solid rgba(0,124,107,0.2);border-radius:4px;font-size:.9rem}
+        .rl-linked-remove{background:transparent;border:none;color:var(--accent-red);cursor:pointer;padding:0;margin-left:.2rem;font-weight:bold}
+
+        /* Buttons */
+        .rl-btn-primary{padding:.6rem 1.2rem;background:var(--accent-mint);color:var(--bg-dark);border:none;border-radius:6px;font-weight:600;cursor:pointer;transition:all .2s}
+        .rl-btn-primary:hover{background:var(--accent-teal);transform:translateY(-1px)}
+        .rl-btn-secondary{padding:.6rem 1.2rem;background:transparent;color:var(--text-light);border:1px solid rgba(255,255,255,0.1);border-radius:6px;cursor:pointer;transition:all .2s}
+        .rl-btn-secondary:hover{border-color:var(--accent-mint);color:var(--accent-mint)}
+        .rl-actions{display:flex;gap:.5rem;margin-top:1.5rem}
+        .rl-status{margin-top:.5rem;font-size:.9rem}
+
+        @media (max-width:720px){
+          .rl-header{flex-direction:column;align-items:stretch}
+          .rl-grid,.rl-editor-grid{grid-template-columns:1fr}
+          .rl-table th:nth-child(3),.rl-table td:nth-child(3){display:none}
+        }
       </style>
 
-      <div class="ms-header">
-        <div class="ms-title">
-          <h1>Research Logs</h1>
-          <p class="ms-sub">Repository for research notes and experiment logs. Viewing requires security clearance &ge; 1. Creating entries requires membership of the Research/Scientific departments or clearance &ge; 5.</p>
-        </div>
-
-        <div class="ms-toolbar">
-          <input id="logSearch" class="ms-search" placeholder="Search logs by title or tags…">
-          <button id="newLogBtn" class="ms-btn-new" style="display:none">+ New</button>
-        </div>
+      <div class="rl-header">
+        <input id="rlSearch" class="rl-search" placeholder="Search logs by title or tags…">
+        <button id="rlNewBtn" class="rl-btn-new" style="display:none">+ New Research Log</button>
       </div>
 
-      <!-- Modal create form -->
-      <div id="createModal" class="modal" aria-hidden="true" style="display:none">
-        <div class="modal-content" role="dialog" aria-modal="true" style="max-width:900px;">
-          <div class="modal-header">
-            <h2>Create New Research Log</h2>
-            <button id="closeModalBtn" class="btn-link" title="Close">✕</button>
+      <table class="rl-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Tags / Linked Items</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="rlTableBody">
+          <tr><td colspan="4" class="rl-empty">Loading…</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Create/Edit Modal -->
+      <div id="rlModal" class="rl-modal" aria-hidden="true">
+        <div class="rl-modal-content" role="dialog" aria-modal="true">
+          <div class="rl-modal-header">
+            <h2 id="rlModalTitle">New Research Log</h2>
+            <button id="rlCloseBtn" class="rl-close" title="Close">✕</button>
           </div>
 
-          <form id="createLogForm">
-            <label>Title <input id="logTitle" placeholder="Title" required></label>
-            <label>Tags <input id="logTags" placeholder="Tags (comma separated)"></label>
-            <label style="display:block; margin-bottom:0.5rem;">Content
-              <textarea id="logContent" style="width:100%; min-height:400px;"></textarea>
+          <form id="rlForm" class="rl-form">
+            <label>
+              Title *
+              <input id="rlTitle" type="text" placeholder="Log Title" required>
             </label>
-            <div style="display:flex;gap:.5rem;margin-top:.6rem"><button id="createLogBtn" class="btn-primary" type="submit">Create</button><button id="cancelLogBtn" class="btn-secondary" type="button">Cancel</button></div>
-            <p id="logFeedback" class="feedback"></p>
+
+            <label>
+              Clearance Level *
+              <select id="rlClearance" required>
+                <option value="">Select…</option>
+                <option value="0">Level 0 (Public)</option>
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5 (Restricted)</option>
+              </select>
+            </label>
+
+            <label>
+              Tags (comma-separated)
+              <input id="rlTags" type="text" placeholder="experiment, observation, analysis">
+            </label>
+
+            <label>
+              Link to Anomalies, POIs, or GOIs
+              <div style="font-size:.9rem;color:var(--text-light);margin-top:.2rem">Enter item numbers (e.g., AN-049, POI-003, GOI-012) separated by commas</div>
+              <input id="rlLinkedItems" type="text" placeholder="AN-049, POI-003, GOI-012">
+            </label>
+
+            <div id="rlLinkedPreview" class="rl-linked-select"></div>
+
+            <label>
+              Content (Markdown) *
+              <div style="font-size:.9rem;color:var(--text-light);margin-top:.2rem">Use Markdown formatting: **bold**, *italic*, # headers, - lists, [links](url)</div>
+            </label>
+            
+            <div class="rl-editor-grid">
+              <div>
+                <div style="font-weight:600;margin-bottom:.5rem">Markdown Editor</div>
+                <textarea id="rlContent" placeholder="Enter your research log content here using Markdown..." required></textarea>
+              </div>
+              <div>
+                <div style="font-weight:600;margin-bottom:.5rem">Live Preview</div>
+                <div id="rlPreview" class="rl-preview"></div>
+              </div>
+            </div>
+
+            <div class="rl-actions">
+              <button type="submit" class="rl-btn-primary">Save Research Log</button>
+              <button type="button" id="rlCancelBtn" class="rl-btn-secondary">Cancel</button>
+              <button type="button" id="rlLoadBtn" class="rl-btn-secondary" style="margin-left:auto">Load Existing…</button>
+            </div>
+            <div id="rlStatus" class="rl-status"></div>
           </form>
         </div>
       </div>
 
-      <h2 style="margin-top:1rem">Entries</h2>
-      <table class="ms-table" aria-describedby="researchLogsDesc">
-        <thead>
-          <tr><th style="width:1px">Title</th><th>Tags</th></tr>
-        </thead>
-        <tbody id="logsTableBody">
-          <tr><td colspan="2" class="empty">Loading…</td></tr>
-        </tbody>
-      </table>
-      <div id="researchLogsDesc" style="display:none">Click any title to view the full entry.</div>
-
-      <!-- View modal -->
-      <div id="viewModal" class="view-modal" aria-hidden="true">
-        <div class="modal-box" role="dialog" aria-modal="true" style="max-width:1100px; max-height:90vh; overflow-y:auto;">
-          <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="viewModalTitle">Title</h2><button id="viewModalClose" class="btn-link">✕</button></div>
-          <div id="viewModalMeta" class="meta"></div>
-          <div id="viewModalBody" style="margin-top:1rem; line-height:1.6;"></div>
+      <!-- View Modal -->
+      <div id="rlViewModal" class="rl-modal" aria-hidden="true">
+        <div class="rl-modal-content" role="dialog" aria-modal="true">
+          <div class="rl-modal-header">
+            <h2 id="rlViewTitle">Log Title</h2>
+            <button id="rlViewCloseBtn" class="rl-close" title="Close">✕</button>
+          </div>
+          <div id="rlViewMeta" style="color:var(--text-light);margin-bottom:1rem;font-size:.95rem"></div>
+          <div id="rlViewLinked" style="margin-bottom:1rem"></div>
+          <div id="rlViewContent" class="rl-preview"></div>
+          <div style="margin-top:1.5rem">
+            <button id="rlEditBtn" class="rl-btn-primary" style="display:none">Edit</button>
+          </div>
         </div>
       </div>
     </section>
@@ -115,6 +192,10 @@
 
   <script src="/assets/js/include.js"></script>
   <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module">
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js';
+    window.marked = marked;
+  </script>
   <script type="module" src="/assets/js/researchLogs.js"></script>
 </body>
 </html>
