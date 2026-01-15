@@ -43,7 +43,39 @@ function refreshPreview(){ if(proceduresPreview) proceduresPreview.innerHTML = r
 
 function resetForm(){ form.reset(); refreshPreview(); }
 
-async function loadExisting(){ const formatted = formatItemNumber(document.getElementById('itemNumber').value || ''); if(!formatted){ setStatus('Enter an item number to load.', true); return; } const docId = docIdFromItemNumber(formatted); const ref = doc(db,'anomalies',docId); const snap = await getDoc(ref); if(!snap.exists()){ setStatus('No anomaly found for that item number.', true); return; } const data = snap.data(); document.getElementById('itemNumber').value = data.itemNumber || formatted; document.getElementById('nickname').value = data.nickname || ''; document.getElementById('photoUrl').value = data.photoUrl || ''; document.getElementById('containmentClass').value = data.containmentClass || ''; document.getElementById('riskClass').value = data.riskClass || ''; document.getElementById('disruptionClass').value = data.disruptionClass || ''; document.getElementById('clearanceLevel').value = data.clearanceLevel || ''; proceduresInput.value = data.proceduresMd || ''; descriptionInput.value = data.descriptionMd || ''; refreshPreview(); setStatus('Loaded existing entry.'); }
+async function loadExisting(){ 
+  const formatted = formatItemNumber(document.getElementById('itemNumber').value || ''); 
+  if(!formatted){ setStatus('Enter an item number to load.', true); return; } 
+  const docId = docIdFromItemNumber(formatted); 
+  const ref = doc(db,'anomalies',docId); 
+  const snap = await getDoc(ref); 
+  if(!snap.exists()){ setStatus('No anomaly found for that item number.', true); return; } 
+  const data = snap.data(); 
+  
+  // Clearance check - prevent loading anomalies above user's clearance
+  const required = parseClearance(data.clearanceLevel || 0);
+  const userC = userClearance();
+  const deptOk = isDeptAllowed(userDepartment());
+  const userHasClearance = !Number.isNaN(userC) && userC >= required;
+  const allowed = deptOk || userHasClearance;
+  
+  if(!allowed){
+    setStatus(`Access denied: Requires Level ${required} clearance or ScD/R&D assignment.`, true);
+    return;
+  }
+  
+  document.getElementById('itemNumber').value = data.itemNumber || formatted; 
+  document.getElementById('nickname').value = data.nickname || ''; 
+  document.getElementById('photoUrl').value = data.photoUrl || ''; 
+  document.getElementById('containmentClass').value = data.containmentClass || ''; 
+  document.getElementById('riskClass').value = data.riskClass || ''; 
+  document.getElementById('disruptionClass').value = data.disruptionClass || ''; 
+  document.getElementById('clearanceLevel').value = data.clearanceLevel || ''; 
+  proceduresInput.value = data.proceduresMd || ''; 
+  descriptionInput.value = data.descriptionMd || ''; 
+  refreshPreview(); 
+  setStatus('Loaded existing entry.'); 
+}
 
 async function handleSubmit(e){ e.preventDefault(); setStatus(''); if(!auth.currentUser){ setStatus('Login is required.', true); return; } if(!canEdit()){ setStatus('Only ScD/R&D or Level 5 may edit.', true); return; }
   const formatted = formatItemNumber(document.getElementById('itemNumber').value || ''); if(!formatted){ setStatus('Item number required.', true); return; }

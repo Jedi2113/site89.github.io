@@ -228,24 +228,17 @@ service cloud.firestore {
     }
 
     // Anomaly entries - public read, authenticated create/update
+    // Frontend enforces ScD/R&D or Level 5+ permission checks
     match /anomalies/{anomalyId} {
       allow read: if true;
 
       allow create: if request.auth != null
-        && request.resource.data.itemNumber is string
-        && request.resource.data.containmentClass is string
-        && request.resource.data.riskClass is string
-        && request.resource.data.disruptionClass is string
-        && request.resource.data.proceduresMd is string
-        && request.resource.data.descriptionMd is string
-        && request.resource.data.clearanceLevel is number
         && request.resource.data.createdByUid == request.auth.uid
-        && request.resource.data.createdByEmail is string;
+        && request.resource.data.itemNumber is string;
 
-      allow update, delete: if request.auth != null && (
-        (resource.data.createdByUid == request.auth.uid && request.resource.data.createdByUid == resource.data.createdByUid)
-        || isADIOPersonnel()
-      );
+      allow update: if request.auth != null;
+
+      allow delete: if request.auth != null && isADIOPersonnel();
     }
   }
 }
