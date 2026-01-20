@@ -19,6 +19,19 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email in adioEmails;
     }
 
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // ===== ANALYTICS =====
+    // Public read, admin-only write
+    match /settings/analytics {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Characters collection - allow anyone to read (for personnel files page)
     match /characters/{characterId} {
       allow read: if true;

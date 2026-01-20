@@ -3,330 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Status — Site-89</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <title>Service Tracker — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/main.css">
-  
-  <!-- Theme System -->
+  <link rel="stylesheet" href="/assets/css/status-tracker.css">
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
     ThemeManager.init();
   </script>
-
-  <style>
-    .status-hero {
-      padding: 3.5rem 1rem;
-      text-align: center;
-      background: linear-gradient(90deg, rgba(78,250,170,0.06) 0%, rgba(0,124,107,0.02) 100%);
-      border-bottom: 1px solid rgba(78,250,170,0.03);
-      margin-bottom: 3rem;
-    }
-
-    .status-hero .title {
-      font-family: var(--font-head);
-      font-size: 2.25rem;
-      color: var(--accent-mint);
-      margin-bottom: 0.45rem;
-    }
-
-    .status-hero .subtitle {
-      color: var(--text-light);
-      opacity: 0.9;
-    }
-
-    .status-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem 3rem 1rem;
-    }
-
-    .status-alert {
-      background: rgba(176, 0, 0, 0.08);
-      border: 1px solid rgba(176, 0, 0, 0.15);
-      padding: 1.25rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      display: none;
-    }
-
-    .status-alert.visible {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .status-alert i {
-      color: var(--accent-red);
-      font-size: 1.25rem;
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-    }
-
-    .status-alert-content h3 {
-      color: var(--accent-red);
-      font-size: 1rem;
-      margin: 0 0 0.35rem 0;
-    }
-
-    .status-alert-content p {
-      margin: 0;
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .services-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .service-card {
-      background: linear-gradient(135deg, rgba(78,250,170,0.02) 0%, rgba(0,0,0,0.1) 100%);
-      border: 1px solid rgba(78,250,170,0.06);
-      border-radius: 8px;
-      padding: 1.5rem 2rem;
-      transition: var(--transition);
-      position: relative;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-    }
-
-    .service-card:hover {
-      border-color: rgba(78,250,170,0.12);
-      background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, rgba(0,0,0,0.15) 100%);
-    }
-
-    .service-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .service-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .service-icon.online {
-      background: rgba(62, 225, 163, 0.15);
-      color: var(--accent-mint);
-    }
-
-    .service-icon.offline {
-      background: rgba(176, 0, 0, 0.15);
-      color: var(--accent-red);
-    }
-
-    .service-icon.checking {
-      background: rgba(255, 200, 87, 0.15);
-      color: #FFC857;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
-    }
-
-    .service-title {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .service-title h3 {
-      font-size: 1.15rem;
-      color: var(--text-light);
-      margin: 0;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .service-status {
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: rgba(62, 225, 163, 0.15);
-      color: var(--accent-mint);
-    }
-
-    .service-status.offline {
-      background: rgba(176, 0, 0, 0.15);
-      color: var(--accent-red);
-    }
-
-    .service-status.checking {
-      background: rgba(255, 200, 87, 0.15);
-      color: #FFC857;
-    }
-
-    .service-details {
-      display: flex;
-      align-items: center;
-      gap: 3rem;
-      flex-shrink: 0;
-    }
-
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
-      min-width: 100px;
-    }
-
-    .detail-label {
-      color: var(--muted);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .detail-value {
-      color: var(--text-light);
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .uptime-bar {
-      width: 200px;
-      height: 32px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .uptime-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-mint), var(--accent-teal));
-      transition: width 0.4s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      color: var(--bg-dark);
-      font-weight: 7
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 0.5rem;
-      font-size: 0.75rem;
-      color: var(--bg-dark);
-      font-weight: 600;
-    }
-
-    .status-footer {
-      text-align: center;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(78,250,170,0.04);
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .last-update {992px) {
-      .service-card {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1.5rem;
-      }
-
-      .service-header {
-        justify-content: space-between;
-      }
-
-      .service-details {
-        justify-content: space-between;
-        gap: 1.5rem;
-      }
-
-      .detail-item {
-        align-items: center;
-        min-width: auto;
-      }
-
-      .uptime-bar {
-        width: 120px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .status-hero .title {
-        font-size: 1.75rem;
-      }
-
-      .service-card {
-        padding: 1.25rem 1.5rem;
-      }
-
-      .service-details {
-        flex-wrap: wrap;
-      }
-
-      .uptime-bar {
-        width: 100%
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .service-card {
-        padding: 1.5rem;
-      }
-    }
-  </style>
 </head>
 <body>
-
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
   <section class="status-hero">
     <div class="content">
-      <div class="title">Service Status</div>
-      <div class="subtitle">Real-time monitoring of Site-89 infrastructure</div>
+      <p class="eyebrow">Operational overview</p>
+      <h1>Service Tracker</h1>
+      <p class="lead">Live heartbeat for critical Site-89 services.</p>
+      <div class="hero-meta">
+        <span class="pill" id="last-checked">Last checked: —</span>
+        <span class="pill pill-ghost">Auto-refresh: 60s</span>
+      </div>
     </div>
   </section>
 
-  <div class="status-container">
-    <div class="status-alert" id="degradedAlert">
-      <i class="fas fa-exclamation-circle"></i>
-      <div class="status-alert-content">
-        <h3>Partially Degraded Service</h3>
-        <p id="alertMessage">One or more services are experiencing issues.</p>
+  <main class="content status-shell">
+    <div class="alert" id="major-alert">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div>
+        <div class="alert-title">Some services are unreachable</div>
+        <div class="alert-text" id="alert-text"></div>
       </div>
     </div>
 
-    <div class="services-grid" id="servicesGrid">
-      <!-- Services will be populated here -->
-    </div>
-
-    <div class="status-footer">
-      <p>Automatic status checks every 30 seconds</p>
-      <div class="last-update" id="lastUpdate">Last updated: <span id="updateTime">—</span></div>
-    </div>
-  </div>
+    <div class="services-grid" id="services-grid"></div>
+  </main>
 
   <div data-include="/components/footer.html"></div>
 
   <script src="/assets/js/include.js"></script>
-  <script src="/assets/js/status.js"></script>
-
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script src="/assets/js/service-tracker.js"></script>
+  <script>
+    document.addEventListener('scroll', () => {
+      const nav = document.getElementById('main-nav');
+      if (nav) nav.classList.toggle('is-sticky', window.scrollY > 120);
+    });
+  </script>
 </body>
 </html>
