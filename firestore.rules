@@ -2,21 +2,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if user has AD/IO permissions
-    function isADIOPersonnel() {
-      // Add emails of AD/IO department personnel here
+    // Helper function to check if user has IA/RAISA permissions
+    function isIARAISAPersonnel() {
+      // Add emails of IA/RAISA department personnel here
       // For now, only admin has this permission - you can add more emails
-      let adioEmails = [
+      let iaraisaEmails = [
         'jedi21132@gmail.com',
         'mason@millerzoo.com',
         'usxafiy@gmail.com',
         'redbridge7242@gmail.com',
         'o5councilfoundation@gmail.com'
-        // Add more AD/IO personnel emails like:
+        // Add more IA/RAISA personnel emails like:
         // 'someuser@example.com',
         // 'anotherperson@example.com'
       ];
-      return request.auth != null && request.auth.token.email in adioEmails;
+      return request.auth != null && request.auth.token.email in iaraisaEmails;
     }
 
     // Helper function to check if user is admin
@@ -36,10 +36,10 @@ service cloud.firestore {
     match /characters/{characterId} {
       allow read: if true;
       allow create: if request.auth != null && request.resource.data.linkedUID == request.auth.uid;
-      // Character owner, AD/IO personnel, or admin can edit/delete
+      // Character owner, IA/RAISA personnel, or admin can edit/delete
       allow update, delete: if request.auth != null && (
         request.auth.uid == resource.data.linkedUID || 
-        isADIOPersonnel()
+        isIARAISAPersonnel()
       );
     }
 
@@ -112,8 +112,8 @@ service cloud.firestore {
       // Allow authenticated users to update (frontend enforces permissions)
       allow update: if request.auth != null;
       
-      // Only AD/IO personnel can delete
-      allow delete: if request.auth != null && isADIOPersonnel();
+      // Only IA/RAISA personnel can delete
+      allow delete: if request.auth != null && isIARAISAPersonnel();
     }
 
     // Incident Reports collection (for SD portal)
@@ -147,7 +147,7 @@ service cloud.firestore {
       );
     }
 
-    // Groups of Interest - DEO personnel (L2+) and Directors can write
+    // Groups of Interest - RAISA personnel (L2+) and Directors can write
     match /groups-of-interest/{goiId} {
       allow read: if true; // Everyone can read
       allow create: if request.auth != null
@@ -160,7 +160,7 @@ service cloud.firestore {
       );
     }
 
-    // Persons of Interest - DEO personnel (L2+) and Directors can write
+    // Persons of Interest - RAISA personnel (L2+) and Directors can write
     match /persons-of-interest/{poiId} {
       allow read: if true; // Everyone can read
       allow create: if request.auth != null
@@ -250,6 +250,25 @@ service cloud.firestore {
 
       allow update: if request.auth != null;
 
+      allow delete: if request.auth != null && isIARAISAPersonnel();
+    }
+
+    // Case Files collection - IA/RAISA cases
+    match /caseFiles/{caseId} {
+      // Public read (frontend filters by clearance)
+      allow read: if true;
+      
+      // Allow authenticated users to create
+      // Frontend enforces IA/RAISA or Level 5+ permission checks
+      allow create: if request.auth != null
+        && request.resource.data.caseId is string
+        && request.resource.data.subject is string
+        && request.resource.data.versions is list;
+      
+      // Allow authenticated users to update (frontend enforces permissions)
+      allow update: if request.auth != null;
+      
+      // Only AD/IO personnel can delete
       allow delete: if request.auth != null && isADIOPersonnel();
     }
   }

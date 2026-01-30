@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Persons of Interest — DEO — Site-89</title>
+  <title>Persons of Interest — RAISA — Site-89</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/main.css">
@@ -90,7 +90,7 @@
 
   <section class="page-hero">
     <div class="hero-title">Persons of Interest (POI)</div>
-    <div class="hero-sub">Individuals of significance monitored by DEO Intelligence</div>
+    <div class="hero-sub">Individuals of significance monitored by RAISA Intelligence</div>
   </section>
 
   <section class="content">
@@ -119,7 +119,7 @@
 
     <div id="accessNotice" class="access-notice" style="display:none;">
       <i class="fas fa-info-circle"></i>
-      <strong>For DEO/IA Personnel & Level 5+:</strong> You have permission to create and manage Persons of Interest entries.
+      <strong>For RAISA Personnel & Level 5+:</strong> You have permission to create and manage Persons of Interest entries.
     </div>
 
     <div id="poisContainer">
@@ -205,8 +205,8 @@
         const rank = userCharacter.rank || '';
         const clearance = userCharacter.clearance || 0;
         
-        // Allow DEO/IA members OR Level 5+ personnel to manage POIs
-        canManagePois = dept.includes('DEO/IA') || clearance >= 5;
+        // Allow RAISA members OR Level 5+ personnel to manage POIs
+        canManagePois = dept.includes('RAISA') || clearance >= 5;
         
         if (canManagePois) {
           document.getElementById('addPoiBtn').style.display = 'inline-block';

@@ -130,12 +130,8 @@ function getDirectorDivisions(){
       
       // Map departments to email divisions
       if(deptUpper.includes('AD/BOD')) divisions.push('bod');
-      if(deptUpper.includes('AD/IO')) divisions.push('io');
-      if(deptUpper.includes('SD/') || deptUpper.startsWith('SD')) divisions.push('sd');
-      if(deptUpper.includes('SCD/') || deptUpper.startsWith('SCD')) divisions.push('scd');
-      if(deptUpper.includes('DEO/') || deptUpper.startsWith('DEO')) divisions.push('deo');
-      if(deptUpper.includes('MTF')) divisions.push('mtf');
-      if(deptUpper.includes('IA')) divisions.push('ia');
+      if(deptUpper.includes('IA/') || deptUpper.includes('IA')) divisions.push('ia');
+      if(deptUpper.includes('RAISA')) divisions.push('raisa');
       
       return [...new Set(divisions)];
     }
@@ -328,12 +324,11 @@ document.addEventListener('includesLoaded', () => {
     if(directorDivisions && directorDivisions.length > 0){
       const divisionMap = {
         'bod': 'Board of Directors (bod.mgmt@site89.org)',
-        'io': 'Internal Operations (io.mgmt@site89.org)',
+        'ia': 'Internal Affairs (ia.mgmt@site89.org)',
+        'raisa': 'RAISA (raisa.mgmt@site89.org)',
         'sd': 'Security Department (sd.mgmt@site89.org)',
         'scd': 'Scientific Department (scd.mgmt@site89.org)',
-        'deo': 'External Operations (deo.mgmt@site89.org)',
-        'mtf': 'Mobile Task Force (mtf.mgmt@site89.org)',
-        'ia': 'Intelligence Agency (ia.mgmt@site89.org)'
+        'mtf': 'Mobile Task Force (mtf.mgmt@site89.org)'
       };
       directorDivisions.forEach(div => {
         const opt = document.createElement('option');

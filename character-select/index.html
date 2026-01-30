@@ -771,7 +771,7 @@
         const pidRef = doc(db, "personnel", pid);
         const snap = await getDoc(pidRef);
         if (!snap.exists()) {
-          showFeedback(charFormFeedback, "PID not found. Contact Internal Operations to add this PID.", "error");
+          showFeedback(charFormFeedback, "PID not found. Contact Internal Affairs to add this PID.", "error");
           return;
         }
 

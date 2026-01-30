@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site-89 IO Personnel Manager</title>
+  <title>Site-89 IA Personnel Manager</title>
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -126,13 +126,13 @@
   <section class="content">
     <div class="about-box" style="margin-bottom: 2rem;">
       <h2>IO Personnel Manager</h2>
-      <p>Administrative Department Internal Operations - Edit personnel records, ranks, class, and photographs.</p>
+      <p>Administrative Department Internal Affairs - Edit personnel records, ranks, class, and photographs.</p>
     </div>
 
     <div id="accessDenied" class="access-denied" style="display:none;">
       <i class="fas fa-lock" style="font-size:3rem;margin-bottom:1rem;opacity:0.5;display:block;"></i>
       <h2>Access Denied</h2>
-      <p>Only characters from the Administrative Department - Internal Operations can access this page.</p>
+      <p>Only characters from the Internal Affairs or RAISA departments can access this page.</p>
     </div>
 
     <div id="managementContainer" style="display:none;">
@@ -764,7 +764,7 @@
           let hasAccess = false;
           charSnap.forEach(doc => {
             const char = doc.data();
-            if ((char.department || '').includes('AD') || (char.department || '').includes('Internal Operations')) {
+            if ((char.department || '').includes('IA') || (char.department || '').includes('RAISA')) {
               hasAccess = true;
             }
           });
