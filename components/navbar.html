@@ -40,20 +40,59 @@
     </div>
   </div> -->
 
-  <button id="navToggle" class="nav-toggle" aria-expanded="false" aria-label="Open menu">☰</button>
+  <button id="navToggle" class="nav-toggle" aria-expanded="false" aria-label="Open menu"></button>
+
+  <!-- Mobile Accounts Button -->
+  <button id="mobileAccountsBtn" class="mobile-accounts-btn" aria-label="Account menu">
+    <i class="fa-solid fa-user"></i>
+  </button>
+
+  <!-- Mobile Accounts Dropdown -->
+  <div id="mobileAccountsDropdown" class="mobile-accounts-dropdown hidden" aria-hidden="true">
+    <a href="/accounts/" class="mobile-accounts-item">
+      <i class="fa-solid fa-gear"></i>
+      <span>Manage Account</span>
+    </a>
+    <a href="/character-select/" class="mobile-accounts-item">
+      <i class="fa-solid fa-masks-theater"></i>
+      <span>Manage Characters</span>
+    </a>
+    <a href="/orientation/" class="mobile-accounts-item" id="mobileOrientationLink" style="display:none;">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>Orientation</span>
+    </a>
+    <div class="mobile-accounts-divider"></div>
+    <button id="mobileThemeToggleBtn" class="mobile-accounts-item theme-toggle">
+      <i class="fa-solid fa-sun" id="mobileThemeIcon"></i>
+      <span id="mobileThemeText">Dark Mode</span>
+    </button>
+    <div class="mobile-accounts-divider"></div>
+    <button id="mobileLogoutBtn" class="mobile-accounts-item logout-item" style="display:none;">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      <span>Logout</span>
+    </button>
+    <a href="/login/" id="mobileLoginBtn" class="mobile-accounts-item">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      <span>Login</span>
+    </a>
+  </div>
 
   <div id="mobileMenu" class="mobile-menu hidden" aria-hidden="true">
-    <a href="/departments/">Departments</a>
-    <a href="/archives/">Archives Hub</a>
-    <a href="/personnel-files/">Personnel Files</a>
-    <a href="/anomalies/">Anomalies</a>
-    <a href="/research-logs/">Research Logs</a>
-    <a href="/incident-reports/">Incident Reports</a>
-    <a href="/newsletter/">Newsletter</a>
-    <a href="/forum/">Forum</a>
-    <a href="/rules/">Rules & Guidelines</a>
-    <a href="/about/">About</a>
-    <a href="/guides/">Guides</a>
+    <!-- Navigation links -->
+    <div class="mobile-menu-section">
+      <a href="/departments/">Departments</a>
+      <a href="/archives/">Archives Hub</a>
+      <a href="/personnel-files/">Personnel Files</a>
+      <a href="/anomalies/">Anomalies</a>
+      <a href="/research-logs/">Research Logs</a>
+      <a href="/incident-reports/">Incident Reports</a>
+      <a href="/emails/">Emails</a>
+      <a href="/newsletter/">Newsletter</a>
+      <a href="/forum/">Forum</a>
+      <a href="/rules/">Rules & Guidelines</a>
+      <a href="/about/">About</a>
+      <a href="/guides/">Guides</a>
+    </div>
   </div>
 
   <!-- Right side: socials + login -->
@@ -117,6 +156,7 @@
     background-color: var(--bg-soft);
     border-bottom: 1px solid var(--card-border);
     position: relative;
+    z-index: 100;
   }
 
   .nav-left, .nav-right {
@@ -237,7 +277,9 @@
     position: absolute;
     top: 100%;
     right: 0;
-    min-width: 280px;
+    left: auto;
+    width: min(320px, calc(100vw - 24px));
+    min-width: 240px;
     margin-top: 8px;
     padding: 0.5rem 0;
     background: var(--bg-card);
@@ -245,6 +287,7 @@
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    box-sizing: border-box;
   }
 
   .nav-dropdown-accounts.hidden {
@@ -327,33 +370,135 @@
     border-radius: 6px;
     font-size: 1.2rem;
     cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001;
+  }
+
+  .nav-toggle::before {
+    content: '☰';
+    display: block;
+  }
+
+  .nav-toggle[aria-expanded="true"]::before {
+    content: '✕';
   }
 
   .mobile-menu {
     display: none;
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 0;
     left: 0;
     right: 0;
-    background: var(--bg-soft);
-    padding: 0.9rem 1rem;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 5rem 1rem 2rem 1rem;
     z-index: 1000;
     flex-direction: column;
-    gap: 0.45rem;
-    border-bottom: 1px solid var(--card-border);
+    gap: 0;
+    backdrop-filter: blur(4px);
+    animation: slideDownMenu 0.3s ease-out;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .mobile-menu-top {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(78, 250, 170, 0.15);
+  }
+
+  .mobile-menu-bottom {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(78, 250, 170, 0.15);
+  }
+
+  .mobile-auth-btn {
+    color: var(--text-light);
+    padding: 1.8rem 1.6rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 1.3rem;
+    background: rgba(78, 250, 170, 0.12);
+    border: 1px solid rgba(78, 250, 170, 0.25);
+    border-left: 4px solid transparent;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .mobile-auth-btn:hover {
+    background: rgba(78, 250, 170, 0.18);
+    border-color: rgba(78, 250, 170, 0.3);
+    border-left-color: var(--accent-mint);
+    color: var(--accent-mint);
+    padding-left: 1.8rem;
+    transform: translateX(4px);
+  }
+
+  @keyframes slideDownMenu {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .mobile-menu a {
     color: var(--text-light);
-    padding: 0.6rem 0.8rem;
-    border-radius: 6px;
+    padding: 1.8rem 1.6rem;
+    border-radius: 10px;
     text-decoration: none;
     transition: all 0.2s ease;
+    font-size: 1.3rem;
+    background: rgba(78, 250, 170, 0.08);
+    border: 1px solid rgba(78, 250, 170, 0.15);
+    border-left: 4px solid transparent;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .mobile-menu-section a {
+    padding: 1.8rem 1.6rem;
+    background: rgba(78, 250, 170, 0.08);
+    border: 1px solid rgba(78, 250, 170, 0.15);
+  }
+
+  .mobile-menu-section a:hover {
+    background: rgba(78, 250, 170, 0.18);
+    border-color: rgba(78, 250, 170, 0.3);
+    border-left-color: var(--accent-mint);
+    color: var(--accent-mint);
+    padding-left: 1.8rem;
+    transform: translateX(4px);
   }
 
   .mobile-menu a:hover {
-    background: rgba(78, 250, 170, 0.08);
+    background: rgba(78, 250, 170, 0.18);
+    border-color: rgba(78, 250, 170, 0.3);
+    border-left-color: var(--accent-mint);
     color: var(--accent-mint);
+    padding-left: 1.8rem;
+    transform: translateX(4px);
   }
 
   /* Light mode navbar adjustments */
@@ -427,6 +572,101 @@
     color: var(--accent-teal);
   }
 
+  /* Mobile accounts button */
+  .mobile-accounts-btn {
+    display: none;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-light);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1001;
+  }
+
+  .mobile-accounts-btn:hover {
+    border-color: rgba(78, 250, 170, 0.3);
+    color: var(--accent-mint);
+  }
+
+  /* Mobile accounts dropdown */
+  .mobile-accounts-dropdown {
+    display: none;
+    position: fixed;
+    top: 50px;
+    right: 15px;
+    background: var(--bg-soft);
+    border: 1px solid rgba(78, 250, 170, 0.15);
+    border-radius: 8px;
+    z-index: 1000;
+    min-width: 220px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    gap: 0;
+    animation: slideDownMenu 0.2s ease-out;
+  }
+
+  .mobile-accounts-dropdown.hidden {
+    display: none !important;
+  }
+
+  .mobile-accounts-dropdown:not(.hidden) {
+    display: flex !important;
+  }
+
+  .mobile-accounts-item {
+    color: var(--text-light);
+    padding: 1rem 1.2rem;
+    border: none;
+    background: none;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .mobile-accounts-item:hover {
+    background: rgba(78, 250, 170, 0.1);
+    color: var(--accent-mint);
+  }
+
+  .mobile-accounts-item i {
+    width: 20px;
+    text-align: center;
+  }
+
+  .mobile-accounts-divider {
+    height: 1px;
+    background: rgba(78, 250, 170, 0.1);
+    margin: 0.5rem 0;
+  }
+
+  /* Light mode mobile accounts */
+  html[data-theme="light"] .mobile-accounts-dropdown {
+    background: #FFFFFF;
+    border-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .mobile-accounts-item {
+    color: #1A1A1A;
+  }
+
+  html[data-theme="light"] .mobile-accounts-item:hover {
+    background: rgba(30, 155, 138, 0.1);
+    color: #1E9B8A;
+  }
+
+  html[data-theme="light"] .mobile-accounts-divider {
+    background: #D0D0D0;
+  }
+
   /* Light mode clock styling */
   html[data-theme="light"] .clock-label {
     color: #666;
@@ -440,6 +680,79 @@
   @media (max-width: 1100px) {
     .nav-clocks {
       display: none;
+    }
+  }
+
+  /* Mobile responsive: 768px and below */
+  @media (max-width: 768px) {
+    #main-nav {
+      padding: 12px 15px;
+      justify-content: space-between;
+    }
+
+    .nav-left {
+      gap: 0;
+      flex: 1;
+    }
+
+    .nav-left a:not(.nav-logo) {
+      display: none;
+    }
+
+    .nav-left .nav-logo {
+      margin: 0;
+    }
+
+    .nav-right {
+      display: none;
+    }
+
+    .nav-toggle {
+      display: block !important;
+      order: 10;
+    }
+
+    .mobile-accounts-btn {
+      display: block !important;
+      order: 9;
+    }
+
+    .mobile-menu.hidden {
+      display: none !important;
+    }
+
+    .mobile-menu:not(.hidden) {
+      display: flex !important;
+    }
+  }
+
+  /* Extra small screens: 480px and below */
+  @media (max-width: 480px) {
+    .nav-logo img {
+      height: 32px;
+    }
+
+    .nav-toggle {
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
+    }
+
+    .mobile-accounts-btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
+    }
+
+    .mobile-menu {
+      padding: 3.5rem 0.8rem 1rem 0.8rem;
+    }
+
+    .mobile-menu a {
+      padding: 0.9rem 1rem;
+      font-size: 1rem;
+    }
+
+    .mobile-menu a:hover {
+      padding-left: 1.4rem;
     }
   }
 </style>
@@ -505,6 +818,31 @@
   }
 
 
+  // Mobile accounts dropdown toggle
+  const mobileAccountsBtn = document.getElementById('mobileAccountsBtn');
+  const mobileAccountsDropdown = document.getElementById('mobileAccountsDropdown');
+  if (mobileAccountsBtn && mobileAccountsDropdown) {
+    mobileAccountsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileAccountsDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (mobileAccountsBtn && !mobileAccountsBtn.contains(e.target) && 
+          mobileAccountsDropdown && !mobileAccountsDropdown.contains(e.target)) {
+        mobileAccountsDropdown.classList.add('hidden');
+      }
+    });
+
+    // Close dropdown when clicking a link inside it
+    mobileAccountsDropdown.querySelectorAll('a, button').forEach(item => {
+      item.addEventListener('click', () => {
+        mobileAccountsDropdown.classList.add('hidden');
+      });
+    });
+  }
+
   // Mobile menu toggle
   const navToggle = document.getElementById('navToggle');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -515,6 +853,13 @@
       const expanded = navToggle.getAttribute('aria-expanded') === 'true';
       navToggle.setAttribute('aria-expanded', (!expanded).toString());
       mobileMenu.setAttribute('aria-hidden', (!expanded).toString());
+      
+      // Prevent scrolling when menu is open
+      if (!expanded) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
     });
 
     // Close menu when clicking outside
@@ -523,8 +868,104 @@
         mobileMenu.classList.add('hidden');
         navToggle.setAttribute('aria-expanded', 'false');
         mobileMenu.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
       }
     });
+  }
+
+  // Handle mobile logout button
+  const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+  if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js');
+        const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js');
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyBJg7PpBl4M5K7X2vHqpxKz8L1K0vN1vQs",
+          authDomain: "site89-81fa9.firebaseapp.com",
+          projectId: "site89-81fa9",
+          storageBucket: "site89-81fa9.firebasestorage.app",
+          messagingSenderId: "1082370055632",
+          appId: "1:1082370055632:web:5e6c7b8d2a1f3c4e5f"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        await signOut(auth);
+        window.location.href = '/login/';
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+    });
+  }
+
+  // Handle mobile theme toggle
+  const mobileThemeToggleBtn = document.getElementById('mobileThemeToggleBtn');
+  if (mobileThemeToggleBtn) {
+    mobileThemeToggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      ThemeManager.toggle();
+      updateMobileThemeUI();
+    });
+  }
+
+  function updateMobileThemeUI() {
+    const themeIcon = document.getElementById('mobileThemeIcon');
+    const themeText = document.getElementById('mobileThemeText');
+    if (!themeIcon || !themeText) return;
+
+    if (ThemeManager.isDark()) {
+      themeIcon.className = 'fa-solid fa-moon';
+      themeText.textContent = 'Light Mode';
+    } else {
+      themeIcon.className = 'fa-solid fa-sun';
+      themeText.textContent = 'Dark Mode';
+    }
+  }
+
+  // Update mobile auth UI based on login state
+  function updateMobileAuthUI(user) {
+    const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    const mobileOrientationLink = document.getElementById('mobileOrientationLink');
+
+    if (user) {
+      // User is logged in
+      if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
+      if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'flex';
+      if (mobileOrientationLink) mobileOrientationLink.style.display = 'flex';
+    } else {
+      // User is not logged in
+      if (mobileLoginBtn) mobileLoginBtn.style.display = 'flex';
+      if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'none';
+      if (mobileOrientationLink) mobileOrientationLink.style.display = 'none';
+    }
+  }
+
+  // Listen for auth state changes
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js');
+    const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js');
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJg7PpBl4M5K7X2vHqpxKz8L1K0vN1vQs",
+      authDomain: "site89-81fa9.firebaseapp.com",
+      projectId: "site89-81fa9",
+      storageBucket: "site89-81fa9.firebasestorage.app",
+      messagingSenderId: "1082370055632",
+      appId: "1:1082370055632:web:5e6c7b8d2a1f3c4e5f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      updateMobileAuthUI(user);
+    });
+  } catch (err) {
+    console.error('Firebase init error:', err);
   }
 
   // Update clocks

@@ -25,6 +25,20 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
+    // Helper function to check if user has AD/IO permissions
+    function isADIOPersonnel() {
+      // Add emails of AD/IO department personnel here
+      let adioEmails = [
+        'jedi21132@gmail.com',
+        'mason@millerzoo.com',
+        'usxafiy@gmail.com',
+        'redbridge7242@gmail.com',
+        'o5councilfoundation@gmail.com'
+        // Add more AD/IO personnel emails as needed
+      ];
+      return request.auth != null && request.auth.token.email in adioEmails;
+    }
+
     // ===== ANALYTICS =====
     // Public read, admin-only write
     match /settings/analytics {
@@ -182,10 +196,12 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.authorUid == request.auth.uid;
       
-      // Author can edit their own thread, admins can moderate
+      // Author can edit their own thread, admins can moderate, OR
+      // Any authenticated user can update ONLY voting fields (upvotes, downvotes, upvoters, downvoters)
       allow update: if request.auth != null && (
         resource.data.authorUid == request.auth.uid ||
-        request.auth.token.email == 'jedi21132@gmail.com'
+        request.auth.token.email == 'jedi21132@gmail.com' ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvotes', 'downvotes', 'upvoters', 'downvoters'])
       );
       
       // Author or admins can delete
@@ -201,10 +217,12 @@ service cloud.firestore {
         allow create: if request.auth != null
           && request.resource.data.authorUid == request.auth.uid;
         
-        // Author can edit, admins can moderate
+        // Author can edit, admins can moderate, OR
+        // Any authenticated user can update ONLY voting fields (upvotes, downvotes, upvoters, downvoters)
         allow update: if request.auth != null && (
           resource.data.authorUid == request.auth.uid ||
-          request.auth.token.email == 'jedi21132@gmail.com'
+          request.auth.token.email == 'jedi21132@gmail.com' ||
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvotes', 'downvotes', 'upvoters', 'downvoters'])
         );
         
         // Author or admins can delete

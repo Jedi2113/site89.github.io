@@ -26,6 +26,29 @@
       padding: 2rem;
     }
 
+    .mobile-unavailable {
+      display: none;
+      margin: 2rem 1rem;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .mobile-unavailable h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.4rem;
+      color: var(--accent-mint);
+    }
+
+    .mobile-unavailable p {
+      margin: 0;
+      color: var(--text-light);
+      opacity: 0.85;
+    }
+
     .org-header {
       text-align: center;
       margin-bottom: 3rem;
@@ -270,6 +293,11 @@
     @media (max-width: 768px) {
       .content {
         padding: 1rem;
+        display: none;
+      }
+
+      .mobile-unavailable {
+        display: block;
       }
 
       .org-level {
@@ -340,6 +368,11 @@
 
   <!-- Navbar -->
   <div data-include="/components/navbar.html"></div>
+
+  <div class="mobile-unavailable">
+    <h1>Sorry, this page is not available on mobile.</h1>
+    <p>Please view on a larger screen.</p>
+  </div>
 
   <section class="content">
     <div class="org-header">

@@ -55,6 +55,25 @@ document.addEventListener("includesLoaded", () => {
     }
     if (navAccountsText) navAccountsText.textContent = displayName;
     
+    const clampAccountsDropdown = () => {
+      if (!navAccountsDropdown || navAccountsDropdown.classList.contains('hidden')) return;
+
+      const padding = 12;
+      navAccountsDropdown.style.left = 'auto';
+      navAccountsDropdown.style.right = '0';
+      navAccountsDropdown.style.maxWidth = `calc(100vw - ${padding * 2}px)`;
+
+      const rect = navAccountsDropdown.getBoundingClientRect();
+      if (rect.right > window.innerWidth - padding) {
+        navAccountsDropdown.style.right = `${padding}px`;
+        navAccountsDropdown.style.left = 'auto';
+      }
+      if (rect.left < padding) {
+        navAccountsDropdown.style.left = `${padding}px`;
+        navAccountsDropdown.style.right = 'auto';
+      }
+    };
+
     // Update button behavior based on login status
     let navAccountsBtn = document.getElementById("navAccountsBtn");
     if (navAccountsBtn) {
@@ -71,6 +90,7 @@ document.addEventListener("includesLoaded", () => {
           // Show dropdown for logged-in users
           if (navAccountsDropdown) {
             navAccountsDropdown.classList.toggle('hidden');
+            clampAccountsDropdown();
           }
         } else {
           // Navigate to login for non-logged-in users
@@ -78,6 +98,8 @@ document.addEventListener("includesLoaded", () => {
         }
       });
     }
+
+    window.addEventListener('resize', clampAccountsDropdown);
   });
 
   Array.from(document.querySelectorAll('#logoutBtn')).forEach(btn => {

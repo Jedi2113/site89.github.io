@@ -1,4 +1,165 @@
 <!-- Account Modal Component -->
+<style>
+  .account-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .account-modal:not(.hidden) {
+    display: flex;
+  }
+
+  .account-modal.hidden {
+    display: none !important;
+  }
+
+  .account-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .account-box {
+    position: relative;
+    z-index: 2001;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-teal);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .account-box h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--accent-mint);
+  }
+
+  .account-box p {
+    margin: 0.5rem 0;
+    color: var(--text-light);
+  }
+
+  .account-box hr {
+    border: none;
+    border-top: 1px solid var(--accent-teal);
+    margin: 1rem 0;
+    opacity: 0.3;
+  }
+
+  .account-box button {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 6px;
+    background: var(--accent-teal);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .account-box button:hover {
+    background: var(--accent-mint);
+    transform: translateY(-2px);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    background: rgba(78, 250, 170, 0.1);
+    color: var(--accent-mint);
+  }
+
+  .feedback {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  /* Light mode */
+  html[data-theme="light"] .account-box {
+    background: #FFFFFF;
+    border-color: #D0D0D0;
+  }
+
+  html[data-theme="light"] .account-box p {
+    color: #333;
+  }
+
+  html[data-theme="light"] .account-box button {
+    background: #1E9B8A;
+    color: #fff;
+  }
+
+  html[data-theme="light"] .account-box button:hover {
+    background: #0D6E66;
+  }
+
+  html[data-theme="light"] .close-btn {
+    color: #333;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 480px) {
+    .account-box {
+      width: 95%;
+      padding: 1.5rem;
+      max-height: 85vh;
+    }
+
+    .account-box h2 {
+      font-size: 1.2rem;
+    }
+
+    .account-box button {
+      padding: 0.7rem;
+      font-size: 0.95rem;
+    }
+
+    .close-btn {
+      top: 0.8rem;
+      right: 0.8rem;
+      width: 2rem;
+      height: 2rem;
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
 <div id="accountModal" class="account-modal hidden">
   <div class="account-overlay"></div>
   <div class="account-box">

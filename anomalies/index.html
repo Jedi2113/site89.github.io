@@ -57,7 +57,29 @@
         #loadExistingBtn{background:rgba(0,212,232,0.2);color:#00d4e8;border:2px solid rgba(0,212,232,0.4);padding:.5rem 1rem;font-size:.9rem;font-weight:700}
         #loadExistingBtn:hover{background:rgba(0,212,232,0.3);border-color:#00d4e8;box-shadow:0 0 12px rgba(0,212,232,0.3)}
         .feedback{margin:0;padding:.5rem .8rem;border-radius:4px;font-size:.9rem;font-weight:600}
-        @media (max-width:720px){ .ms-header{flex-direction:column;align-items:stretch}.ms-toolbar{justify-content:space-between} .ms-table th:nth-child(3), .ms-table td:nth-child(3){display:none} }
+        @media (max-width:1024px) {
+          .ms-logs { margin: 0 !important; }
+        }
+        @media (max-width:768px) {
+          .ms-header{flex-direction:column;align-items:stretch}
+          .ms-toolbar{justify-content:space-between}
+          .ms-table th:nth-child(3), .ms-table td:nth-child(3){display:none}
+          .ms-search { min-width: 100%; }
+          .ms-table th, .ms-table td { padding: 0.6rem 0.5rem; font-size: 0.9rem; }
+          .ms-title h1 { font-size: 1.3rem; }
+          .ms-title .ms-sub { font-size: 0.85rem; }
+        }
+        @media (max-width:480px) {
+          .ms-logs { padding: 0 !important; }
+          .ms-header { gap: 0.5rem; margin-bottom: 0.75rem; }
+          .ms-toolbar { flex-direction: column; gap: 0.5rem; }
+          .ms-search { min-width: 100%; padding: 0.4rem 0.6rem; }
+          .ms-btn-new { width: 100%; }
+          .ms-title h1 { font-size: 1.15rem; }
+          .ms-table th, .ms-table td { padding: 0.5rem 0.4rem; font-size: 0.8rem; }
+          .ms-table th:nth-child(2), .ms-table td:nth-child(2) { display: none; }
+          .pill { padding: 0.2rem 0.4rem; font-size: 0.75rem; }
+        }
       </style>
 
       <div class="ms-header">

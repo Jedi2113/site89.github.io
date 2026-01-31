@@ -845,6 +845,15 @@ document.addEventListener('includesLoaded', () => {
     let selected = null;
     try { selected = JSON.parse(localStorage.getItem('selectedCharacter')); } catch(e){ selected = null; }
     
+    // Check if user has a character with level 1+ clearance
+    if (!selected || !selected.name || !selected.clearance || Number(selected.clearance) < 1) {
+      // Insufficient clearance or no character selected
+      messagesContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-light);opacity:0.7;"><div style="font-size:1.2rem;color:var(--accent-red);margin-bottom:1rem;"><i class="fas fa-lock"></i> Access Denied</div><p>You must create a character with security clearance level 1 or higher to access the mail system.</p><p><a href="/character-select/" style="color:var(--accent-mint);text-decoration:underline;">Manage Your Characters</a></p></div>';
+      showEmptyState();
+      if (emailsUnsubscribe){ emailsUnsubscribe(); emailsUnsubscribe = null; }
+      return;
+    }
+    
     try {
       if (selected && selected.name){
         const directory = await getEmailDirectory(db);

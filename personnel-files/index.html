@@ -99,12 +99,15 @@
       height: 100%;
       background-color: rgba(0, 0, 0, 0.7);
       animation: fadeIn 0.3s ease;
+      overflow: auto;
     }
 
     .modal.show {
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
     }
 
     .modal-content {
@@ -112,12 +115,13 @@
       border: 2px solid var(--accent-mint);
       border-radius: 10px;
       padding: 2rem;
-      width: 90%;
+      width: 100%;
       max-width: 800px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 8px 32px rgba(78, 250, 170, 0.15);
       animation: slideIn 0.3s ease;
+      box-sizing: border-box;
     }
 
     @keyframes slideIn {
@@ -162,6 +166,7 @@
       font-size: 1.8rem;
       cursor: pointer;
       transition: color 0.2s ease;
+      flex-shrink: 0;
     }
 
     .modal-close:hover {
@@ -213,6 +218,75 @@
       margin-top: 1rem;
       color: var(--text-light);
       line-height: 1.6;
+    }
+
+    /* Mobile responsive modal */
+    @media (max-width: 768px) {
+      .modal-content {
+        padding: 1.5rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.4rem;
+      }
+
+      .modal-body {
+        grid-template-columns: 120px 1fr;
+        gap: 1.5rem;
+      }
+
+      .modal-photo {
+        width: 120px;
+        height: 120px;
+      }
+
+      .modal-detail-label {
+        min-width: 100px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal.show {
+        padding: 0.5rem;
+      }
+
+      .modal-content {
+        padding: 1rem;
+        border-radius: 8px;
+      }
+
+      .modal-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.2rem;
+      }
+
+      .modal-close {
+        font-size: 1.5rem;
+      }
+
+      .modal-body {
+        grid-template-columns: 100px 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .modal-photo {
+        width: 100px;
+        height: 100px;
+      }
+
+      .modal-detail-row {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .modal-detail-label {
+        min-width: unset;
+      }
     }
 
     .awards-section {

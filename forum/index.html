@@ -36,8 +36,10 @@
 
     .forum-container {
       max-width: 1200px;
+      width: 100%;
       margin: 2rem auto;
       padding: 0 1rem;
+      box-sizing: border-box;
     }
 
     .forum-header {
@@ -59,10 +61,13 @@
     .forum-filter {
       display: flex;
       gap: 0.5rem;
+      flex-wrap: wrap;
       background: var(--bg-card);
       padding: 0.35rem;
       border-radius: 8px;
       border: 1px solid rgba(78,250,170,0.1);
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .filter-btn {
@@ -74,6 +79,7 @@
       border-radius: 6px;
       transition: all 0.2s;
       font-size: 0.9rem;
+      white-space: nowrap;
     }
 
     .filter-btn:hover {
@@ -127,6 +133,7 @@
       padding: 1.5rem;
       transition: all 0.2s;
       cursor: pointer;
+      box-sizing: border-box;
     }
 
     .thread-card:hover {
@@ -346,12 +353,45 @@
         flex-direction: column;
       }
 
+      .forum-filter {
+        width: 100%;
+        overflow-x: auto;
+      }
+
       .forum-search input {
         width: 100%;
       }
 
       .thread-header {
         flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .forum-container {
+        margin: 1.25rem auto;
+        padding: 0 0.75rem;
+      }
+
+      .forum-hero {
+        padding: 2rem 0.75rem;
+      }
+
+      .forum-hero h1 {
+        font-size: 1.7rem;
+      }
+
+      .forum-hero p {
+        font-size: 0.9rem;
+      }
+
+      .thread-card {
+        padding: 1rem;
+      }
+
+      .filter-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
       }
     }
   </style>
