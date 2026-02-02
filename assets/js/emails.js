@@ -1,5 +1,6 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import { getFirestore, collection, query, where, orderBy, getDocs, onSnapshot, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js';
 
 // Normalize a name into a local-part seed like "lastname.firstname"
 function baseLocalFromName(name){
@@ -230,7 +231,6 @@ document.addEventListener('includesLoaded', () => {
   let locallyMarkedRead = new Set();
   let contactsList = new Set();
   let charactersCache = {};
-  let tinyMCEInstance = null;
   let isMobile = window.innerWidth <= 768;
 
   function isValidEmail(e){
@@ -259,44 +259,6 @@ document.addEventListener('includesLoaded', () => {
     }
   }
   
-  // Initialize TinyMCE
-  function initTinyMCE(){
-    if(tinyMCEInstance) return;
-    
-    // Check if tinymce is available
-    if(typeof tinymce === 'undefined'){
-      console.warn('TinyMCE not loaded, using plain textarea');
-      composeBody.style.display = 'block';
-      return;
-    }
-    
-    tinymce.init({
-      selector: '#composeBody',
-      height: 300,
-      menubar: false,
-      skin: 'oxide-dark',
-      content_css: 'dark',
-      plugins: [
-        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
-        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-        'insertdatetime', 'media', 'table', 'help', 'wordcount'
-      ],
-      toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | ' +
-        'alignleft aligncenter alignright alignjustify | ' +
-        'bullist numlist outdent indent | removeformat | help',
-      content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 14px; color: #e0e0e0; background-color: #1a1a1a; }',
-      setup: function(editor) {
-        tinyMCEInstance = editor;
-      },
-      init_instance_callback: function(editor) {
-        console.log('TinyMCE initialized');
-      },
-      oninit: function(editor) {
-        console.log('TinyMCE loaded');
-      }
-    });
-  }
-
   function setActiveFolder(name){
     folderEls.forEach(f => f.classList.toggle('active', f.dataset.folder === name));
     currentFolder = name;
@@ -395,13 +357,6 @@ document.addEventListener('includesLoaded', () => {
     }
     
     composeTo.focus();
-    
-    // Initialize TinyMCE with a slight delay to ensure DOM is ready
-    setTimeout(() => {
-      if(!tinyMCEInstance){
-        initTinyMCE();
-      }
-    }, 100);
   });
   
   composeClose.addEventListener('click', ()=> { 
@@ -420,11 +375,7 @@ document.addEventListener('includesLoaded', () => {
   function clearCompose(){ 
     composeTo.value=''; 
     composeSubject.value='';
-    if(tinyMCEInstance){
-      tinyMCEInstance.setContent('');
-    } else {
-      composeBody.value='';
-    }
+    composeBody.value='';
   }
 
   // Contacts autocomplete helpers
@@ -517,13 +468,8 @@ document.addEventListener('includesLoaded', () => {
     // Normalize all recipients to lowercase for case-insensitive matching
     recipients = recipients.map(r => r.toLowerCase());
     
-    // Get email body from TinyMCE or textarea
-    let emailBody = '';
-    if(tinyMCEInstance){
-      emailBody = tinyMCEInstance.getContent();
-    } else {
-      emailBody = composeBody.value || '';
-    }
+    // Get email body from Markdown textarea
+    const emailBody = composeBody.value || '';
 
     const payload = {
       sender: sender,
@@ -531,7 +477,8 @@ document.addEventListener('includesLoaded', () => {
       recipients: recipients,
       subject: composeSubject.value || '(no subject)',
       body: emailBody,
-      isHTML: !!tinyMCEInstance, // Track if email is HTML
+      isHTML: false,
+      format: 'markdown',
       status: status, // 'sent' or 'draft'
       folder: status === 'draft' ? 'drafts' : '',
       ts: serverTimestamp()
@@ -583,22 +530,9 @@ document.addEventListener('includesLoaded', () => {
     composeArea.classList.add('active');
     composeTo.value = currentMessage.sender;
     composeSubject.value = 'Re: ' + (currentMessage.subject||'');
-    
-    // Initialize or reset TinyMCE
-    setTimeout(() => {
-      if(!tinyMCEInstance){
-        initTinyMCE();
-        setTimeout(() => {
-          if(tinyMCEInstance){
-            const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-            tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
-          }
-        }, 500);
-      } else {
-        const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-        tinyMCEInstance.setContent(`<p><br></p><hr><p><em>On ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:</em></p>${originalBody}`);
-      }
-    }, 100);
+    const originalText = getMessagePlainText(currentMessage);
+    const quoted = originalText.split('\n').map(line => `> ${line}`).join('\n');
+    composeBody.value = `\n\n---\nOn ${fmtDate(currentMessage.ts)} ${currentMessage.sender} wrote:\n${quoted}`;
   });
 
   btnForward.addEventListener('click', ()=>{
@@ -607,22 +541,10 @@ document.addEventListener('includesLoaded', () => {
     composeArea.classList.add('active');
     composeTo.value = '';
     composeSubject.value = 'Fwd: ' + (currentMessage.subject||'');
-    
-    // Initialize or reset TinyMCE
-    setTimeout(() => {
-      if(!tinyMCEInstance){
-        initTinyMCE();
-        setTimeout(() => {
-          if(tinyMCEInstance){
-            const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-            tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
-          }
-        }, 500);
-      } else {
-        const originalBody = currentMessage.isHTML ? currentMessage.body : `<p>${(currentMessage.body || '').replace(/\n/g, '<br>')}</p>`;
-        tinyMCEInstance.setContent(`<p><br></p><hr><p><strong>Forwarded message</strong></p><p>From: ${currentMessage.sender}<br>Date: ${fmtDate(currentMessage.ts)}</p>${originalBody}`);
-      }
-    }, 100);
+    const originalText = getMessagePlainText(currentMessage);
+    const quoted = originalText.split('\n').map(line => `> ${line}`).join('\n');
+    const header = `---\nForwarded message\nFrom: ${currentMessage.sender}\nDate: ${fmtDate(currentMessage.ts)}\nTo: ${(currentMessage.recipients || []).join(', ')}`;
+    composeBody.value = `\n\n${header}\n\n${quoted}`;
   });
 
   // Render list depending on folder
@@ -741,6 +663,16 @@ document.addEventListener('includesLoaded', () => {
     `;
   }
 
+  function getMessagePlainText(message){
+    if(!message) return '';
+    if(message.isHTML){
+      const div = document.createElement('div');
+      div.innerHTML = message.body || '';
+      return (div.textContent || div.innerText || '').trim();
+    }
+    return (message.body || '').trim();
+  }
+
   async function openMessage(m){
     currentMessage = m;
     selectedMessageId = m.id;
@@ -759,8 +691,10 @@ document.addEventListener('includesLoaded', () => {
       ? `<div class="mail-sender-avatar"><img src="${profileImage}" alt="Profile"></div>`
       : `<div class="mail-sender-avatar">${(m.sender||'').charAt(0).toUpperCase()||'?'}</div>`;
     
-    // Format body content (handle HTML vs plain text)
-    const bodyContent = m.isHTML ? m.body : `<pre style="white-space:pre-wrap;font-family:inherit;margin:0">${m.body || ''}</pre>`;
+    // Format body content (handle HTML vs Markdown)
+    const bodyContent = m.isHTML
+      ? (m.body || '')
+      : `<div class="markdown-body">${marked.parse(m.body || '')}</div>`;
     
     mailContentWrapper.innerHTML = `
       <div class="mail-message-header">

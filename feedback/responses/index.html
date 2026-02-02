@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Feedback Responses — Site-89</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400,500&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Theme System -->
+  <script type="module">
+    import { ThemeManager } from '/assets/js/theme.js';
+    ThemeManager.init();
+  </script>
+
+  <style>
+    /* 403 Error Styles */
+    .warning-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(0deg, 
+        transparent 0%, 
+        transparent 24%, 
+        rgba(255, 0, 0, 0.05) 25%, 
+        rgba(255, 0, 0, 0.05) 26%, 
+        transparent 27%, 
+        transparent 74%, 
+        rgba(255, 0, 0, 0.05) 75%, 
+        rgba(255, 0, 0, 0.05) 76%, 
+        transparent 77%, 
+        transparent 100%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+      animation: scanlines 0.15s infinite;
+      display: none;
+    }
+
+    @keyframes scanlines {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 4px; }
+    }
+
+    @keyframes pulse-red {
+      0%, 100% { border-color: var(--accent-red); box-shadow: 0 0 10px rgba(176, 0, 0, 0.3); }
+      50% { border-color: #ff6b6b; box-shadow: 0 0 20px rgba(176, 0, 0, 0.8); }
+    }
+
+    @keyframes redFlash {
+      0%, 100% { color: var(--accent-red); text-shadow: 0 0 10px rgba(176, 0, 0, 0.8); }
+      50% { color: #ff6b6b; text-shadow: 0 0 20px rgba(176, 0, 0, 1); }
+    }
+
+    .error-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 2rem;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .clearance-box {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem;
+      border: 3px solid var(--accent-red);
+      border-radius: 0;
+      background: rgba(176, 0, 0, 0.05);
+      box-shadow: inset 0 0 30px rgba(176, 0, 0, 0.1), 0 0 30px rgba(176, 0, 0, 0.2);
+      animation: pulse-red 2s ease-in-out infinite;
+      position: relative;
+    }
+
+    .clearance-box::before {
+      content: '⚠ SECURITY ALERT ⚠';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0a0e27;
+      padding: 0 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent-red);
+      animation: redFlash 1.5s ease-in-out infinite;
+    }
+
+    .error-code {
+      font-family: var(--font-head);
+      font-size: 6rem;
+      color: var(--accent-red);
+      margin: 0;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(176, 0, 0, 0.8);
+      animation: redFlash 2s ease-in-out infinite;
+    }
+
+    .error-title {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      color: var(--text-light);
+      margin: 1rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .error-message {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text-light);
+      opacity: 0.9;
+      line-height: 1.6;
+      margin: 1.5rem 0;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background: var(--accent-red);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      margin-top: 1rem;
+    }
+
+    .back-btn:hover {
+      background: #ff6b6b;
+      box-shadow: 0 0 20px rgba(176, 0, 0, 0.5);
+    }
+
+    /* Authorized Content Styles */
+    .page-hero { 
+      padding: 2.5rem 1rem; 
+      text-align:center; 
+      background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); 
+      border-bottom: 1px solid rgba(78,250,170,0.03); 
+    }
+    .page-hero .hero-title { 
+      font-family: var(--font-head); 
+      font-size: 2rem; 
+      color: var(--accent-mint); 
+      margin-bottom: 0.35rem; 
+    }
+    .page-hero .hero-sub { 
+      color: var(--text-light); 
+      opacity: 0.9; 
+    }
+
+    .responses-container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 2rem 1rem;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+    }
+
+    .loading-state i {
+      font-size: 2rem;
+      color: var(--accent-mint);
+      margin-bottom: 1rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .filters-bar {
+      background: var(--bg-card);
+      border: 2px solid rgba(78,250,170,0.15);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .filter-group label {
+      font-size: 0.85rem;
+      color: var(--accent-teal);
+      font-weight: 600;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 0.5rem;
+      background: var(--bg-soft);
+      border: 1px solid rgba(78,250,170,0.2);
+      border-radius: 4px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: var(--bg-card);
+      border: 1px solid rgba(78,250,170,0.15);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-mint);
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+    }
+
+    .feedback-card {
+      background: var(--bg-card);
+      border: 2px solid rgba(78,250,170,0.15);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .feedback-card:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 4px 15px rgba(78,250,170,0.1);
+    }
+
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .feedback-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-light);
+      margin: 0;
+      flex: 1;
+    }
+
+    .feedback-meta {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-category {
+      background: rgba(78,250,170,0.15);
+      color: var(--accent-mint);
+    }
+
+    .badge-status {
+      background: rgba(78,250,170,0.1);
+      color: var(--accent-teal);
+    }
+
+    .badge-date {
+      background: rgba(78,250,170,0.05);
+      color: var(--text-light);
+      opacity: 0.8;
+    }
+
+    .feedback-description {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+    }
+
+    .feedback-details {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(78,250,170,0.1);
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.7;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .detail-item {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--accent-teal);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+      opacity: 0.7;
+    }
+
+    #authorizedContent {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 403 Error Display -->
+  <div class="warning-screen"></div>
+  <div class="error-container">
+    <div class="clearance-box">
+      <h1 class="error-code">403</h1>
+      <h2 class="error-title">ACCESS DENIED</h2>
+      <p class="error-message">
+        <strong>SECURITY CLEARANCE INSUFFICIENT</strong><br><br>
+        You do not have the required authorization to access this resource.<br>
+        This incident has been logged and security has been notified.<br><br>
+        <strong>AUTHORIZATION LEVEL REQUIRED: O5 COUNCIL</strong>
+      </p>
+      <a href="/feedback/" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Return to Feedback
+      </a>
+    </div>
+  </div>
+
+  <!-- Authorized Content (Only visible to jedi21132@gmail.com) -->
+  <div id="authorizedContent">
+    <div data-include="/components/header.html"></div>
+    <div data-include="/components/navbar.html"></div>
+
+    <section class="page-hero">
+      <div class="hero-title">Feedback Responses</div>
+      <div class="hero-sub">Administrative view of all site feedback submissions</div>
+    </section>
+
+    <section class="content">
+      <div class="responses-container">
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-state">
+          <div><i class="fas fa-spinner"></i></div>
+          <div>Loading feedback responses...</div>
+        </div>
+
+        <!-- Statistics Bar -->
+        <div id="statsBar" class="stats-bar" style="display: none;">
+          <div class="stat-box">
+            <div class="stat-value" id="totalCount">0</div>
+            <div class="stat-label">Total Submissions</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="newCount">0</div>
+            <div class="stat-label">New</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="bugCount">0</div>
+            <div class="stat-label">Bug Reports</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="featureCount">0</div>
+            <div class="stat-label">Feature Requests</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div id="filtersBar" class="filters-bar" style="display: none;">
+          <div class="filter-group">
+            <label>Category</label>
+            <select id="filterCategory">
+              <option value="">All Categories</option>
+              <option value="bug">Bug Report</option>
+              <option value="feature">Feature Request</option>
+              <option value="improvement">Improvement</option>
+              <option value="security">Security</option>
+              <option value="content">Content</option>
+              <option value="ux">UI/UX</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Status</label>
+            <select id="filterStatus">
+              <option value="">All Statuses</option>
+              <option value="new">New</option>
+              <option value="reviewing">Reviewing</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Search</label>
+            <input type="text" id="searchInput" placeholder="Search in title/description...">
+          </div>
+        </div>
+
+        <!-- Feedback List -->
+        <div id="feedbackList"></div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+          <i class="fas fa-inbox" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>
+          <p>No feedback responses found matching your filters.</p>
+        </div>
+      </div>
+    </section>
+
+    <div data-include="/components/footer.html"></div>
+  </div>
+
+  <!-- Include System -->
+  <script src="/assets/js/includes.js"></script>
+
+  <!-- Firebase & Authentication -->
+  <script type="module">
+    import { app, auth, onAuthStateChanged } from '/assets/js/auth.js';
+    import { getFirestore, collection, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+
+    const db = getFirestore(app);
+    const AUTHORIZED_EMAIL = 'jedi21132@gmail.com';
+
+    let allFeedback = [];
+    let filteredFeedback = [];
+
+    // Check authentication and authorization
+    onAuthStateChanged(auth, async (user) => {
+      const errorContainer = document.querySelector('.error-container');
+      const warningScreen = document.querySelector('.warning-screen');
+      const authorizedContent = document.getElementById('authorizedContent');
+
+      if (!user || user.email !== AUTHORIZED_EMAIL) {
+        // Show 403 error
+        errorContainer.style.display = 'flex';
+        warningScreen.style.display = 'block';
+        authorizedContent.style.display = 'none';
+        document.body.style.background = '#0a0e27';
+      } else {
+        // User is authorized - show content
+        errorContainer.style.display = 'none';
+        warningScreen.style.display = 'none';
+        authorizedContent.style.display = 'block';
+        document.body.style.background = '';
+        
+        // Load feedback data
+        await loadFeedbackData();
+      }
+    });
+
+    async function loadFeedbackData() {
+      const loadingState = document.getElementById('loadingState');
+      const statsBar = document.getElementById('statsBar');
+      const filtersBar = document.getElementById('filtersBar');
+      const feedbackList = document.getElementById('feedbackList');
+
+      try {
+        loadingState.style.display = 'block';
+
+        // Query all feedback from Firestore
+        const feedbackQuery = query(
+          collection(db, 'site-feedback'),
+          orderBy('submittedAt', 'desc')
+        );
+
+        const snapshot = await getDocs(feedbackQuery);
+        allFeedback = [];
+
+        snapshot.forEach((doc) => {
+          allFeedback.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        filteredFeedback = [...allFeedback];
+
+        // Update statistics
+        updateStatistics();
+
+        // Display feedback
+        displayFeedback();
+
+        // Show UI elements
+        loadingState.style.display = 'none';
+        statsBar.style.display = 'flex';
+        filtersBar.style.display = 'flex';
+
+      } catch (error) {
+        console.error('Error loading feedback:', error);
+        loadingState.innerHTML = `
+          <div style="color: var(--accent-red);">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>Error loading feedback: ${error.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    function updateStatistics() {
+      const totalCount = allFeedback.length;
+      const newCount = allFeedback.filter(f => f.status === 'new').length;
+      const bugCount = allFeedback.filter(f => f.category === 'bug').length;
+      const featureCount = allFeedback.filter(f => f.category === 'feature').length;
+
+      document.getElementById('totalCount').textContent = totalCount;
+      document.getElementById('newCount').textContent = newCount;
+      document.getElementById('bugCount').textContent = bugCount;
+      document.getElementById('featureCount').textContent = featureCount;
+    }
+
+    function displayFeedback() {
+      const feedbackList = document.getElementById('feedbackList');
+      const noResults = document.getElementById('noResults');
+
+      if (filteredFeedback.length === 0) {
+        feedbackList.innerHTML = '';
+        noResults.style.display = 'block';
+        return;
+      }
+
+      noResults.style.display = 'none';
+
+      feedbackList.innerHTML = filteredFeedback.map(feedback => {
+        const date = feedback.submittedAt?.toDate?.() || new Date();
+        const dateStr = date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const categoryEmoji = {
+          'bug': '🐛',
+          'feature': '💡',
+          'improvement': '✨',
+          'security': '🔒',
+          'content': '📝',
+          'ux': '🎨',
+          'other': '📋'
+        };
+
+        return `
+          <div class="feedback-card">
+            <div class="feedback-header">
+              <h3 class="feedback-title">${escapeHtml(feedback.title)}</h3>
+            </div>
+            
+            <div class="feedback-meta">
+              <span class="meta-badge badge-category">
+                ${categoryEmoji[feedback.category] || '📋'} ${feedback.category || 'Unknown'}
+              </span>
+              <span class="meta-badge badge-status">
+                Status: ${feedback.status || 'new'}
+              </span>
+              <span class="meta-badge badge-date">
+                <i class="fas fa-clock"></i> ${dateStr}
+              </span>
+            </div>
+
+            <div class="feedback-description">
+              ${escapeHtml(feedback.description)}
+            </div>
+
+            <div class="feedback-details">
+              <div class="detail-item">
+                <span class="detail-label">User:</span>
+                <span>${escapeHtml(feedback.userEmail || 'anonymous')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Character:</span>
+                <span>${escapeHtml(feedback.characterName || 'None')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Page:</span>
+                <span>${escapeHtml(feedback.page || 'Not specified')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Contact:</span>
+                <span>${escapeHtml(feedback.contact || 'None provided')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Screen Size:</span>
+                <span>${escapeHtml(feedback.screenSize || 'Unknown')}</span>
+              </div>
+              <div class="detail-item" style="grid-column: 1 / -1;">
+                <span class="detail-label">User Agent:</span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; word-break: break-all;">${escapeHtml(feedback.userAgent || 'Unknown')}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Feedback ID:</span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem;">${feedback.id}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters() {
+      const categoryFilter = document.getElementById('filterCategory').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+      const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+      filteredFeedback = allFeedback.filter(feedback => {
+        // Category filter
+        if (categoryFilter && feedback.category !== categoryFilter) {
+          return false;
+        }
+
+        // Status filter
+        if (statusFilter && feedback.status !== statusFilter) {
+          return false;
+        }
+
+        // Search filter
+        if (searchText) {
+          const titleMatch = (feedback.title || '').toLowerCase().includes(searchText);
+          const descMatch = (feedback.description || '').toLowerCase().includes(searchText);
+          if (!titleMatch && !descMatch) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      displayFeedback();
+    }
+
+    // Set up filter event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('filterCategory')?.addEventListener('change', applyFilters);
+      document.getElementById('filterStatus')?.addEventListener('change', applyFilters);
+      document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+    });
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

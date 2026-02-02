@@ -7,9 +7,6 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/wgqechbx2jopsbvntv872129bj4qw3wbxsvy35z27edgkqz4/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-  
   <!-- Theme System -->
   <script type="module">
     import { ThemeManager } from '/assets/js/theme.js';
@@ -456,6 +453,31 @@
       line-height: 1.6;
       font-size: 0.95rem;
       min-height: 200px;
+    }
+
+    html[data-theme="light"] .mail-message-header,
+    html[data-theme="light"] .mail-body {
+      background: #ffffff;
+      color: #121317;
+    }
+
+    html[data-theme="light"] .mail-sender-name,
+    html[data-theme="light"] .mail-subject,
+    html[data-theme="light"] .mail-recipients-list,
+    html[data-theme="light"] .mail-body {
+      color: #121317;
+    }
+
+    html[data-theme="light"] .mail-sender-email,
+    html[data-theme="light"] .mail-date,
+    html[data-theme="light"] .mail-recipients-label {
+      color: #4a5560;
+      opacity: 1;
+    }
+
+    html[data-theme="light"] .mail-sender-info,
+    html[data-theme="light"] .mail-recipients {
+      border-color: rgba(0, 0, 0, 0.08);
     }
     
     .mail-empty-state {
@@ -976,8 +998,8 @@
                 </div>
                 
                 <div class="compose-field compose-editor">
-                  <label>Message</label>
-                  <textarea id="composeBody" placeholder="Type your message here..."></textarea>
+                  <label>Message (Markdown)</label>
+                  <textarea id="composeBody" placeholder="Type your message here using Markdown..."></textarea>
                 </div>
               </div>
               
