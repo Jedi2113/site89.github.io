@@ -530,10 +530,10 @@
         const card = document.createElement("div");
         card.className = "personnel-card";
 
-        const photoUrl = char.profileImage || '#file:dataunavailable.png';
+        const photoUrl = char.profileImage || '/assets/img/dataunavailable.png';
 
         card.innerHTML = `
-          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.src='#file:dataunavailable.png'">
+          <img src="${photoUrl}" alt="${char.name}" class="personnel-card-image" onerror="this.onerror=null;this.src='/assets/img/dataunavailable.png'">
           <div class="personnel-card-info">
             <h3 class="personnel-card-name">${char.name || "Unknown"}</h3>
             <p class="personnel-card-rank">${char.rank || "Unassigned"}</p>
@@ -666,7 +666,12 @@
       }
       document.getElementById("modalPID").textContent = maskPID(char.pid || '') || '—';
       document.getElementById("modalClearance").textContent = char.clearance || "—";
-      document.getElementById("modalPhoto").src = char.profileImage || '#file:dataunavailable.png';
+      const modalPhoto = document.getElementById("modalPhoto");
+      modalPhoto.onerror = () => {
+        modalPhoto.onerror = null;
+        modalPhoto.src = '/assets/img/dataunavailable.png';
+      };
+      modalPhoto.src = char.profileImage || '/assets/img/dataunavailable.png';
 
       // Load and display awards
       const awardsContainer = document.getElementById("modalAwards");
