@@ -12,6 +12,7 @@
   --accent-mint: #3EE1A3;
   --accent-teal: #00A389;
   --accent-red: #b00000;
+  --alert-warn: #ff6b6b;  /* Lighter red for alerts, delete actions */
 
   /* Layout & rhythm */
   --radius: 10px;
@@ -39,6 +40,7 @@ html[data-theme="light"] {
   --shadow-strong: 0 2px 8px rgba(0, 0, 0, 0.08);
   --accent-mint: #1E9B8A;
   --accent-teal: #0D6E66;
+  --alert-warn: #ff6b6b;  /* Consistent alert red across themes */
 }
 
 /* ─────────── Base Styling ─────────── */
@@ -479,7 +481,7 @@ footer p { margin:0; }
 /* ─────────── Button utilities (shared) ─────────── */
 .btn { padding: .6rem 1rem; font-size: .95rem; font-weight:700; border-radius:8px; cursor:pointer; display:inline-flex; gap:.6rem; align-items:center; transition: transform .14s ease, box-shadow .14s ease, background .14s ease; }
 
-.btn-primary { background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal)); color:#06100e; border: none; box-shadow: 0 8px 26px rgba(0,0,0,0.55); }
+.btn-primary { background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal)); color: var(--bg-dark); border: none; box-shadow: 0 8px 26px rgba(0,0,0,0.55); }
 .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,0.65); }
 
 .btn-secondary { background: transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text-light); }
@@ -489,12 +491,15 @@ footer p { margin:0; }
 .btn-icon { padding:.45rem .6rem; font-weight:700; border-radius:8px; font-size:.85rem; }
 .btn-icon i { font-size:1rem; }
 
+/* Utility: text alignment for buttons and links */
+.text-center { text-align: center; }
+
 /* ─────────── Mail UI polish ─────────── */
 .mail-list { padding: .6rem; }
 .message-item { padding:.8rem .9rem; border-bottom:1px solid rgba(255,255,255,0.02); display:flex; gap:.8rem; align-items:flex-start; cursor:pointer; transition: background 0.12s ease, transform 0.08s ease; }
 .message-item:hover { background: rgba(78,250,170,0.02); transform: translateY(-1px); }
 .message-item.unread { background: rgba(78,250,170,0.03); box-shadow: inset 0 0 0 1px rgba(78,250,170,0.02); }
-.message-item .avatar { width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));color:#081413;font-weight:700 }
+.message-item .avatar { width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent-mint),var(--accent-teal));color: var(--bg-dark);font-weight:700 }
 .message-item .meta { flex:1; min-width: 0 }
 .message-item .subject { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 .message-item .snippet { color:var(--text-light); opacity:.86; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }

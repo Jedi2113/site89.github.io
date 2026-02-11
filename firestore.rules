@@ -271,6 +271,29 @@ service cloud.firestore {
       allow delete: if request.auth != null && isIARAISAPersonnel();
     }
 
+    // Anomaly drafts - character-specific, private to each character
+    // Only the character who created the draft can access it
+    match /anomaly_drafts/{draftId} {
+      // Allow read only if the draft belongs to a character the user owns
+      // Frontend enforces character-level access via characterId
+      allow read: if request.auth != null
+        && request.auth.uid == resource.data.createdByUid;
+
+      // Allow create for authenticated users
+      allow create: if request.auth != null
+        && request.resource.data.createdByUid == request.auth.uid
+        && request.resource.data.draftId is string
+        && request.resource.data.characterId is string;
+
+      // Allow update only for the draft owner
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.createdByUid;
+
+      // Allow delete only for the draft owner
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.createdByUid;
+    }
+
     // Case Files collection - IA/RAISA cases
     match /caseFiles/{caseId} {
       // Public read (frontend filters by clearance)

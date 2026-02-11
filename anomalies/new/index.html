@@ -34,6 +34,34 @@
     .hero-head h1{margin:0;font-size:1.8rem}
     .hero-meta{color:var(--text-light);opacity:.9}
     @media (max-width:900px){.an-form-grid{grid-template-columns:1fr}.hero-head{flex-direction:column}}
+    
+    /* Draft System Styles */
+    .btn-draft{background:rgba(255,255,255,0.08);border:1px solid rgba(255,165,0,0.4);color:#FFA500;font-weight:700;padding:.7rem 1.2rem;border-radius:10px;cursor:pointer;transition:all .15s ease}
+    .btn-draft:hover{background:rgba(255,165,0,0.1);border-color:#FFA500}
+    .btn-danger{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.4);color:#f87171;font-weight:700;padding:.7rem 1.2rem;border-radius:10px;cursor:pointer;transition:all .15s ease}
+    .btn-danger:hover{background:rgba(220,38,38,0.25);border-color:#ef4444}
+    .draft-indicator{display:inline-block;padding:.4rem .75rem;background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.3);border-radius:6px;color:#FFA500;font-size:.85rem;font-weight:700;margin-left:.5rem}
+    
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+    .modal-overlay.active{display:flex}
+    .modal-content{background:var(--bg-card);border:1px solid rgba(255,255,255,0.1);border-radius:12px;max-width:700px;width:90%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.5)}
+    .modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center}
+    .modal-header h2{margin:0;font-size:1.5rem}
+    .modal-close{background:none;border:none;color:var(--text-light);font-size:1.8rem;cursor:pointer;line-height:1;padding:.25rem .5rem;transition:color .15s ease}
+    .modal-close:hover{color:var(--text)}
+    .modal-body{padding:1.5rem;overflow-y:auto;flex:1}
+    .draft-list{display:flex;flex-direction:column;gap:.75rem}
+    .draft-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:background .15s ease}
+    .draft-item:hover{background:rgba(255,255,255,0.06)}
+    .draft-info{flex:1;min-width:0}
+    .draft-title{font-weight:700;font-size:1.05rem;margin-bottom:.25rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .draft-meta{color:var(--text-light);font-size:.85rem}
+    .draft-actions{display:flex;gap:.5rem;flex-shrink:0}
+    .btn-small{padding:.4rem .7rem;font-size:.85rem;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--text);font-weight:600;transition:all .15s ease}
+    .btn-small:hover{background:rgba(255,255,255,0.1)}
+    .btn-small.danger{border-color:rgba(220,38,38,0.4);color:#f87171}
+    .btn-small.danger:hover{background:rgba(220,38,38,0.2)}
+    .empty-drafts{text-align:center;color:var(--text-light);padding:2rem 1rem;font-style:italic}
   </style>
 </head>
 <body>
@@ -44,7 +72,7 @@
     <div class="hero-head">
       <div>
         <div class="page-identifier">ANOMALY AUTHORING</div>
-        <h1>Create or Edit an Anomaly</h1>
+        <h1>Create or Edit an Anomaly<span id="draftIndicator" class="draft-indicator" style="display:none">DRAFT</span></h1>
         <p class="hero-meta">Markdown is supported for procedures and description. Required fields keep our formatting consistent.</p>
       </div>
       <div class="pill-bar">
@@ -141,12 +169,30 @@
 
         <div class="an-actions">
           <button type="button" class="btn-secondary" id="loadBtn">Load Existing</button>
-          <button type="submit" class="btn-primary">Save Anomaly</button>
+          <button type="button" class="btn-draft" id="saveDraftBtn">Save Draft</button>
+          <button type="button" class="btn-secondary" id="myDraftsBtn">My Drafts</button>
+          <button type="submit" class="btn-primary" id="publishBtn">Publish Anomaly</button>
+          <button type="button" class="btn-danger" id="deleteDraftBtn" style="display:none">Delete Draft</button>
           <span class="status" id="formStatus"></span>
         </div>
       </form>
     </div>
   </main>
+
+  <!-- Draft Management Modal -->
+  <div class="modal-overlay" id="draftsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>My Drafts</h2>
+        <button class="modal-close" id="closeDraftsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="draft-list" id="draftList">
+          <p class="empty-drafts">Loading drafts...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div data-include="/components/footer.html"></div>
 

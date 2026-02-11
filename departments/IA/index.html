@@ -41,6 +41,17 @@
 
     .program-highlight { background: linear-gradient(135deg, rgba(78,250,170,0.05) 0%, rgba(78,250,170,0.01) 100%); padding:1rem; border-radius:6px; margin:1rem 0; border: 1px solid rgba(78,250,170,0.1); }
 
+    /* Warning/Caution Styles - Brand Compliant */
+    .dept-card-warning { background: linear-gradient(135deg, rgba(217,119,6,0.08) 0%, rgba(217,119,6,0.03) 100%); border-left: 4px solid #D97706; }
+    .dept-card-warning-title { color: #D97706; }
+    .link-warning { color: #D97706; text-decoration: underline; }
+    .cta-box-warning { margin-top:1rem; padding:1rem; background:rgba(217,119,6,0.1); border-left:3px solid #D97706; border-radius:4px; }
+    .cta-title-warning { color: #D97706; }
+
+    /* Utility Classes */
+    .flex-col { display:flex; flex-direction:column; gap:0.8rem; }
+    .highlight-primary { font-weight: 600; color: var(--accent-mint); }
+
     @media (max-width:880px) { .dept-grid { grid-template-columns:1fr; } .dept-hero { text-align:center; flex-direction:column; } }
   </style>
 </head>
@@ -68,6 +79,25 @@
             <strong>Director:</strong> Josiah Beck<br>
             <strong>Executive Agent:</strong> N/A
           </div>
+        </div>
+
+        <!-- IA Function-First Notice -->
+        <div class="dept-card dept-card-warning">
+          <h2 class="dept-card-warning-title">⚠ IMPORTANT: Function-First Department</h2>
+          <p class="highlight-primary">Internal Affairs is a function-first department and is NOT accepting new applicants.</p>
+          <p>Internal Affairs personnel are selected exclusively based on demonstrated need, trust, and roleplay capability. Unlike other departments, IA positions are not open to general application. The department requires staff members who can handle both in-character and out-of-character responsibilities with exceptional judgment and discretion.</p>
+          
+          <h3 class="dept-card-warning-title" style="margin-top: 1.5rem;">What Acceptance Means</h3>
+          <p><strong>If accepted into Internal Affairs, you would immediately be promoted to <a href="/about/staff/" class="link-warning">Roleplay Manager</a></strong>, effectively a moderator role. This is not a regular departmental position. You would be granted staff-level responsibilities and authority to manage roleplay operations and handle rule violations across the entire site.</p>
+          
+          <h3 class="dept-card-warning-title" style="margin-top: 1.5rem;">Want to Apply Anyway?</h3>
+          <p>If you believe you are absolutely the most qualified, experienced, and trustworthy candidate for a Roleplay Manager position, and are willing to accept an extremely low probability of acceptance, you may submit an application. <strong>This application will likely not be read or accepted</strong> unless you demonstrate exceptional qualifications that would immediately warrant staffing you as a moderator.</p>
+          
+          <p class="cta-box-warning">
+            <strong class="cta-title-warning">Submit IA Application</strong><br>
+            <a href="https://forms.gle/TBD" style="color:var(--accent-teal); font-family:var(--font-mono);">Internal Affairs Application Form</a><br>
+            <span style="font-size:0.9rem; opacity:0.85;">"The estimated wait time is about seven." <strong>"Seven what?"</strong> "I dunno."</span>
+          </p>
         </div>
 
         <!-- Working in DEO -->
@@ -141,14 +171,14 @@
 
         <div class="dept-card">
           <h3>Portal</h3>
-          <div style="display:flex; flex-direction:column; gap:0.8rem;">
+          <div class="flex-col">
             <a href="/admin/io-personnel-manager/" class="btn-primary" style="text-align:center;">Internal Affairs Portal</a>
           </div>
         </div>
 
         <div class="dept-card">
           <h3>Public Resources</h3>
-          <div style="display:flex; flex-direction:column; gap:0.8rem;">
+          <div class="flex-col">
             <a href="/archives/case-files/" class="btn-primary" style="text-align:center;">Case Files</a>
             <a href="https://forms.gle/Z5wFVwekZWKiVwzs5" class="btn-primary" style="text-align:center;">Warrants</a>
             <a href="https://forms.gle/4MKpk93cYX2NEt2J7" class="btn-primary" style="text-align:center;">Information Requests</a>

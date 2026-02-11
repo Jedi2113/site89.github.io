@@ -1,5 +1,5 @@
 import { app } from '/assets/js/auth.js';
-import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, serverTimestamp, query, where, getDocs, deleteDoc, orderBy } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js';
 
@@ -13,6 +13,7 @@ function userDepartment(){ const ch = getSelectedCharacter(); return ch && ch.de
 function isDeptAllowed(dept){ if(!dept) return false; const d = dept.toLowerCase().replace(/[^a-z0-9]/g, ''); return d.includes('research') || d.includes('rd') || d.includes('scien') || d.includes('scd') || d.includes('scientificdepartment'); }
 function canEdit(){ const c = userClearance(); if(!isNaN(c) && c >= 5) return true; return isDeptAllowed(userDepartment()); }
 function displayName(){ const ch = getSelectedCharacter(); if(ch && ch.name) return ch.name; if(auth.currentUser && auth.currentUser.email) return auth.currentUser.email; return 'Unknown'; }
+function characterId(){ const ch = getSelectedCharacter(); return ch && ch.id ? ch.id : null; }
 
 function docIdFromItemNumber(itemNumber){ const m = (itemNumber || '').match(/\d+/); if(m) return m[0]; return (itemNumber || 'scp-000').replace(/[^A-Za-z0-9]/g,'-'); }
 function formatItemNumber(raw){ const s = (raw || '').toUpperCase().replace(/\s+/g,''); const digits = s.match(/\d+/); if(!digits) return s || 'SCP-000'; const padded = digits[0].padStart(3,'0'); return `SCP-${padded}`; }
@@ -30,6 +31,12 @@ const descriptionInput = document.getElementById('description');
 const proceduresPreview = document.getElementById('proceduresPreview');
 const descriptionPreview = document.getElementById('descriptionPreview');
 const formStatus = document.getElementById('formStatus');
+const saveDraftBtn = document.getElementById('saveDraftBtn');
+const myDraftsBtn = document.getElementById('myDraftsBtn');
+const deleteDraftBtn = document.getElementById('deleteDraftBtn');
+const draftsModal = document.getElementById('draftsModal');
+const closeDraftsModal = document.getElementById('closeDraftsModal');
+const draftList = document.getElementById('draftList');
 const searchInput = document.getElementById('anomalySearch');
 const classFilter = document.getElementById('classFilter');
 const riskFilter = document.getElementById('riskFilter');
@@ -37,11 +44,193 @@ const disruptionFilter = document.getElementById('disruptionFilter');
 const tableBody = document.getElementById('anomalyTableBody');
 
 let anomalies = [];
+let currentDraftId = null;
 
 function setStatus(msg, isError=false){ if(!formStatus) return; formStatus.textContent = msg || ''; formStatus.style.color = isError ? 'var(--accent-red)' : 'var(--text-light)'; }
 function refreshPreview(){ if(proceduresPreview) proceduresPreview.innerHTML = renderMarkdown(proceduresInput.value); if(descriptionPreview) descriptionPreview.innerHTML = renderMarkdown(descriptionInput.value); }
 
-function resetForm(){ form.reset(); refreshPreview(); }
+function updateDraftUI(isDraft){
+  if(!deleteDraftBtn) return;
+  deleteDraftBtn.style.display = isDraft ? 'inline-block' : 'none';
+  if(!isDraft) currentDraftId = null;
+}
+
+function resetForm(){ form.reset(); refreshPreview(); updateDraftUI(false); }
+
+function getFormData(){
+  return {
+    itemNumber: document.getElementById('itemNumber').value || '',
+    nickname: document.getElementById('nickname').value || '',
+    photoUrl: (document.getElementById('photoUrl').value || '').trim(),
+    containmentClass: document.getElementById('containmentClass').value || '',
+    riskClass: document.getElementById('riskClass').value || '',
+    disruptionClass: document.getElementById('disruptionClass').value || '',
+    clearanceLevel: document.getElementById('clearanceLevel').value || '',
+    proceduresMd: proceduresInput.value || '',
+    descriptionMd: descriptionInput.value || ''
+  };
+}
+
+function setFormData(data){
+  document.getElementById('itemNumber').value = data.itemNumber || '';
+  document.getElementById('nickname').value = data.nickname || '';
+  document.getElementById('photoUrl').value = data.photoUrl || '';
+  document.getElementById('containmentClass').value = data.containmentClass || '';
+  document.getElementById('riskClass').value = data.riskClass || '';
+  document.getElementById('disruptionClass').value = data.disruptionClass || '';
+  document.getElementById('clearanceLevel').value = data.clearanceLevel || '';
+  proceduresInput.value = data.proceduresMd || '';
+  descriptionInput.value = data.descriptionMd || '';
+  refreshPreview();
+}
+
+function generateDraftTitle(formData){
+  if(formData.itemNumber && formData.itemNumber.trim()) return `Draft: ${formData.itemNumber}`;
+  return 'Draft: Untitled Anomaly';
+}
+
+function escapeHtml(text){
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+async function saveDraft(){
+  if(!auth.currentUser){ setStatus('Login is required to save drafts.', true); return; }
+  const charId = characterId();
+  if(!charId){ setStatus('Please select a character first.', true); return; }
+
+  const formData = getFormData();
+  const draftTitle = generateDraftTitle(formData);
+  const draftId = currentDraftId || `draft_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  const draftPayload = {
+    ...formData,
+    draftId,
+    draftTitle,
+    characterId: charId,
+    characterName: displayName(),
+    createdByUid: auth.currentUser.uid,
+    createdByEmail: auth.currentUser.email || '',
+    updatedAt: serverTimestamp()
+  };
+  if(!currentDraftId) draftPayload.createdAt = serverTimestamp();
+
+  try{
+    await setDoc(doc(db, 'anomaly_drafts', draftId), draftPayload, { merge: true });
+    currentDraftId = draftId;
+    updateDraftUI(true);
+    setStatus('Draft saved.');
+  } catch(err){
+    console.error('Error saving draft', err);
+    setStatus('Error saving draft: ' + err.message, true);
+  }
+}
+
+async function loadDraft(draftId){
+  if(!auth.currentUser){ setStatus('Login is required.', true); return; }
+  try{
+    const snap = await getDoc(doc(db, 'anomaly_drafts', draftId));
+    if(!snap.exists()){ setStatus('Draft not found.', true); return; }
+    const data = snap.data();
+    const charId = characterId();
+    if(data.characterId !== charId){ setStatus('This draft belongs to another character.', true); return; }
+    setFormData(data);
+    currentDraftId = draftId;
+    updateDraftUI(true);
+    setStatus('Draft loaded.');
+    draftsModal?.classList.remove('active');
+  } catch(err){
+    console.error('Error loading draft', err);
+    setStatus('Error loading draft: ' + err.message, true);
+  }
+}
+
+async function deleteDraft(){
+  if(!currentDraftId) return;
+  if(!confirm('Delete this draft? This cannot be undone.')) return;
+  try{
+    await deleteDoc(doc(db, 'anomaly_drafts', currentDraftId));
+    setStatus('Draft deleted.');
+    resetForm();
+  } catch(err){
+    console.error('Error deleting draft', err);
+    setStatus('Error deleting draft: ' + err.message, true);
+  }
+}
+
+async function deleteDraftById(draftId){
+  if(!confirm('Delete this draft? This cannot be undone.')) return;
+  try{
+    await deleteDoc(doc(db, 'anomaly_drafts', draftId));
+    if(currentDraftId === draftId) resetForm();
+    showDraftsModal();
+  } catch(err){
+    console.error('Error deleting draft', err);
+    alert('Error deleting draft: ' + err.message);
+  }
+}
+
+async function showDraftsModal(){
+  if(!auth.currentUser){ setStatus('Login is required.', true); return; }
+  const charId = characterId();
+  if(!charId){ setStatus('Please select a character first.', true); return; }
+
+  draftsModal?.classList.add('active');
+  if(draftList) draftList.innerHTML = '<p class="empty-drafts">Loading drafts...</p>';
+
+  try{
+    const q = query(
+      collection(db, 'anomaly_drafts'),
+      where('createdByUid', '==', auth.currentUser.uid)
+    );
+    const snapshot = await getDocs(q);
+    if(snapshot.empty){
+      if(draftList) draftList.innerHTML = '<p class="empty-drafts">No drafts found. Start writing to create one!</p>';
+      return;
+    }
+
+    const drafts = [];
+    snapshot.forEach((docSnap)=>{
+      const data = docSnap.data();
+      if(data.characterId !== charId) return;
+      drafts.push(data);
+    });
+
+    drafts.sort((a, b) => {
+      const aTime = a.updatedAt?.toMillis?.() || 0;
+      const bTime = b.updatedAt?.toMillis?.() || 0;
+      return bTime - aTime;
+    });
+
+    let html = '';
+    drafts.forEach((data)=>{
+      const updatedDate = data.updatedAt?.toDate?.() || new Date();
+      const formattedDate = updatedDate.toLocaleDateString() + ' ' + updatedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      html += `
+        <div class="draft-item">
+          <div class="draft-info">
+            <div class="draft-title">${escapeHtml(data.draftTitle || 'Untitled Draft')}</div>
+            <div class="draft-meta">Last modified: ${formattedDate}</div>
+          </div>
+          <div class="draft-actions">
+            <button class="btn-small" onclick="window.anomalyIndex.loadDraftById('${data.draftId}')">Load</button>
+            <button class="btn-small danger" onclick="window.anomalyIndex.deleteDraftById('${data.draftId}')">Delete</button>
+          </div>
+        </div>
+      `;
+    });
+
+    if(!drafts.length){
+      if(draftList) draftList.innerHTML = '<p class="empty-drafts">No drafts found. Start writing to create one!</p>';
+      return;
+    }
+
+    if(draftList) draftList.innerHTML = html;
+  } catch(err){
+    console.error('Error loading drafts', err);
+    if(draftList) draftList.innerHTML = `<p class="empty-drafts" style="color:var(--accent-red)">Error loading drafts: ${escapeHtml(err.message)}</p>`;
+  }
+}
 
 async function loadExisting(){ 
   const formatted = formatItemNumber(document.getElementById('itemNumber').value || ''); 
@@ -74,6 +263,7 @@ async function loadExisting(){
   proceduresInput.value = data.proceduresMd || ''; 
   descriptionInput.value = data.descriptionMd || ''; 
   refreshPreview(); 
+  updateDraftUI(false);
   setStatus('Loaded existing entry.'); 
 }
 
@@ -104,6 +294,10 @@ async function handleSubmit(e){ e.preventDefault(); setStatus(''); if(!auth.curr
   if(!snap.exists()) payload.createdAt = serverTimestamp();
   try{
     await setDoc(ref, payload, { merge:true });
+    if(currentDraftId){
+      try{ await deleteDoc(doc(db, 'anomaly_drafts', currentDraftId)); }
+      catch(err){ console.error('Error deleting draft after publish', err); }
+    }
     setStatus('Saved.');
     modal.style.display='none'; modal.setAttribute('aria-hidden','true');
     resetForm();
@@ -185,6 +379,11 @@ function wireModal(){
   }
   if(closeModalBtn) closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); setStatus(''); });
   if(loadExistingBtn) loadExistingBtn.addEventListener('click', loadExisting);
+  if(saveDraftBtn) saveDraftBtn.addEventListener('click', saveDraft);
+  if(myDraftsBtn) myDraftsBtn.addEventListener('click', showDraftsModal);
+  if(deleteDraftBtn) deleteDraftBtn.addEventListener('click', deleteDraft);
+  if(closeDraftsModal) closeDraftsModal.addEventListener('click', ()=> draftsModal?.classList.remove('active'));
+  draftsModal?.addEventListener('click', (e)=>{ if(e.target === draftsModal) draftsModal.classList.remove('active'); });
   [proceduresInput, descriptionInput].forEach(el=> el && el.addEventListener('input', refreshPreview));
   if(form) form.addEventListener('submit', handleSubmit);
   
@@ -210,14 +409,24 @@ function kickoff(){ if(window.__anomalyIndexReady) return; window.__anomalyIndex
   setTimeout(() => { wireModal(); }, 50);
   // auto-load anomaly if id or item param provided
   const params = new URLSearchParams(window.location.search);
+  const draftParam = params.get('draft');
   const idParam = params.get('id') || params.get('item');
-  if(idParam){ 
+  if(draftParam){
+    modal.style.display='flex';
+    modal.setAttribute('aria-hidden','false');
+    setTimeout(() => loadDraft(draftParam), 100);
+  } else if(idParam){ 
     modal.style.display='flex'; 
     modal.setAttribute('aria-hidden','false'); 
     document.getElementById('itemNumber').value = formatItemNumber(idParam); 
     setTimeout(() => loadExisting(), 100); 
   }
 }
+
+window.anomalyIndex = {
+  loadDraftById: loadDraft,
+  deleteDraftById: deleteDraftById
+};
 
 document.addEventListener('includesLoaded', kickoff);
 document.addEventListener('DOMContentLoaded', kickoff);

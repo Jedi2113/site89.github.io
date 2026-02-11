@@ -516,7 +516,7 @@
           const card = document.createElement("div");
           card.className = "character-card";
 
-          const photoUrl = char.profileImage || 'https://files.catbox.moe/aa9390.png';
+          const photoUrl = char.profileImage || '#file:dataunavailable.png';
           const isSelected = localStorage.getItem("selectedCharacter") ? 
             JSON.parse(localStorage.getItem("selectedCharacter")).id === char.id : false;
 

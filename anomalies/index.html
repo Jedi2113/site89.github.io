@@ -54,9 +54,32 @@
         .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(78,250,170,0.3)}
         .btn-secondary{background:rgba(78,250,170,0.15);color:var(--accent-mint);border:1px solid rgba(78,250,170,0.3)}
         .btn-secondary:hover{background:rgba(78,250,170,0.25);border-color:var(--accent-mint)}
+        .btn-draft{background:rgba(255,255,255,0.08);border:1px solid rgba(255,165,0,0.4);color:#FFA500;font-weight:700;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;transition:all .15s ease}
+        .btn-draft:hover{background:rgba(255,165,0,0.1);border-color:#FFA500}
+        .btn-danger{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.4);color:#f87171;font-weight:700;padding:.6rem 1.2rem;border-radius:6px;cursor:pointer;transition:all .15s ease}
+        .btn-danger:hover{background:rgba(220,38,38,0.25);border-color:#ef4444}
         #loadExistingBtn{background:rgba(0,212,232,0.2);color:#00d4e8;border:2px solid rgba(0,212,232,0.4);padding:.5rem 1rem;font-size:.9rem;font-weight:700}
         #loadExistingBtn:hover{background:rgba(0,212,232,0.3);border-color:#00d4e8;box-shadow:0 0 12px rgba(0,212,232,0.3)}
         .feedback{margin:0;padding:.5rem .8rem;border-radius:4px;font-size:.9rem;font-weight:600}
+        .drafts-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+        .drafts-overlay.active{display:flex}
+        .drafts-content{background:var(--bg-card);border-radius:12px;border:1px solid rgba(255,255,255,0.1);max-width:700px;width:90%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.5)}
+        .drafts-header{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center}
+        .drafts-header h2{margin:0;font-size:1.4rem}
+        .drafts-close{background:none;border:none;color:var(--text-light);font-size:1.8rem;cursor:pointer;line-height:1;padding:.25rem .5rem}
+        .drafts-close:hover{color:var(--text)}
+        .drafts-body{padding:1.5rem;overflow-y:auto;flex:1}
+        .draft-list{display:flex;flex-direction:column;gap:.75rem}
+        .draft-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+        .draft-info{flex:1;min-width:0}
+        .draft-title{font-weight:700;font-size:1.05rem;margin-bottom:.25rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .draft-meta{color:var(--text-light);font-size:.85rem}
+        .draft-actions{display:flex;gap:.5rem;flex-shrink:0}
+        .btn-small{padding:.4rem .7rem;font-size:.85rem;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--text);font-weight:600}
+        .btn-small:hover{background:rgba(255,255,255,0.1)}
+        .btn-small.danger{border-color:rgba(220,38,38,0.4);color:#f87171}
+        .btn-small.danger:hover{background:rgba(220,38,38,0.2)}
+        .empty-drafts{text-align:center;color:var(--text-light);padding:2rem 1rem;font-style:italic}
         @media (max-width:1024px) {
           .ms-logs { margin: 0 !important; }
         }
@@ -186,11 +209,28 @@
             </div>
 
             <div style="display:flex;gap:.6rem;align-items:center;margin-top:1rem;flex-wrap:wrap;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08)">
-              <button class="btn-primary" type="submit">Save Anomaly</button>
+              <button class="btn-primary" type="submit" id="publishBtn">Save Anomaly</button>
+              <button class="btn-draft" type="button" id="saveDraftBtn">Save Draft</button>
+              <button class="btn-secondary" type="button" id="myDraftsBtn">My Drafts</button>
               <button class="btn-secondary" type="button" id="loadExistingBtn">📂 Load Existing</button>
+              <button class="btn-danger" type="button" id="deleteDraftBtn" style="display:none">Delete Draft</button>
               <p id="formStatus" class="feedback"></p>
             </div>
           </form>
+        </div>
+      </div>
+
+      <div class="drafts-overlay" id="draftsModal" aria-hidden="true">
+        <div class="drafts-content" role="dialog" aria-modal="true">
+          <div class="drafts-header">
+            <h2>My Drafts</h2>
+            <button class="drafts-close" id="closeDraftsModal" title="Close">&times;</button>
+          </div>
+          <div class="drafts-body">
+            <div class="draft-list" id="draftList">
+              <p class="empty-drafts">Loading drafts...</p>
+            </div>
+          </div>
         </div>
       </div>
 
