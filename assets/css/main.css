@@ -177,9 +177,11 @@ a:hover { color: var(--accent-teal); text-decoration: underline; }
 
 /* Compact header for secondary pages */
 .site-header {
-  background: transparent;
+  background: var(--bg-dark);
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(78,250,170,0.04);
+  border-bottom: 1px solid rgba(78,250,170,0.08);
+  position: relative;
+  z-index: 1100;
 }
 
 .site-header .header-inner {

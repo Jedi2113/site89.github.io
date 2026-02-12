@@ -699,6 +699,703 @@
         font-size: 1.5rem;
       }
     }
+
+    /* ===== SECTION 1: NEW PLAYER WELCOME ===== */
+    .welcome-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(78, 250, 170, 0.05) 0%, rgba(0, 124, 107, 0.03) 100%);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.1);
+      text-align: center;
+    }
+
+    .welcome-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .welcome-title {
+      font-size: 2rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .welcome-title i {
+      font-size: 2.5rem;
+      opacity: 0.8;
+    }
+
+    .welcome-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    .welcome-benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .welcome-benefit {
+      background: rgba(78, 250, 170, 0.02);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-teal);
+      text-align: left;
+    }
+
+    .welcome-benefit i {
+      color: var(--accent-mint);
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .welcome-benefit h4 {
+      color: var(--accent-mint);
+      margin-top: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .welcome-benefit p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .welcome-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-welcome {
+      padding: 0.9rem 2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      font-family: var(--font-head);
+    }
+
+    .btn-welcome-primary {
+      background: linear-gradient(135deg, var(--accent-mint), var(--accent-teal));
+      color: var(--bg-dark);
+      box-shadow: 0 0 15px rgba(78, 250, 170, 0.3);
+    }
+
+    .btn-welcome-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(78, 250, 170, 0.5);
+    }
+
+    .btn-welcome-secondary {
+      background: transparent;
+      border: 2px solid var(--accent-teal);
+      color: var(--accent-teal);
+    }
+
+    .btn-welcome-secondary:hover {
+      background: rgba(0, 124, 107, 0.1);
+      color: var(--accent-mint);
+      border-color: var(--accent-mint);
+    }
+
+    /* ===== SECTION 2: WHY SITE-89 VALUE PROPOSITION ===== */
+    .why-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(78, 250, 170, 0.02) 100%);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.08);
+    }
+
+    .why-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .why-title {
+      font-size: 2.2rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .why-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.1);
+      padding: 2rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .why-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-mint);
+      box-shadow: 0 8px 24px rgba(78, 250, 170, 0.15);
+    }
+
+    .why-card-icon {
+      font-size: 2.5rem;
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+    }
+
+    .why-card-title {
+      font-size: 1.3rem;
+      color: var(--accent-mint);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .why-card-description {
+      color: var(--text-light);
+      opacity: 0.85;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* ===== SECTION 3: DEPARTMENT SHOWCASE ===== */
+    .departments-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(0, 124, 107, 0.02) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.08);
+    }
+
+    .departments-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .departments-title {
+      font-size: 2.2rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .departments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .dept-showcase-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .dept-showcase-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-mint);
+      box-shadow: 0 12px 32px rgba(78, 250, 170, 0.2);
+    }
+
+    .dept-showcase-header {
+      background: linear-gradient(135deg, rgba(78, 250, 170, 0.1), rgba(0, 124, 107, 0.05));
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .dept-showcase-logo {
+      width: 80px;
+      height: auto;
+      margin: 0 auto 1rem;
+      filter: brightness(1.1);
+    }
+
+    html[data-theme="dark"] .dept-showcase-logo {
+      filter: invert(0.85);
+    }
+
+    .dept-showcase-name {
+      font-size: 1.4rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin: 0.5rem 0;
+    }
+
+    .dept-showcase-abbr {
+      font-size: 0.9rem;
+      color: var(--accent-teal);
+      font-family: var(--font-mono);
+      opacity: 0.8;
+    }
+
+    .dept-showcase-body {
+      padding: 1.5rem;
+    }
+
+    .dept-showcase-tagline {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      opacity: 0.9;
+      font-style: italic;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .dept-showcase-link {
+      display: inline-block;
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .dept-showcase-link:hover {
+      color: var(--accent-mint);
+    }
+
+    /* ===== SECTION 4: COMMUNITY ACTIVITY DASHBOARD ===== */
+    .activity-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(78, 250, 170, 0.02) 100%);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.08);
+    }
+
+    .activity-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .activity-title {
+      font-size: 2.2rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .activity-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.1);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .activity-card:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 8px 20px rgba(78, 250, 170, 0.12);
+      transform: translateY(-3px);
+    }
+
+    .activity-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(78, 250, 170, 0.05);
+    }
+
+    .activity-card-icon {
+      font-size: 2rem;
+      color: var(--accent-teal);
+    }
+
+    .activity-card-title {
+      font-size: 1.3rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin: 0;
+    }
+
+    .activity-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(78, 250, 170, 0.03);
+      font-size: 0.95rem;
+      color: var(--text-light);
+      opacity: 0.85;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-item-title {
+      font-weight: 600;
+      color: var(--accent-teal);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .activity-item-meta {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      font-family: var(--font-mono);
+    }
+
+    .activity-empty {
+      text-align: center;
+      padding: 2rem;
+      opacity: 0.6;
+    }
+
+    .activity-view-all {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .activity-view-all:hover {
+      color: var(--accent-mint);
+    }
+
+    /* ===== SECTION 7: CONTENT ARCHIVE HUB ===== */
+    .archive-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(0, 124, 107, 0.02) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(78, 250, 170, 0.08);
+    }
+
+    .archive-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .archive-title {
+      font-size: 2.2rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .archive-subtitle {
+      font-size: 1rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+    }
+
+    .archive-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 250, 170, 0.12);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .archive-card:hover {
+      border-color: var(--accent-mint);
+      transform: translateY(-6px);
+      box-shadow: 0 10px 28px rgba(78, 250, 170, 0.18);
+    }
+
+    .archive-card-icon {
+      font-size: 3rem;
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+    }
+
+    .archive-card-title {
+      font-size: 1.3rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 0.5rem;
+    }
+
+    .archive-card-description {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 880px) {
+      .welcome-section {
+        padding: 3rem 1.5rem;
+      }
+
+      .why-section {
+        padding: 3rem 1.5rem;
+      }
+
+      .departments-section {
+        padding: 3rem 1.5rem;
+      }
+
+      .activity-section {
+        padding: 3rem 1.5rem;
+      }
+
+      .archive-section {
+        padding: 3rem 1.5rem;
+      }
+
+      .welcome-title {
+        font-size: 1.6rem;
+      }
+
+      .why-title,
+      .departments-title,
+      .activity-title,
+      .archive-title {
+        font-size: 1.8rem;
+      }
+
+      .departments-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .activity-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .archive-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .welcome-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .why-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .departments-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .activity-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .enhanced-status-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .archive-section {
+        padding: 2.5rem 1rem;
+      }
+
+      .welcome-title {
+        font-size: 1.3rem;
+      }
+
+      .why-title,
+      .departments-title,
+      .activity-title,
+      .archive-title {
+        font-size: 1.5rem;
+      }
+
+      .welcome-benefits {
+        grid-template-columns: 1fr;
+      }
+
+      .why-grid,
+      .departments-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .archive-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome-cta {
+        flex-direction: column;
+      }
+
+      .btn-welcome {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    /* ===== CONDENSED STATS SECTION ===== */
+    .condensed-stats-section {
+      padding: 3rem 2rem;
+      background: linear-gradient(180deg, rgba(78, 250, 170, 0.03) 0%, transparent 100%);
+      border-top: 1px solid rgba(78, 250, 170, 0.1);
+      text-align: center;
+    }
+
+    .condensed-stats-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .condensed-stats-title {
+      font-size: 1.6rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 2rem;
+    }
+
+    .condensed-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .condensed-stats-subtitle {
+      margin: 2rem 0 1rem;
+      font-size: 1rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-family: var(--font-head);
+    }
+
+    .condensed-stats-subgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .dev-time-total {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      opacity: 0.75;
+      font-family: var(--font-body);
+    }
+
+    .condensed-stat-item.dev-time {
+      padding: 1rem 0.75rem;
+    }
+
+    .condensed-stat-number.dev-time {
+      font-size: 1.4rem;
+    }
+
+    .condensed-stat-item {
+      background: rgba(78, 250, 170, 0.02);
+      border: 1px solid rgba(78, 250, 170, 0.1);
+      border-radius: 6px;
+      padding: 1.5rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .condensed-stat-item:hover {
+      border-color: var(--accent-mint);
+      box-shadow: 0 4px 12px rgba(78, 250, 170, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .condensed-stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-mint);
+      margin-bottom: 0.3rem;
+      font-family: var(--font-head);
+    }
+
+    .condensed-stat-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 880px) {
+      .condensed-stats-section {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .condensed-stats-title {
+        font-size: 1.4rem;
+      }
+
+      .condensed-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .condensed-stats-subgrid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .condensed-stats-section {
+        padding: 2rem 1rem;
+      }
+
+      .condensed-stats-title {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .condensed-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .condensed-stats-subgrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .condensed-stat-item {
+        padding: 1.25rem 1rem;
+      }
+
+      .condensed-stat-number {
+        font-size: 1.5rem;
+      }
+
+      .condensed-stat-number.dev-time {
+        font-size: 1.2rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1084,117 +1781,330 @@
     </div>
   </section>
 
-  <!-- Information Sections -->
-  <section class="info-section">
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-users"></i>
+  <!-- ===== SECTION 1: NEW PLAYER WELCOME (CONDITIONAL - LOGGED OUT ONLY) ===== -->
+  <section class="welcome-section" id="welcomeSection">
+    <div class="welcome-container">
+      <h2 class="welcome-title">
+        <i class="fas fa-user-plus"></i> New to Site-89?
+      </h2>
+      <p class="welcome-description">
+        Whether you're an SCP fan or discovering the Foundation for the first time, Site-89 welcomes you. 
+        Create your character and dive into an immersive roleplay experience built by the community, for the community.
+      </p>
+      
+      <div class="welcome-benefits">
+        <div class="welcome-benefit">
+          <i class="fas fa-users"></i>
+          <h4>Active Community</h4>
+          <p>Join a thriving roleplay community with dedicated directors and active personnel</p>
+        </div>
+        <div class="welcome-benefit">
+          <i class="fas fa-compass"></i>
+          <h4>Easy Onboarding</h4>
+          <p>Complete guide for new players with character creation and roleplay orientation</p>
+        </div>
+        <div class="welcome-benefit">
+          <i class="fas fa-star"></i>
+          <h4>Creative Freedom</h4>
+          <p>Develop unique characters and storylines within the SCP Foundation universe</p>
+        </div>
+        <div class="welcome-benefit">
+          <i class="fas fa-shield-alt"></i>
+          <h4>Safe Environment</h4>
+          <p>Clear community rules and responsive leadership ensure a professional experience</p>
+        </div>
       </div>
-      <h3 class="card-title">Personnel</h3>
-      <p class="card-description">Access comprehensive personnel dossiers, organizational structure, and departmental assignments for Site-89 staff.</p>
-      <a href="/personnel-files/" class="card-link">
-        View Personnel <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
 
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-sitemap"></i>
+      <div class="welcome-cta">
+        <button class="btn-welcome btn-welcome-primary" onclick="window.location.href='/guides/newcomer-guide/'">
+          <i class="fas fa-book"></i> New Player Guide
+        </button>
+        <button class="btn-welcome btn-welcome-primary" onclick="window.location.href='/accounts/'">
+          <i class="fas fa-user-check"></i> Create Account
+        </button>
+        <a href="/orientation/" class="btn-welcome btn-welcome-secondary">
+          <i class="fas fa-graduation-cap"></i> Orientation
+        </a>
       </div>
-      <h3 class="card-title">Departments</h3>
-      <p class="card-description">Explore Site-89's organizational departments, their functions, and operational responsibilities.</p>
-      <a href="/departments/" class="card-link">
-        View Departments <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fa-solid fa-envelope"></i>
-      </div>
-      <h3 class="card-title">Mail</h3>
-      <p class="card-description">Secure communication between Site-89 personnel.</p>
-      <a href="/emails/" class="card-link">
-        Access Mail <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-info-circle"></i>
-      </div>
-      <h3 class="card-title">About Site-89</h3>
-      <p class="card-description">Learn about our history, mission, and systems that power Site-89.</p>
-      <a href="/about/" class="card-link">
-        Learn More <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-map"></i>
-      </div>
-      <h3 class="card-title">Development</h3>
-      <p class="card-description">Track Site-89's development roadmap and phase progression from construction to full operational status.</p>
-      <a href="/roadmap/" class="card-link">
-        View Roadmap <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-archive"></i>
-      </div>
-      <h3 class="card-title">Archives</h3>
-      <p class="card-description">Secure access to classified archives including anomalies, research logs, and incident reports.</p>
-      <a href="/archives/" class="card-link">
-        Access Archives <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-book"></i>
-      </div>
-      <h3 class="card-title">Resources</h3>
-      <p class="card-description">Essential guides, handbooks, and operational procedures for Site-89 personnel.</p>
-      <a href="/guides/" class="card-link">
-        Browse Resources <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="info-card">
-      <div class="card-icon">
-        <i class="fas fa-gavel"></i>
-      </div>
-      <h3 class="card-title">Rules & Guidelines</h3>
-      <p class="card-description">Community conduct standards, roleplay rules, and enforcement policies for Site-89.</p>
-      <a href="/rules/" class="card-link">
-        View Rules <i class="fas fa-arrow-right"></i>
-      </a>
     </div>
   </section>
 
-  <!-- Featured Stats Section -->
-  <section class="featured-section">
-    <h2 class="featured-title">FACILITY STATISTICS</h2>
-    <div class="featured-grid">
-      <div class="featured-item">
-        <div class="featured-item-number" id="statPersonnel">0</div>
-        <div class="featured-item-label">Active Personnel</div>
+  <!-- ===== SECTION 4: WHY SITE-89? VALUE PROPOSITION ===== -->
+  <section class="why-section">
+    <div class="why-container">
+      <h2 class="why-title">Why Choose Site-89?</h2>
+      
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3 class="why-card-title">Modern Technology</h3>
+          <p class="why-card-description">Built from the ground up with modern web infrastructure, custom plugins, and server systems—far beyond traditional Wikidot roleplay.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <h3 class="why-card-title">Character-Driven Stories</h3>
+          <p class="why-card-description">Develop meaningful, long-term characters with real impact on the site's narrative and community lore.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-users-cog"></i>
+          </div>
+          <h3 class="why-card-title">Active Leadership</h3>
+          <p class="why-card-description">A dedicated founding team responsive to feedback, constantly improving gameplay and systems based on community input.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-crown"></i>
+          </div>
+          <h3 class="why-card-title">Professional Immersion</h3>
+          <p class="why-card-description">Immersive website, realistic procedures, and comprehensive lore create a truly professional SCP Foundation experience.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <h3 class="why-card-title">Deep Systems</h3>
+          <p class="why-card-description">Complex containment procedures, research tracking, incident reporting, and personnel management create endless roleplay opportunities.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-card-icon">
+            <i class="fas fa-people-arrows"></i>
+          </div>
+          <h3 class="why-card-title">Collaborative Community</h3>
+          <p class="why-card-description">A welcoming environment where both new and veteran players drive stories together, building something extraordinary.</p>
+        </div>
       </div>
-      <div class="featured-item">
-        <div class="featured-item-number" id="statDepartments">4</div>
-        <div class="featured-item-label">Hours in Development</div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: DEPARTMENT SHOWCASE ===== -->
+  <section class="departments-section">
+    <div class="departments-container">
+      <h2 class="departments-title">Organization Structure</h2>
+      
+      <div class="departments-grid">
+        <a href="/departments/SD/" class="dept-showcase-card">
+          <div class="dept-showcase-header">
+            <img src="/assets/img/SD.png" alt="Security Department" class="dept-showcase-logo">
+            <div class="dept-showcase-name">Security Department</div>
+            <div class="dept-showcase-abbr">SD</div>
+          </div>
+          <div class="dept-showcase-body">
+            <p class="dept-showcase-tagline">Prevention, Observation & Safety</p>
+            <p style="font-size:0.9rem; opacity:0.8; margin:0;">Containment specialists, tactical response, and facility security.</p>
+            <a href="/departments/SD/" class="dept-showcase-link">View Department →</a>
+          </div>
+        </a>
+
+        <a href="/departments/ScD/" class="dept-showcase-card">
+          <div class="dept-showcase-header">
+            <img src="/assets/img/ScD.png" alt="Scientific Department" class="dept-showcase-logo">
+            <div class="dept-showcase-name">Scientific Department</div>
+            <div class="dept-showcase-abbr">ScD</div>
+          </div>
+          <div class="dept-showcase-body">
+            <p class="dept-showcase-tagline">Study & Innovation</p>
+            <p style="font-size:0.9rem; opacity:0.8; margin:0;">Research coordination, anomaly testing, and scientific advancement.</p>
+            <a href="/departments/ScD/" class="dept-showcase-link">View Department →</a>
+          </div>
+        </a>
+
+        <a href="/departments/AD/" class="dept-showcase-card">
+          <div class="dept-showcase-header">
+            <img src="/assets/img/ADblack.png" alt="Administrative Department" class="dept-showcase-logo">
+            <div class="dept-showcase-name">Administrative Department</div>
+            <div class="dept-showcase-abbr">AD</div>
+          </div>
+          <div class="dept-showcase-body">
+            <p class="dept-showcase-tagline">Leadership & Operations</p>
+            <p style="font-size:0.9rem; opacity:0.8; margin:0;">Site management, policy enforcement, and operational oversight.</p>
+            <a href="/departments/AD/" class="dept-showcase-link">View Department →</a>
+          </div>
+        </a>
+
+        <a href="/departments/IA/" class="dept-showcase-card">
+          <div class="dept-showcase-header">
+            <img src="/assets/img/IO.png" alt="Internal Affairs" class="dept-showcase-logo">
+            <div class="dept-showcase-name">Internal</div>
+            <div class="dept-showcase-name">Affairs</div>
+            <div class="dept-showcase-abbr">IA</div>
+          </div>
+          <div class="dept-showcase-body">
+            <p class="dept-showcase-tagline">Records & Oversight</p>
+            <p style="font-size:0.9rem; opacity:0.8; margin:0;">Personnel investigations, compliance monitoring, and ethical enforcement.</p>
+            <a href="/departments/IA/" class="dept-showcase-link">View Department →</a>
+          </div>
+        </a>
       </div>
-      <div class="featured-item">
-        <div class="featured-item-number">4</div>
-        <div class="featured-item-label">Development Phases</div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: COMMUNITY ACTIVITY DASHBOARD ===== -->
+  <section class="activity-section">
+    <div class="activity-container">
+      <h2 class="activity-title">Community Activity</h2>
+      
+      <div class="activity-grid">
+        <!-- Recent Anomalies -->
+        <div class="activity-card">
+          <div class="activity-card-header">
+            <div class="activity-card-icon">
+              <i class="fas fa-flask"></i>
+            </div>
+            <h3 class="activity-card-title">Recent Anomalies</h3>
+          </div>
+          <div id="anomalies-list" class="activity-items">
+            <div class="activity-empty">Loading anomalies...</div>
+          </div>
+          <a href="/anomalies/" class="activity-view-all">View All Anomalies →</a>
+        </div>
+
+        <!-- Latest Research -->
+        <div class="activity-card">
+          <div class="activity-card-header">
+            <div class="activity-card-icon">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <h3 class="activity-card-title">Research Logs</h3>
+          </div>
+          <div id="research-list" class="activity-items">
+            <div class="activity-empty">Loading research logs...</div>
+          </div>
+          <a href="/research-logs/" class="activity-view-all">View All Logs →</a>
+        </div>
+
+        <!-- Recent Gallery Submissions -->
+        <div class="activity-card">
+          <div class="activity-card-header">
+            <div class="activity-card-icon">
+              <i class="fas fa-images"></i>
+            </div>
+            <h3 class="activity-card-title">Gallery Submissions</h3>
+          </div>
+          <div id="gallery-list" class="activity-items">
+            <div class="activity-empty">Loading gallery submissions...</div>
+          </div>
+          <a href="/gallery/" class="activity-view-all">View Gallery →</a>
+        </div>
       </div>
-      <div class="featured-item">
-        <div class="featured-item-number" id="statAnomalies">31</div>
-        <div class="featured-item-label">Anomalies Contained</div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 7: CONTENT ARCHIVE HUB ===== -->
+  <section class="archive-section">
+    <div class="archive-container">
+      <h2 class="archive-title">Content Library</h2>
+      <p class="archive-subtitle">Explore our comprehensive archive of anomalies, research, incidents, and more</p>
+      
+      <div class="archive-grid">
+        <a href="/anomalies/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-flask-vial"></i>
+          </div>
+          <h3 class="archive-card-title">Anomalies</h3>
+          <p class="archive-card-description">Complete catalog of contained anomalous objects with classifications, properties, and containment procedures</p>
+        </a>
+
+        <a href="/research-logs/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-book"></i>
+          </div>
+          <h3 class="archive-card-title">Research Logs</h3>
+          <p class="archive-card-description">Detailed documentation of ongoing anomaly research, experiments, and scientific findings</p>
+        </a>
+
+        <a href="/incident-reports/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h3 class="archive-card-title">Incident Reports</h3>
+          <p class="archive-card-description">Official records of containment breaches, accidents, and critical events at Site-89</p>
+        </a>
+
+        <a href="/archives/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-archive"></i>
+          </div>
+          <h3 class="archive-card-title">Full Archives</h3>
+          <p class="archive-card-description">Comprehensive database of all classified materials, case files, and historical records</p>
+        </a>
+
+        <a href="/personnel-files/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-id-card"></i>
+          </div>
+          <h3 class="archive-card-title">Personnel Files</h3>
+          <p class="archive-card-description">Personnel dossiers, organizational charts, and staff directory for Site-89 personnel</p>
+        </a>
+
+        <a href="/guides/" class="archive-card">
+          <div class="archive-card-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h3 class="archive-card-title">Guides & Resources</h3>
+          <p class="archive-card-description">Essential guides, handbooks, and procedural documentation for new and experienced personnel</p>
+        </a>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== FACILITY STATISTICS (CONDENSED) ===== -->
+  <section class="condensed-stats-section" id="condensedStatsSection">
+    <div class="condensed-stats-container">
+      <h2 class="condensed-stats-title">Facility Statistics</h2>
+      
+      <div class="condensed-stats-grid">
+        <div class="condensed-stat-item">
+          <div class="condensed-stat-number" id="statPersonnelCondensed">0</div>
+          <div class="condensed-stat-label">Active Personnel</div>
+        </div>
+        <div class="condensed-stat-item">
+          <div class="condensed-stat-number" id="statAnomaliesCondensed">31</div>
+          <div class="condensed-stat-label">Anomalies Contained</div>
+        </div>
+        <div class="condensed-stat-item">
+          <div class="condensed-stat-number">4</div>
+          <div class="condensed-stat-label">Development Phases</div>
+        </div>
+      </div>
+
+      <div class="condensed-stats-subtitle">Time in Development</div>
+      <div class="condensed-stats-subgrid" id="devTimeGrid">
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devYears">0</div>
+          <div class="condensed-stat-label">Years</div>
+        </div>
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devMonths">0</div>
+          <div class="condensed-stat-label">Months</div>
+        </div>
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devDays">0</div>
+          <div class="condensed-stat-label">Days</div>
+        </div>
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devHours">0</div>
+          <div class="condensed-stat-label">Hours</div>
+        </div>
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devMinutes">0</div>
+          <div class="condensed-stat-label">Minutes</div>
+        </div>
+        <div class="condensed-stat-item dev-time">
+          <div class="condensed-stat-number dev-time" id="devSeconds">0</div>
+          <div class="condensed-stat-label">Seconds</div>
+        </div>
+      </div>
+      <div class="dev-time-total" id="devTotalSeconds">That's 0 seconds in total!</div>
     </div>
   </section>
 
@@ -1206,7 +2116,7 @@
 
   <script type="module">
     import { app, auth } from "/assets/js/auth.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
     const db = getFirestore(app);
@@ -1219,6 +2129,18 @@
       if (user) {
         // Close modal if user logs in
         closeFirstTimeModal();
+        
+        // Hide welcome section for logged-in users
+        const welcomeSection = document.getElementById('welcomeSection');
+        if (welcomeSection) {
+          welcomeSection.style.display = 'none';
+        }
+        
+        // Hide why section for logged-in users
+        const whySection = document.querySelector('.why-section');
+        if (whySection) {
+          whySection.style.display = 'none';
+        }
         
         const selectedChar = localStorage.getItem("selectedCharacter");
         if (selectedChar) {
@@ -1238,7 +2160,46 @@
         authBtnText.textContent = "Authenticate";
         authBtn.onclick = () => window.location.href = "/login/";
       }
+      
+      // Reorganize page sections for better flow
+      reorganizePage();
     });
+
+    // Reorganize sections on page load for better UX flow
+    function reorganizePage() {
+      // Target the main content container (typically after hero)
+      const body = document.body;
+      
+      // Get section elements by class
+      const heroSection = document.querySelector('.hero-section');
+      const welcomeSection = document.getElementById('welcomeSection');
+      const whySection = document.querySelector('.why-section');
+      const activitySection = document.querySelector('.activity-section');
+      const departmentsSection = document.querySelector('.departments-section');
+      const archiveSection = document.querySelector('.archive-section');
+      const condensedStatsSection = document.getElementById('condensedStatsSection');
+      const footer = document.querySelector('[data-include="/components/footer.html"]');
+      
+      if (!heroSection || !footer) return;
+      
+      // Add sections in desired order after hero
+      const sectionsInOrder = [
+        welcomeSection,
+        whySection,
+        activitySection,
+        departmentsSection,
+        archiveSection,
+        condensedStatsSection
+      ].filter(el => el !== null);
+      
+      // Insert sections before footer in correct order
+      sectionsInOrder.forEach(section => {
+        if (section.parentNode) {
+          section.parentNode.removeChild(section);
+        }
+        body.insertBefore(section, footer);
+      });
+    }
 
     // Load statistics
     async function loadStats() {
@@ -1246,11 +2207,22 @@
         // Load featured article
         loadFeaturedArticle();
         
+        // Load activity data
+        loadActivityDashboard();
+        
+        // Load personnel count
         const charactersSnap = await getDocs(collection(db, "characters"));
-        document.getElementById("statPersonnel").textContent = charactersSnap.size;
+        const personnelCount = charactersSnap.size;
+        const statPersonnelEl = document.getElementById("statPersonnelCondensed");
+        if (statPersonnelEl) {
+          statPersonnelEl.textContent = personnelCount;
+        }
       } catch (err) {
         console.error("Error loading stats:", err);
       }
+      
+      // Update development time
+      updateDevTime();
     }
 
     loadStats();
@@ -1299,17 +2271,168 @@
         console.error('Error loading featured article:', err);
       }
     }
-    function updateHoursInDev(){
-      const el = document.getElementById('statDepartments');
-      if(!el) return;
-      const start = new Date('2024-02-01T00:00:00Z');
-      const ms = Date.now() - start.getTime();
-      const hours = Math.floor(ms / (1000 * 60 * 60));
-      el.textContent = hours.toLocaleString();
+
+    // Load Community Activity Dashboard with real-time updates
+    function loadActivityDashboard() {
+      const anomaliesList = document.getElementById('anomalies-list');
+      const researchList = document.getElementById('research-list');
+      const galleryList = document.getElementById('gallery-list');
+
+      // Subscribe to anomalies collection
+      const anomaliesQuery = query(collection(db, 'anomalies'), orderBy('createdAt', 'desc'));
+      onSnapshot(anomaliesQuery, (snap) => {
+        if (snap.size === 0) {
+          anomaliesList.innerHTML = '<div class="activity-empty">No anomalies yet</div>';
+        } else {
+          let anomaliesHTML = '';
+          let count = 0;
+          snap.forEach(doc => {
+            if (count >= 3) return;
+            const anomaly = doc.data();
+            const id = anomaly.idNumber || anomaly.scp_id || doc.id;
+            anomaliesHTML += `
+              <div class="activity-item">
+                <span class="activity-item-title">SCP-${id}</span>
+                <span class="activity-item-meta">${anomaly.alterationClass || anomaly.class || 'Unclassified'}</span>
+              </div>
+            `;
+            count++;
+          });
+          anomaliesList.innerHTML = anomaliesHTML;
+        }
+      }, (err) => {
+        console.warn('Could not load anomalies:', err);
+        anomaliesList.innerHTML = '<div class="activity-empty">—</div>';
+      });
+
+      // Subscribe to research logs collection
+      const researchQuery = query(collection(db, 'researchLogs'), orderBy('createdAt', 'desc'));
+      onSnapshot(researchQuery, (snap) => {
+        if (snap.size === 0) {
+          researchList.innerHTML = '<div class="activity-empty">No research logs yet</div>';
+        } else {
+          let researchHTML = '';
+          let count = 0;
+          snap.forEach(doc => {
+            if (count >= 3) return;
+            const log = doc.data();
+            const dateVal = log.createdAt ? (log.createdAt.seconds ? new Date(log.createdAt.seconds * 1000) : new Date(log.createdAt)) : new Date();
+            const date = dateVal.toLocaleDateString();
+            researchHTML += `
+              <div class="activity-item">
+                <span class="activity-item-title">${log.title || 'Untitled Log'}</span>
+                <span class="activity-item-meta">📅 ${date}</span>
+              </div>
+            `;
+            count++;
+          });
+          researchList.innerHTML = researchHTML;
+        }
+      }, (err) => {
+        console.warn('Could not load research logs:', err);
+        researchList.innerHTML = '<div class="activity-empty">—</div>';
+      });
+
+      // Subscribe to gallery submissions collection
+      const galleryQuery = query(collection(db, 'gallery'), orderBy('timestamp', 'desc'));
+      onSnapshot(galleryQuery, (snap) => {
+        if (snap.size === 0) {
+          galleryList.innerHTML = '<div class="activity-empty">No gallery submissions yet</div>';
+        } else {
+          let galleryHTML = '';
+          let count = 0;
+          snap.forEach(doc => {
+            if (count >= 3) return;
+            const item = doc.data();
+            const caption = item.caption || 'Untitled Submission';
+            const uploader = item.uploaderName || 'Anonymous';
+            const dateVal = item.timestamp
+              ? (item.timestamp.seconds ? new Date(item.timestamp.seconds * 1000) : new Date(item.timestamp))
+              : new Date();
+            const date = dateVal.toLocaleDateString();
+            galleryHTML += `
+              <div class="activity-item">
+                <span class="activity-item-title">${caption}</span>
+                <span class="activity-item-meta">by ${uploader} • ${date}</span>
+              </div>
+            `;
+            count++;
+          });
+          galleryList.innerHTML = galleryHTML;
+        }
+      }, (err) => {
+        console.warn('Could not load gallery submissions:', err);
+        galleryList.innerHTML = '<div class="activity-empty">—</div>';
+      });
     }
-    updateHoursInDev();
-    // refresh every minute to keep it current
-    setInterval(updateHoursInDev, 60 * 1000);
+
+    function updateDevTime(){
+      const start = new Date(Date.UTC(2024, 1, 1, 0, 0, 0));
+      const now = new Date();
+      const totalSeconds = Math.floor((now.getTime() - start.getTime()) / 1000);
+
+      let years = now.getUTCFullYear() - start.getUTCFullYear();
+      let months = now.getUTCMonth() - start.getUTCMonth();
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      let anchor = new Date(Date.UTC(
+        start.getUTCFullYear() + years,
+        start.getUTCMonth() + months,
+        start.getUTCDate(),
+        start.getUTCHours(),
+        start.getUTCMinutes(),
+        start.getUTCSeconds()
+      ));
+
+      if (anchor > now) {
+        months -= 1;
+        if (months < 0) {
+          years -= 1;
+          months += 12;
+        }
+        anchor = new Date(Date.UTC(
+          start.getUTCFullYear() + years,
+          start.getUTCMonth() + months,
+          start.getUTCDate(),
+          start.getUTCHours(),
+          start.getUTCMinutes(),
+          start.getUTCSeconds()
+        ));
+      }
+
+      let remainingMs = now - anchor;
+      const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+      remainingMs -= days * 1000 * 60 * 60 * 24;
+      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+      remainingMs -= hours * 1000 * 60 * 60;
+      const minutes = Math.floor(remainingMs / (1000 * 60));
+      remainingMs -= minutes * 1000 * 60;
+      const seconds = Math.floor(remainingMs / 1000);
+
+      const yearsEl = document.getElementById('devYears');
+      const monthsEl = document.getElementById('devMonths');
+      const daysEl = document.getElementById('devDays');
+      const hoursEl = document.getElementById('devHours');
+      const minutesEl = document.getElementById('devMinutes');
+      const secondsEl = document.getElementById('devSeconds');
+      const totalEl = document.getElementById('devTotalSeconds');
+
+      if (!yearsEl || !monthsEl || !daysEl || !hoursEl || !minutesEl || !secondsEl || !totalEl) return;
+
+      yearsEl.textContent = years;
+      monthsEl.textContent = months;
+      daysEl.textContent = days;
+      hoursEl.textContent = hours;
+      minutesEl.textContent = minutes;
+      secondsEl.textContent = seconds;
+      totalEl.textContent = `That's ${totalSeconds.toLocaleString()} seconds in total!`;
+    }
+    updateDevTime();
+    // refresh every second
+    setInterval(updateDevTime, 1000);
 
     // Sticky nav
     document.addEventListener("scroll", () => {
@@ -1512,6 +2635,35 @@
       const value = item.querySelector('.status-value');
       indicator.className = `status-indicator ${state}`;
       value.textContent = state === 'online' ? 'ONLINE' : 'OFFLINE';
+      
+      // Update enhanced status display
+      updateEnhancedStatusDisplay();
+    }
+    
+    function updateEnhancedStatusDisplay() {
+      const mcItem = document.getElementById('status-mc');
+      const catboxItem = document.getElementById('status-catbox');
+      const msaItem = document.getElementById('status-msa');
+      
+      const mcVal = document.getElementById('status-mc-val');
+      const cdnVal = document.getElementById('status-cdn-val');
+      const authVal = document.getElementById('status-auth-val');
+      const overallVal = document.getElementById('status-overall-val');
+      
+      if (!mcVal || !cdnVal || !authVal || !overallVal) return;
+      
+      const mcStatus = mcItem?.querySelector('.status-value')?.textContent === 'ONLINE' ? '🟢 ONLINE' : '🔴 OFFLINE';
+      const cdnStatus = catboxItem?.querySelector('.status-value')?.textContent === 'ONLINE' ? '🟢 ONLINE' : '🔴 OFFLINE';
+      const authStatus = msaItem?.querySelector('.status-value')?.textContent === 'ONLINE' ? '🟢 ONLINE' : '🔴 OFFLINE';
+      
+      mcVal.textContent = mcStatus;
+      cdnVal.textContent = cdnStatus;
+      authVal.textContent = authStatus;
+      
+      // Calculate overall status
+      const allOnline = mcStatus.includes('🟢') && cdnStatus.includes('🟢') && authStatus.includes('🟢');
+      overallVal.textContent = allOnline ? '✓ OPERATIONAL' : '⚠ DEGRADED';
+      overallVal.style.color = allOnline ? 'var(--accent-mint)' : '#ffc857';
     }
     
     async function updateHomeStatus() {

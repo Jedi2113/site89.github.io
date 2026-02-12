@@ -11,96 +11,598 @@
     import { ThemeManager } from '/assets/js/theme.js';
     ThemeManager.init();
   </script>
-  <meta name="description" content="Foundation Gallery: Community-contributed imagery and documentation photos from Site-89 operations.">
+  <meta name="description" content="Foundation Gallery: community-contributed art, photos, and screenshots from Site-89 operations.">
   <style>
-    .page-hero { padding: 3rem 1rem; text-align: center; background: linear-gradient(90deg, rgba(78,250,170,0.04), transparent); border-bottom: 1px solid rgba(78,250,170,0.03); }
-    .page-hero h1 { font-family: var(--font-head); font-size: 2.2rem; color: var(--accent-mint); margin-bottom: 0.5rem; }
-    .page-hero p { color: var(--text-light); opacity: 0.9; max-width: 600px; margin: 0 auto; }
+    .gallery-page .page-hero {
+      padding: 2.75rem 1rem;
+      text-align: left;
+      background: linear-gradient(90deg, rgba(78,250,170,0.06), transparent);
+      border-bottom: 1px solid rgba(78,250,170,0.08);
+    }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .gallery-item { position: relative; background: var(--bg-card); border: 1px solid rgba(78,250,170,0.1); border-radius: 8px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(78,250,170,0.15); }
-    .gallery-item img { width: 100%; height: 280px; object-fit: cover; display: block; }
-    .gallery-caption { padding: 1rem; color: var(--text-light); font-size: 0.95rem; line-height: 1.5; }
-    .gallery-meta { padding: 0 1rem 0.8rem; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; }
-    .gallery-delete { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,0,0,0.85); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; opacity: 0; transition: opacity 0.2s ease; }
-    .gallery-item:hover .gallery-delete { opacity: 1; }
+    .gallery-page .hero-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+      color: var(--accent-mint);
+      margin-bottom: 0.4rem;
+    }
 
-    .upload-section { background: var(--bg-card); border: 2px dashed rgba(78,250,170,0.3); border-radius: 8px; padding: 2.5rem; text-align: center; margin-bottom: 3rem; transition: all 0.2s ease; }
-    .upload-section:hover { border-color: var(--accent-mint); background: rgba(78,250,170,0.02); }
-    .upload-section i { font-size: 3rem; color: var(--accent-mint); margin-bottom: 1rem; display: block; }
-    .upload-section h3 { margin: 0 0 0.5rem 0; color: var(--accent-mint); }
-    .upload-section p { margin: 0; color: var(--text-light); opacity: 0.85; }
+    .gallery-page .hero-sub {
+      color: var(--text-light);
+      opacity: 0.9;
+      max-width: 620px;
+    }
 
-    .upload-btn { padding: 0.8rem 2rem; background: var(--accent-mint); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 1rem; margin-top: 1.5rem; }
-    .upload-btn:hover { background: var(--accent-teal); }
+    .gallery-actions {
+      margin-top: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
 
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-overlay.active { display: flex; }
-    .modal-box { background: var(--bg-card); padding: 2rem; border-radius: 8px; border: 2px solid var(--accent-mint); max-width: 500px; width: 90%; }
-    .modal-box h3 { margin-top: 0; color: var(--accent-mint); }
-    .modal-box input, .modal-box textarea { width: 100%; padding: 0.6rem; margin: 0.8rem 0; background: var(--bg-soft); border: 1px solid rgba(78,250,170,0.2); border-radius: 4px; color: var(--text-light); font-family: var(--font-body); box-sizing: border-box; }
-    .modal-box input:focus, .modal-box textarea:focus { outline: none; border-color: var(--accent-mint); }
-    .modal-buttons { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
-    .modal-buttons button { flex: 1; padding: 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
-    .btn-submit { background: var(--accent-mint); color: var(--bg-dark); }
-    .btn-cancel { background: rgba(78,250,170,0.1); border: 1px solid var(--accent-mint); color: var(--accent-mint); }
+    .gallery-actions .btn-primary {
+      border-radius: 8px;
+      padding: 0.7rem 1.2rem;
+    }
 
-    .loading-text { color: var(--text-light); opacity: 0.7; text-align: center; padding: 3rem; }
-    .auth-required { text-align: center; padding: 3rem; color: var(--text-light); }
-    .auth-required i { font-size: 3rem; opacity: 0.5; margin-bottom: 1rem; display: block; }
+    .gallery-actions .btn-secondary {
+      border-radius: 8px;
+      padding: 0.7rem 1.2rem;
+    }
 
-    .empty-gallery { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-light); opacity: 0.7; }
+    .auth-required {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-light);
+    }
 
-    .photo-expand-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
-    .photo-expand-modal.active { display: flex; }
-    .photo-expand-content { position: relative; max-width: 90%; max-height: 90vh; }
-    .photo-expand-img { width: 100%; height: auto; max-height: 80vh; border-radius: 8px; }
-    .photo-expand-close { position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
-    .photo-expand-close:hover { transform: scale(1.2); }
-    .photo-expand-caption { margin-top: 1rem; text-align: center; color: var(--text-light); padding: 1rem; background: var(--bg-card); border-radius: 8px; }
+    .auth-required i {
+      font-size: 2.6rem;
+      opacity: 0.6;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .submission-stage {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2.5rem 0;
+    }
+
+    .submission-info h2 {
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin-bottom: 0.6rem;
+    }
+
+    .submission-steps {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .step-card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      padding: 0.9rem 1rem;
+      color: var(--text-light);
+    }
+
+    .step-card span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+      background: rgba(78,250,170,0.18);
+      color: var(--accent-mint);
+      font-weight: 700;
+    }
+
+    .submission-panel {
+      background: var(--bg-card);
+      border: 1px dashed rgba(78,250,170,0.3);
+      border-radius: 8px;
+      padding: 1.6rem;
+    }
+
+    .submission-panel h3 {
+      margin-top: 0;
+      color: var(--accent-mint);
+      font-family: var(--font-head);
+    }
+
+    .submission-panel ul {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 1.2rem;
+      color: var(--text-light);
+    }
+
+    .submission-panel li {
+      margin-bottom: 0.6rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .upload-btn {
+      padding: 0.7rem 1.4rem;
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .gallery-section {
+      padding-bottom: 3rem;
+    }
+
+    .gallery-header {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .gallery-header h2 {
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+      margin: 0;
+    }
+
+    .gallery-header p {
+      margin: 0;
+      color: var(--text-light);
+      opacity: 0.85;
+    }
+
+    .gallery-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .gallery-control {
+      display: grid;
+      grid-template-rows: auto 40px auto;
+      gap: 0.4rem;
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+
+    .gallery-search {
+      position: relative;
+      height: 40px;
+    }
+
+    .gallery-search i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .gallery-search input,
+    .gallery-control select {
+      width: 100%;
+      height: 40px;
+      padding: 0 0.8rem;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: var(--bg-soft);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      box-sizing: border-box;
+    }
+
+    .gallery-search input {
+      padding-left: 2.2rem;
+    }
+
+    .gallery-count {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-item {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+
+    .gallery-body {
+      padding: 1rem 1.1rem 1.2rem;
+      display: grid;
+      gap: 0.5rem;
+      color: var(--text-light);
+    }
+
+    .gallery-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(78,250,170,0.12);
+      color: var(--accent-mint);
+      border: 1px solid rgba(78,250,170,0.2);
+      width: fit-content;
+    }
+
+    .gallery-caption {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .gallery-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .gallery-delete {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      background: var(--alert-warn);
+      color: white;
+      border: none;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .gallery-item:hover .gallery-delete {
+      opacity: 1;
+    }
+
+    .loading-text,
+    .empty-gallery {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--muted);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      max-width: 520px;
+      width: 100%;
+      color: var(--text-light);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .modal-box h3 {
+      margin-top: 0;
+      color: var(--accent-mint);
+      font-family: var(--font-head);
+    }
+
+    .modal-box label {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+    }
+
+    .modal-box input,
+    .modal-box textarea,
+    .modal-box select {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.4rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      box-sizing: border-box;
+    }
+
+    .modal-box input:focus,
+    .modal-box textarea:focus,
+    .modal-box select:focus {
+      outline: none;
+      border-color: var(--accent-mint);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: var(--font-body);
+    }
+
+    .btn-submit {
+      background: var(--accent-mint);
+      color: var(--bg-dark);
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-light);
+    }
+
+    .modal-tip {
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .photo-expand-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .photo-expand-modal.active {
+      display: flex;
+    }
+
+    .photo-expand-content {
+      position: relative;
+      max-width: min(960px, 92vw);
+      max-height: 90vh;
+      display: grid;
+      gap: 1rem;
+      justify-items: center;
+    }
+
+    .photo-expand-img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+
+    .photo-expand-close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2.4rem;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-expand-caption {
+      text-align: center;
+      color: var(--text-light);
+      padding: 1rem 1.2rem;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      width: 100%;
+    }
+
+    .expand-title {
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      font-family: var(--font-head);
+      color: var(--accent-mint);
+    }
+
+    .expand-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .expand-source {
+      display: inline-flex;
+      gap: 0.4rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--accent-mint);
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .gallery-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .photo-expand-close {
+        top: -36px;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="gallery-page">
   <div data-include="/components/header.html"></div>
   <div data-include="/components/navbar.html"></div>
 
   <section class="page-hero">
-    <h1>Foundation Gallery</h1>
-    <p>Community-contributed imagery and documentation photos from Site-89 operations. Anyone with an account can contribute their photos with captions.</p>
+    <div class="content">
+      <div class="hero-title">Foundation Gallery</div>
+      <div class="hero-sub">Community submissions for art, photos, and screenshots. Share your work, add context, and keep Site-89 lore-rich.</div>
+      <div class="gallery-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('uploadModal').classList.add('active')">
+          <i class="fas fa-cloud-upload-alt"></i>Submit
+        </button>
+        <a class="btn btn-secondary" href="#gallery" style="text-decoration:none;">
+          <i class="fas fa-images"></i>Browse
+        </a>
+      </div>
+    </div>
   </section>
 
   <main class="content">
     <div id="authRequired" class="auth-required" style="display:none;">
       <i class="fas fa-lock"></i>
       <h2>Authentication Required</h2>
-      <p>You must be logged in to upload photos. <a href="/accounts/" style="color:var(--accent-mint);">Create or sign in to your account</a>.</p>
+      <p>You must be logged in to submit art, photos, or screenshots. <a href="/accounts/" style="color:var(--accent-mint);">Create or sign in to your account</a>.</p>
     </div>
 
     <div id="galleryContent" style="display:none;">
-      <div class="upload-section">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <h3>Contribute to the Gallery</h3>
-        <p>Share your photos and documentation with captions</p>
-        <button class="upload-btn" onclick="document.getElementById('uploadModal').classList.add('active')">
-          <i class="fas fa-plus" style="margin-right:0.5rem;"></i>Upload Image
-        </button>
-      </div>
+      <section class="submission-stage">
+        <div class="submission-info">
+          <h2>Submit to the Archive</h2>
+          <p>Share concept art, field photos, or in-game screenshots. Every post keeps the community archive current and searchable.</p>
+          <div class="submission-steps">
+            <div class="step-card"><span>1</span>Upload your file to a host (Catbox, Imgur, etc.).</div>
+            <div class="step-card"><span>2</span>Add a caption and pick the type.</div>
+            <div class="step-card"><span>3</span>Submit and watch it appear in the archive.</div>
+          </div>
+        </div>
+        <div class="submission-panel">
+          <h3>Submission checklist</h3>
+          <ul>
+            <li><i class="fas fa-check"></i>Tag art vs. photos vs. screenshots.</li>
+            <li><i class="fas fa-check"></i>Keep captions short and lore-aware.</li>
+            <li><i class="fas fa-check"></i>Credit collaborators when relevant.</li>
+          </ul>
+          <button class="upload-btn" onclick="document.getElementById('uploadModal').classList.add('active')">
+            <i class="fas fa-plus"></i>Start a Submission
+          </button>
+        </div>
+      </section>
 
-      <div id="galleryGrid" class="gallery-grid">
-        <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Loading gallery...</div>
-      </div>
+      <section class="gallery-section" id="gallery">
+        <div class="gallery-header">
+          <div>
+            <h2>Latest Submissions</h2>
+            <p>Fresh drops from artists, photographers, and field agents.</p>
+          </div>
+          <div class="gallery-controls">
+            <label class="gallery-control" for="gallerySearchInput">
+              Search
+              <div class="gallery-search">
+                <i class="fas fa-search"></i>
+                <input id="gallerySearchInput" type="search" placeholder="Search captions, names, types">
+              </div>
+            </label>
+            <label class="gallery-control" for="galleryTypeFilter">
+              Filter by type
+              <select id="galleryTypeFilter">
+                <option value="all">All submissions</option>
+                <option value="art">Art / Illustration</option>
+                <option value="photo">Photo / Reference</option>
+                <option value="screenshot">Screenshot</option>
+                <option value="other">Other</option>
+              </select>
+              <div id="galleryCount" class="gallery-count"></div>
+            </label>
+          </div>
+        </div>
+        <div id="galleryGrid" class="gallery-grid">
+          <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Loading gallery...</div>
+        </div>
+      </section>
     </div>
   </main>
 
   <!-- Upload Modal -->
   <div id="uploadModal" class="modal-overlay">
     <div class="modal-box">
-      <h3>Upload to Gallery</h3>
-      <input id="imageUrl" type="text" placeholder="Image URL (catbox, etc.)" maxlength="500">
-      <textarea id="imageCaption" placeholder="Image caption or description" rows="4" maxlength="300"></textarea>
-      <div style="font-size:0.85rem;color:var(--text-light);opacity:0.8;margin:0.5rem 0;">
-        <strong>Tip:</strong> Upload your image to <a href="https://catbox.moe" target="_blank" style="color:var(--accent-mint);">Catbox.moe</a> and paste the image URL here.
+      <h3>Submit to the Gallery</h3>
+      <label for="imageType">Submission type</label>
+      <select id="imageType">
+        <option value="">Select type</option>
+        <option value="art">Art / Illustration</option>
+        <option value="photo">Photo / Reference</option>
+        <option value="screenshot">Screenshot</option>
+        <option value="other">Other</option>
+      </select>
+      <label for="imageUrl">Image URL</label>
+      <input id="imageUrl" type="text" placeholder="Paste a direct image URL" maxlength="500">
+      <label for="imageCaption">Caption</label>
+      <textarea id="imageCaption" placeholder="Add context, character, or location" rows="4" maxlength="300"></textarea>
+      <label for="imageSource">Source link (optional)</label>
+      <input id="imageSource" type="text" placeholder="Credit link or original post" maxlength="500">
+      <div class="modal-tip">
+        <strong>Tip:</strong> Upload your image to <a href="https://catbox.moe" target="_blank" style="color:#ffd27c;">Catbox.moe</a> and paste the direct image URL here.
       </div>
       <div class="modal-buttons">
         <button class="btn-submit" onclick="submitGalleryImage()">Submit</button>
@@ -114,7 +616,13 @@
     <div class="photo-expand-content">
       <button class="photo-expand-close" onclick="closePhotoExpand()">&times;</button>
       <img id="expandedPhotoImg" class="photo-expand-img" src="" alt="Expanded photo">
-      <div id="expandedPhotoCaption" class="photo-expand-caption"></div>
+      <div id="expandedPhotoCaption" class="photo-expand-caption">
+        <div id="expandedPhotoTitle" class="expand-title"></div>
+        <div id="expandedPhotoMeta" class="expand-meta"></div>
+        <a id="expandedPhotoSource" class="expand-source" href="" target="_blank" rel="noopener" style="display:none;">
+          <i class="fas fa-link"></i>View source
+        </a>
+      </div>
     </div>
   </div>
 
@@ -133,8 +641,12 @@
     const authRequired = document.getElementById('authRequired');
     const galleryContent = document.getElementById('galleryContent');
     const galleryGrid = document.getElementById('galleryGrid');
+    const gallerySearchInput = document.getElementById('gallerySearchInput');
+    const galleryTypeFilter = document.getElementById('galleryTypeFilter');
+    const galleryCount = document.getElementById('galleryCount');
     let currentUser = null;
     let currentUserClearance = 0;
+    let galleryItems = [];
 
     // Check authentication status
     onAuthStateChanged(auth, async (user) => {
@@ -163,12 +675,137 @@
     });
 
     // Load gallery images
+    function normalizeUrl(url) {
+      try {
+        const parsed = new URL(url);
+        return parsed.href;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function formatType(type) {
+      switch (type) {
+        case 'art':
+          return 'Art / Illustration';
+        case 'photo':
+          return 'Photo / Reference';
+        case 'screenshot':
+          return 'Screenshot';
+        case 'other':
+          return 'Other';
+        default:
+          return 'Submission';
+      }
+    }
+
+    function buildSearchText(item) {
+      return [
+        item.caption,
+        item.uploaderName,
+        item.typeLabel,
+        item.type
+      ].filter(Boolean).join(' ').toLowerCase();
+    }
+
+    function renderGalleryItems(items) {
+      if (!items.length) {
+        galleryGrid.innerHTML = '<div class="empty-gallery">No submissions match your search.</div>';
+        if (galleryCount) {
+          galleryCount.textContent = '0 submissions';
+        }
+        return;
+      }
+
+      galleryGrid.innerHTML = '';
+      items.forEach(data => {
+        const uploadDate = data.timestamp
+          ? new Date(data.timestamp.toDate ? data.timestamp.toDate() : data.timestamp).toLocaleDateString()
+          : 'Unknown';
+        const canDelete = currentUser && (currentUser.uid === data.uploaderId || currentUserClearance >= 5);
+
+        const item = document.createElement('article');
+        item.className = 'gallery-item';
+
+        const img = document.createElement('img');
+        img.className = 'gallery-thumb';
+        img.src = data.imageUrl;
+        img.alt = data.caption || 'Gallery submission';
+        img.loading = 'lazy';
+        img.addEventListener('click', () => {
+          expandPhoto({
+            imageUrl: data.imageUrl,
+            caption: data.caption || 'Untitled',
+            uploaderName: data.uploaderName || 'Anonymous',
+            uploadDate: uploadDate,
+            typeLabel: data.typeLabel,
+            sourceUrl: data.sourceUrl || ''
+          });
+        });
+
+        const body = document.createElement('div');
+        body.className = 'gallery-body';
+
+        const badge = document.createElement('span');
+        badge.className = 'gallery-badge';
+        badge.textContent = data.typeLabel;
+
+        const caption = document.createElement('p');
+        caption.className = 'gallery-caption';
+        caption.textContent = data.caption || 'Untitled';
+
+        const meta = document.createElement('div');
+        meta.className = 'gallery-meta';
+        meta.textContent = `By ${data.uploaderName || 'Anonymous'} • ${uploadDate}`;
+
+        body.appendChild(badge);
+        body.appendChild(caption);
+        body.appendChild(meta);
+
+        item.appendChild(img);
+        item.appendChild(body);
+
+        if (canDelete) {
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'gallery-delete';
+          deleteBtn.innerHTML = '<i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete';
+          deleteBtn.addEventListener('click', () => deleteImage(data.id));
+          item.appendChild(deleteBtn);
+        }
+
+        galleryGrid.appendChild(item);
+      });
+
+      if (galleryCount) {
+        galleryCount.textContent = `${items.length} submission${items.length === 1 ? '' : 's'}`;
+      }
+    }
+
+    function applyGalleryFilters() {
+      const term = gallerySearchInput ? gallerySearchInput.value.trim().toLowerCase() : '';
+      const typeFilter = galleryTypeFilter ? galleryTypeFilter.value : 'all';
+
+      const filtered = galleryItems.filter(item => {
+        const matchesType = typeFilter === 'all'
+          ? true
+          : (item.type === typeFilter || (!item.type && typeFilter === 'other'));
+        const matchesSearch = !term || item.searchText.includes(term);
+        return matchesType && matchesSearch;
+      });
+
+      renderGalleryItems(filtered);
+    }
+
     async function loadGallery() {
       try {
         const snapshot = await getDocs(collection(db, 'gallery'));
 
         if (snapshot.empty) {
-          galleryGrid.innerHTML = '<div class="empty-gallery">No images yet. Be the first to contribute!</div>';
+          galleryItems = [];
+          galleryGrid.innerHTML = '<div class="empty-gallery">No submissions yet. Be the first to contribute!</div>';
+          if (galleryCount) {
+            galleryCount.textContent = '0 submissions';
+          }
           return;
         }
 
@@ -184,21 +821,23 @@
           return timeB - timeA;
         });
 
-        galleryGrid.innerHTML = '';
-        items.forEach(data => {
-          const uploadDate = data.timestamp ? new Date(data.timestamp.toDate ? data.timestamp.toDate() : data.timestamp).toLocaleDateString() : 'Unknown';
-          const canDelete = currentUser && (currentUser.uid === data.uploaderId || currentUserClearance >= 5);
-          
-          const item = document.createElement('div');
-          item.className = 'gallery-item';
-          item.innerHTML = `
-            <img src="${data.imageUrl}" alt="${data.caption}" loading="lazy" onclick="expandPhoto('${data.imageUrl}', '${(data.caption || 'Untitled').replace(/'/g, "\\'")}')", style="cursor: pointer;">
-            <div class="gallery-caption">${data.caption || 'Untitled'}</div>
-            <div class="gallery-meta">By ${data.uploaderName || 'Anonymous'} • ${uploadDate}</div>
-            ${canDelete ? `<button class="gallery-delete" onclick="deleteImage('${data.id}')"><i class="fas fa-trash" style="margin-right:0.3rem;"></i>Delete</button>` : ''}
-          `;
-          galleryGrid.appendChild(item);
+        galleryItems = items.map(data => {
+          const type = data.type || '';
+          const typeLabel = formatType(type);
+          return {
+            ...data,
+            type,
+            typeLabel,
+            searchText: buildSearchText({
+              caption: data.caption,
+              uploaderName: data.uploaderName,
+              typeLabel: typeLabel,
+              type: type
+            })
+          };
         });
+
+        applyGalleryFilters();
       } catch (err) {
         console.error('Error loading gallery:', err);
         galleryGrid.innerHTML = '<div class="empty-gallery" style="color:red;">Error loading gallery: ' + err.message + '</div>';
@@ -207,11 +846,29 @@
 
     // Submit gallery image
     window.submitGalleryImage = async function() {
+      const imageType = document.getElementById('imageType').value.trim();
       const imageUrl = document.getElementById('imageUrl').value.trim();
       const imageCaption = document.getElementById('imageCaption').value.trim();
+      const imageSource = document.getElementById('imageSource').value.trim();
+
+      if (!imageType) {
+        alert('Please choose a submission type');
+        return;
+      }
 
       if (!imageUrl) {
         alert('Please enter an image URL');
+        return;
+      }
+
+      const normalizedImageUrl = normalizeUrl(imageUrl);
+      if (!normalizedImageUrl) {
+        alert('Please enter a valid image URL');
+        return;
+      }
+
+      if (imageSource && !normalizeUrl(imageSource)) {
+        alert('Please enter a valid source URL or leave it blank');
         return;
       }
 
@@ -234,11 +891,13 @@
         }
 
         await addDoc(collection(db, 'gallery'), {
-          imageUrl: imageUrl,
+          imageUrl: normalizedImageUrl,
           caption: imageCaption,
           uploaderId: currentUser.uid,
           uploaderName: uploaderName,
-          timestamp: new Date()
+          timestamp: new Date(),
+          type: imageType,
+          sourceUrl: imageSource || ''
         });
 
         closeUploadModal();
@@ -265,8 +924,10 @@
     // Modal controls
     window.closeUploadModal = function() {
       document.getElementById('uploadModal').classList.remove('active');
+      document.getElementById('imageType').value = '';
       document.getElementById('imageUrl').value = '';
       document.getElementById('imageCaption').value = '';
+      document.getElementById('imageSource').value = '';
       const submitBtn = document.querySelector('.btn-submit');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Submit';
@@ -281,11 +942,30 @@
     });
 
     // Photo expansion functions
-    window.expandPhoto = function(imageUrl, caption) {
-      document.getElementById('expandedPhotoImg').src = imageUrl;
-      document.getElementById('expandedPhotoCaption').textContent = caption;
+    window.expandPhoto = function(data) {
+      document.getElementById('expandedPhotoImg').src = data.imageUrl;
+      document.getElementById('expandedPhotoTitle').textContent = data.caption || 'Untitled';
+      document.getElementById('expandedPhotoMeta').textContent = `${data.typeLabel} • ${data.uploaderName} • ${data.uploadDate}`;
+
+      const sourceLink = document.getElementById('expandedPhotoSource');
+      if (data.sourceUrl) {
+        sourceLink.href = data.sourceUrl;
+        sourceLink.style.display = 'inline-flex';
+      } else {
+        sourceLink.href = '';
+        sourceLink.style.display = 'none';
+      }
+
       document.getElementById('photoExpandModal').classList.add('active');
     };
+
+    if (gallerySearchInput) {
+      gallerySearchInput.addEventListener('input', () => applyGalleryFilters());
+    }
+
+    if (galleryTypeFilter) {
+      galleryTypeFilter.addEventListener('change', () => applyGalleryFilters());
+    }
 
     window.closePhotoExpand = function() {
       document.getElementById('photoExpandModal').classList.remove('active');
